@@ -2,6 +2,8 @@ const express = require('express')
     , router = express.Router()
     , all = require('./all')
     , entry = require('./entry')
+    , ping = require('./ping')
+    , user = require('./user')
     // , login = require('./login')
 
 // Set Token 
@@ -9,6 +11,10 @@ router.use('/entry', entry);
 
 // Get Data Of Token 
 router.use('*', all);
+
+// Normal Router 
+router.use('/ping', ping); 
+router.use('/user', user)
 
 router.use('*', function(req, res, next){
 	console.log('\n\n'); 

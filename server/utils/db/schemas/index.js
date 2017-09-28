@@ -23,21 +23,15 @@ schemas.user = mongoose.Schema({
 		type: String, 
 		required: true
 	},
-
 	// EXTERNAL
-	bg: {
-		type: String,
-		default: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAE0lEQVQImWPcvXv3fwYgYGKAAgAxOAM0xpONdQAAAABJRU5ErkJggg=='
-	}, 
+	// bg: {
+	// 	type: String,
+	// 	default: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAE0lEQVQImWPcvXv3fwYgYGKAAgAxOAM0xpONdQAAAABJRU5ErkJggg=='
+	// }, 
 	phone: {
 		type: String, 
 		max: 11, 
 		default: '未设置'
-	},
-	ps: {
-		type: String, 
-		max: 120,
-		default: '这个懒虫没有设置签名 ~ '
 	},
 	created_at: {
 		type: Date, 
