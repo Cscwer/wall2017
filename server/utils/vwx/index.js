@@ -1,5 +1,5 @@
 const { httpGet } = require('../http.client')
-    , { getSign } = require('./base')
+    // , { getSign } = require('./base')
     , qs = require('querystring')
     , config = require('../../config')
     , R = require('../redis')
