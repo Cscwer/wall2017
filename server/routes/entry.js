@@ -60,23 +60,23 @@ router.get('/code', function(req, res){
 		if (err.code === 11000){
 			return userModel.findOne({
 				openid: openid
+			}).then(user => {
+				console.log(`用户重复`)
+
+				let token = auth.en(user); 
+
+				res.cookie('user-token', token, {
+					expires: new Date('2017-11-11')
+				})
+
+				res.redirect('/'); 
 			}); 
 		} else {
 			console.log(err);
 
 			return Promise.reject(err); 
 		}
-	}).then(user => {
-		console.log(`用户重复`)
-
-		let token = auth.en(user); 
-
-		res.cookie('user-token', token, {
-			expires: new Date('2017-11-11')
-		})
-
-		res.redirect('/'); 
-	}, err => {
+	}).catch(err => {
 		console.log(err); 
 		res.json({
 			code: 500, 
