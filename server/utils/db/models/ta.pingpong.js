@@ -32,6 +32,7 @@ function pingpong(from) {
 		}
 	}).catch(err => {
 		// 出现错误 匹配失败
+		console.log('[ ERROR ] ta.pingpong.js'); 
 		console.log(err); 
 		return false; 
 	})

@@ -6,21 +6,27 @@ const schemas = require('../schemas')
 
 let schemasNames = Object.keys(schemas); 
 
-let extFuncs = fs.readdirSync(__dirname).filter(name => {
-	if (name === 'index.js'){
-		return false; 
-	} else if (!name.endsWith('.js')){
-		return false; 
-	} else {
-		return true; 
-	}
-}).map(fileName => {
+var extGeneretor = fileName => {
 	let namePart = fileName.split('.'); 
 	let [modelName, funcName] = namePart; 
 	let func = require('./' + fileName); 
 
 	return { modelName, funcName, func }; 
-}); 
+}
+
+let publicFuncs = [];
+let extFuncs = fs.readdirSync(__dirname).filter(name => {
+	if (name === 'index.js'){
+		return false; 
+	} else if (!name.endsWith('.js')){
+		return false; 
+	} else if (name.startsWith('all.')){
+		let ext = extGeneretor(name); 
+		publicFuncs.push(ext); 
+	} else {
+		return true; 
+	}
+}).map(extGeneretor);
 
 let models = schemasNames.reduce((acc, name) => {
 	let model = mongoose.model(
@@ -28,6 +34,7 @@ let models = schemasNames.reduce((acc, name) => {
 		schemas[name]
 	);
 
+	// 私有方法 
 	extFuncs.forEach(ext => {
 		let { modelName, funcName, func } = ext; 
 
@@ -35,6 +42,12 @@ let models = schemasNames.reduce((acc, name) => {
 			model[funcName] = func; 
 		}
 	}); 
+
+	// 公共方法 
+	publicFuncs.forEach(ext => {
+		let { modelName, funcName, func } = ext; 
+		model[funcName] = func; 
+	})
 
 	acc[name + 'Model'] = model; 
 

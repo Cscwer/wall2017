@@ -7,7 +7,8 @@ let taSchema = mongoose.Schema({
 	from: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'user', 
-		required: true
+		required: true, 
+		unique: true
 	}, 
 	// left 被 right 暗恋着
 	to: {
