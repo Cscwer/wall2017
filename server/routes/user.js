@@ -1,14 +1,11 @@
 // user.js
 const express = require('express')
     , router = express.Router()
+    , rps = require('../utils/rps')
 
 router.get('/me', function(req, res, next){
-	res.json({
-		code: 200, 
-		data: req.user,
-		msg: 'Boot_Yourself_Success'
-	}); 
-})
+	rps.send2000(res, req.user); 
+});
 
 module.exports = router; 
 
