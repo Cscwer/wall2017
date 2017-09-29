@@ -15,6 +15,7 @@ var R = new Redis();
 
 
 
+
 // let u = {
 // 	"_id": "59cb7a292400a81eb8d8a467",
 // 	"openid": "opdbdwdWXWMg9UY72Z4i_DTcblR0",
@@ -44,5 +45,31 @@ var R = new Redis();
 // var d = R.get('access_token').then(res => {
 // 	console.log(res)
 // }); 
+
+// 命名空间
+let JS_OBJ_NS = 'JSOBJ-'; 
+
+R.setObj = (key, obj) => {
+	key = JS_OBJ_NS + key; 
+
+	let obj_json = JSON.stringify(obj); 
+
+	R.set(key, obj_json); 
+
+	return true; 
+}
+
+R.getObj = key => {
+	key = JS_OBJ_NS + key; 
+
+	return R.get(key).then(obj_json => {
+		return JSON.parse(obj_json); 
+	}).catch(err => {
+		console.log('[ ERROR ] R.getObj'); 
+		console.log(err); 
+
+		return null; 
+	})
+}
 
 module.exports = R; 
