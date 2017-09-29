@@ -28,7 +28,9 @@ function getAccessToken(){
 		}
 	}).catch(err => {
 		console.log(err); 
-		return wait(1000).getAccessToken(); 
+		return wait(1000).then(() => {
+			return getAccessToken(); 
+		})
 	});
 }
 
