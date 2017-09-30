@@ -48,15 +48,14 @@ var R = new Redis();
 
 // 命名空间
 let JS_OBJ_NS = 'JSOBJ-'; 
+let JS_QUEUE_NS = 'JSQUEUE-'
 
 R.setObj = (key, obj) => {
 	key = JS_OBJ_NS + key; 
 
 	let obj_json = JSON.stringify(obj); 
 
-	R.set(key, obj_json); 
-
-	return true; 
+	return R.set(key, obj_json); 
 }
 
 R.getObj = key => {
@@ -71,5 +70,43 @@ R.getObj = key => {
 		return null; 
 	})
 }
+
+R.enQueue = (key, obj) => {
+	key = JS_OBJ_NS + key; 
+
+	let obj_json = JSON.stringify(obj); 
+
+	return R.lpush(key, obj_json).catch(err => {
+		console.log('[ ERROR ] R.enQueue'); 
+		console.log(err); 
+
+		return null; 
+	}); 
+}
+
+R.deQueue = key => {
+	key = JS_OBJ_NS + key; 
+
+	return R.lpop(key).then(JSON.parse).catch(err => {
+		console.log('[ ERROR ] R.deQueue'); 
+		console.log(err); 
+
+		return null; 
+	})
+}
+
+// R.topQueue = key => {
+// 	key = JS_OBJ_NS + key; 
+
+// 	return R.rrange(key, -2, 0).then(e => {
+// 		console.log(e); 
+// 		return JSON.parse(e)
+// 	}).catch(err => {
+// 		console.log('[ ERROR ] R.topQueue'); 
+// 		console.log(err); 
+
+// 		return null; 
+// 	}); 
+// }
 
 module.exports = R; 
