@@ -25,6 +25,12 @@ let wishSchema = mongoose.Schema({
 		min: 0, 
 		max: 2
 	},
+	wishtype: {
+		type: Number,
+		default: 0, 
+		min: 0, 
+		max: 1
+	},
 	created_at: {
 		type: Date, 
 		default: Date.now
