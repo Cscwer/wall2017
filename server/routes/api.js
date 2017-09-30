@@ -5,6 +5,8 @@ const express = require('express')
     , ping = require('./ping')
     , user = require('./user')
     , ta = require('./ta')
+    , wish = require('./wish')
+    , music = require('./music')
     // , login = require('./login')
 
 // Set Token 
@@ -17,6 +19,8 @@ router.use('*', all);
 router.use('/ping', ping); 
 router.use('/user', user); 
 router.use('/ta', ta); 
+router.use('/wish', wish); 
+router.use('/music', music);
 
 router.use('*', function(req, res, next){
 	console.log('\n\n'); 
