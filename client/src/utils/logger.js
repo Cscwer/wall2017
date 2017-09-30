@@ -34,7 +34,7 @@ logger.res = (method, path, httpRes) => {
 		`background: #222;color: #FA9`,
 		`background: #222;color: #FA9`
 	);
-	console.log(httpRes.data);
+	console.log(httpRes.data ? httpRes.data : httpRes);
 	console.log('<<<<', 'From:', path)
 	// console.log(httpRes); 
 	console.groupEnd(); 
