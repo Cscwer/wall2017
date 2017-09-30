@@ -32,8 +32,10 @@ router.post('/', function(req, res){
 		}).catch(err => {
 			if (err.code === 11000){
 				rps.send4005(res); 
+			} else if (err.name === 'ValidationError') {
+				rps.send4000(res, req.body, err); 
 			} else {
-				rps.send5000(res, {}, err); 	
+				rps.send5000(res, {}, err); 
 			}
 		}); 
 	}
