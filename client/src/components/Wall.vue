@@ -1,7 +1,8 @@
 <template>
 	<div v-infinite-scroll="loadMore"
 		infinite-scroll-disabled="loading" 
-		infinite-scroll-distance="20" 
+		infinite-scroll-distance="20"
+		
 		class="hello">
 		<img :src="user.headimgurl" class="avatar" />
 		<p class="name">{{ user.nickname }} {{ user.sex }}</p>
@@ -48,14 +49,12 @@ export default {
 	created(){
 		// Call Async Function 
 		this.initAll(); 
-
+		this.loadMore(); 
 	},
 	methods: {
 		initAll: async function(){
 			let res = await http.get('/api/user/me'); 
 
-			// let list = await http.get('/api/wish'); 
-			// this.list = list.data; 
 			this.user = res.data;
 		},
 		getUser: function(){
@@ -66,7 +65,7 @@ export default {
 			
 			http.post('/api/wish', o); 
 		}, 
-		loadMore: async function(e){
+		loadMore: async function(){
 			let p = this.p; 
 
 			this.loading = true; 
