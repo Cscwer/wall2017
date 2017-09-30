@@ -33,10 +33,6 @@ let userSchema = mongoose.Schema({
 		type: Date, 
 		default: Date.now
 	}
-}, {
-	skipVersioning: {
-		dontVersionMe: true
-	}
 });
 
 module.exports = userSchema; 

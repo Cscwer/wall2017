@@ -7,9 +7,9 @@ const R = require('../../redis')
  *  @describe   在表中更新一个元素并重新在 redis 中缓存它
  *  @return     Promise<document>
  */
-function updateOneAndCache(conditions, update, opt){
+function updateOneAndCache(conditions, update, opt = {}){
 	opt.new    = true; 
-	opt.upsert = true; 
+	// opt.upsert = true; 
 
 	return this.findOneAndUpdate(conditions, update, opt).then(doc => {
 		if (!doc) return null; 
