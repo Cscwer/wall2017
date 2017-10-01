@@ -87,12 +87,37 @@ R.enQueue = (key, obj) => {
 R.deQueue = key => {
 	key = JS_OBJ_NS + key; 
 
-	return R.lpop(key).then(JSON.parse).catch(err => {
+	return R.rpop(key).then(JSON.parse).catch(err => {
 		console.log('[ ERROR ] R.deQueue'); 
 		console.log(err); 
 
 		return null; 
 	})
+}
+
+R.cancelDeQueue = (key, obj) => {
+	key = JS_OBJ_NS + key; 
+
+	let obj_json = JSON.stringify(obj); 
+
+	return R.rpush(key, obj_json).catch(err => {
+		console.log('[ ERROR ] R.rpush'); 
+		console.log(err); 
+
+		return null; 
+	}); 
+}
+
+R.lenQueue = key => {
+	key = JS_OBJ_NS + key; 
+
+	return R.llen(key); 
+}
+
+R.fullQueue = key => {
+	key = JS_OBJ_NS + key;  
+
+	return R.lrange(key, 0, -1); 
 }
 
 // R.topQueue = key => {
