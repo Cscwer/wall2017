@@ -9,8 +9,10 @@ const qiniu = require('qiniu')
     , QINIU_DOMAIN = 'http://source.ijarvis.cn'
     , opt = {
 		scope: 'h5game',
+		bucket: 'h5game', 
 		expires: 1200, 
 	}
+
 
 // Set Zone 
 config.zone = qiniu.zone.Zone_z2; 
@@ -53,7 +55,31 @@ function upload(localFile, key){
 	})
 }
 
+function fetch(target_url, key){
+	return new Promise((res, rej) => {
+		bucketManager.fetch(
+			target_url,
+			opt.bucket,
+			key,
+			function(err, respBody, respInfo) {
+				if (err) {
+					console.log('[ ERROR ] qnx', err);
+					rej(err); 
+				} else {
+					console.log('[ FETCH ]', respInfo.statusCode);
+
+					if (respInfo.statusCode === 200) {
+						respBody.url = key2url(respBody.key);
+					}
+
+					res(respBody); 
+				}
+			});
+	})
+}
+
 module.exports = {
 	qiniuToken: qiniuToken, 
-	upload: upload
+	upload: upload, 
+	fetch: fetch
 }
