@@ -4,6 +4,7 @@ const { httpGet } = require('../http.client')
     , config = require('../../config')
     , R = require('../redis')
     , wait = require('../wait')
+    , sdk = require('./sdk')
 
 /**
 *  获取 access_token
@@ -19,12 +20,11 @@ function getAccessToken(){
 	var url = 'https://api.weixin.qq.com/cgi-bin/token?' + qsStr;
 
 	return httpGet(url).then(bodyObj => {
-		console.log(bodyObj)
+		// console.log(bodyObj)
 		if (bodyObj.access_token){
 			return bodyObj.access_token;  
 		} else {
-
-			Promise.reject('body has no access_token'); 
+			return Promise.reject('body has no access_token'); 
 		}
 	}).catch(err => {
 		console.log(err); 
@@ -32,6 +32,29 @@ function getAccessToken(){
 			return getAccessToken(); 
 		})
 	});
+}
+
+/**
+*  用 access_token 换取 jsapi_ticket
+*  @param  code:string
+*  @return Promise<object>
+*/
+function getTicket(access_token){
+    var url = `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${access_token}&type=jsapi`; 
+    return httpGet(url).then(bodyObj => {
+    	// console.log(bodyObj); 
+
+    	if (bodyObj.ticket){
+    		return bodyObj.ticket; 
+    	} else {
+    		return Promise.reject('body has no ticket'); 
+    	}
+    }).catch(err => {
+    	console.log(err); 
+    	return wait(1000).then(() => {
+    		return getTicket(); 
+    	})
+    })
 }
 
 /**
@@ -66,18 +89,37 @@ function code2user(code){
 	})
 }
 
+function media2url(media_id){
+	return R.get('access_token').then(access_token => {
+		let url = 'https://api.weixin.qq.com/cgi-bin/media/get'; 
+		
+		return httpGet(url + '?' + qs.stringify({
+			access_token: access_token, 
+			media_id: media_id
+		})); 
+	}); 
+}
+
 // Loop 
 (function loopGet(){
 	// let pre_access_token = R.get('access_token'); 
 	getAccessToken().then(new_access_token => {
 		R.set('access_token', new_access_token, 'EX', 7000); 
 		console.log('[ access_token Update ]', new_access_token);
-		// 6000 秒后看看
+
+		return getTicket(new_access_token); 
+	}).then(ticket => {
+		R.set('jsapi_ticket', ticket, 'EX', 7000); 
+
+		console.log('[ jsapi_ticket Update ]', ticket);
+
 		setTimeout(loopGet, 6000000); 
 	})
 })(); 
 
 module.exports = {
 	code2user, 
-	getAccessToken
+	getAccessToken, 
+	sdk, 
+	media2url
 }
