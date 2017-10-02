@@ -7,7 +7,12 @@ const express = require('express')
     , ta = require('./ta')
     , wish = require('./wish')
     , music = require('./music')
+    , system = require('./system')
+    , wx = require('./wx')
     // , login = require('./login')
+
+// System Info
+router.use('/system', system); 
 
 // Set Token 
 router.use('/entry', entry);
@@ -16,7 +21,8 @@ router.use('/entry', entry);
 router.use('*', all);
 
 // Normal Router 
-router.use('/ping', ping); 
+router.use('/ping', ping);
+router.use('/wx', wx); 
 router.use('/user', user); 
 router.use('/ta', ta); 
 router.use('/wish', wish); 
