@@ -18,6 +18,7 @@ router.get('/img', function(req, res){
 
 
 	vwx.media2url(serverId).then(bodyObj => {
+		console.log('the body obj', bodyObj); 
 		rps.send2000(res, bodyObj); 
 	}); 
 });
