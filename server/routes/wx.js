@@ -16,10 +16,10 @@ router.get('/config', function(req, res){
 router.get('/img', function(req, res){
 	let { serverId } = req.query; 
 
-
-	vwx.media2url(serverId).then(bodyObj => {
-		console.log('the body obj', bodyObj); 
-		rps.send2000(res, bodyObj); 
+	vwx.media2url(serverId).then(qn_resp => {
+		rps.send2000(res, qn_resp); 
+	}).catch(err => {
+		rps.send5007(res, req.query, err); 
 	}); 
 });
 
