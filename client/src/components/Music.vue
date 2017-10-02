@@ -24,7 +24,6 @@
 import wait from '@/utils/wait'; 
 import http from '@/utils/http.client'; 
 
-
 export default {
 	name: 'music', 
 	data: function(){
@@ -36,12 +35,43 @@ export default {
 		}
 	}, 
 	created(){
-		http.musicSearch({
-			asd: 'asd', 
-			keyword: '初音'
-		}); 
+		// http.musicSearch({
+		// 	asd: 'asd', 
+		// 	keyword: '初音'
+		// }); 
 
+		// let hash = '6d93f084270ac0540cb84e43b00436dd';
+		// Promise.all([
+		// 	new Array(5).fill(0).map(() => {
+		// 		return http.post('/api/music', {
+		// 			hash: hash
+		// 		}).then(res => {
+		// 			if (res.code === 4102){
+		// 				console.log('满了'); 
+		// 			} else {
+		// 				console.log('suc'); 
+		// 			}
+		// 		})
+		// 	})
+		// ])
+
+		// for (var i = 0; i <= 2; i++){
+		// let ts = 1400;
+		// http.get('/api/music', {
+		// 	ts: ts
+		// }).then(res => {
+		// 	let data = res.data; 
+		// 	console.log('ts', ts); 
+		// 	console.log('n', data.n); 
+		// 	console.log('start_at', data.start_at); 
+		// 	console.log('duration', data.duration); 
+		// })
+
+		// http.get('/api/system/usage')
+
+		// }
 		
+
 	}, 
 	methods: {
 		toSearch(){
@@ -55,11 +85,11 @@ export default {
 		toPlay(item){
 			let { hash } = item; 
 
-			http.musicDetail({
+			http.post('/api/music', {
 				hash: hash
 			}).then(music => {
-				this.music   =  music; 
-				this.showMp3 =  true; 
+				// this.music   =  music; 
+				// this.showMp3 =  true; 
 			})
 		}
 	},
