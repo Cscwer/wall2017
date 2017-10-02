@@ -1,10 +1,12 @@
 const { httpGet } = require('../http.client')
-    // , { getSign } = require('./base')
     , qs = require('querystring')
     , config = require('../../config')
     , R = require('../redis')
     , wait = require('../wait')
     , sdk = require('./sdk')
+    , qnx = require('../qnx')
+    , uuid = require('uuid')
+    , IMAGE_KEY_NS = 'girl-wall-image/'; 
 
 /**
 *  获取 access_token
@@ -89,14 +91,19 @@ function code2user(code){
 	})
 }
 
+
 function media2url(media_id){
 	return R.get('access_token').then(access_token => {
 		let url = 'https://api.weixin.qq.com/cgi-bin/media/get'; 
-		
-		return httpGet(url + '?' + qs.stringify({
+		// "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=" + access_token + "&media_id=" + media_id;
+		let img_url = url + '?' + qs.stringify({
 			access_token: access_token, 
 			media_id: media_id
-		})); 
+		}); 
+
+		let key = IMAGE_KEY_NS + uuid(); 
+
+		return qnx.fetch(img_url, key); 
 	}); 
 }
 
