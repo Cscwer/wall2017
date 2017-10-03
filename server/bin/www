@@ -29,6 +29,15 @@ server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
 
+
+/**
+ * For Socket.io
+ */
+var IO = require('../io'); 
+var io = require('socket.io')(server);
+
+IO.init(io); 
+
 /**
  * Normalize a port into a number, string, or false.
  */
