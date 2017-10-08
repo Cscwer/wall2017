@@ -5,16 +5,24 @@ const express = require('express')
     , rps = require('../utils/rps')
 
 // 有分页
-router.get('/', function(req, res){
-	let N = 10; 
-	let p = parseInt(req.query.p); 
+router.all('*', function(req, res, next){
+	if (req.user.sex === 0){
+		return rps.send4103(res, {}); 
+	} else {
+		next(); 
+	}
+}); 
 
-	// 无效值用 0 代替 
-	p = p || 0; 
+router.get('/', function(req, res){
+	let N = 10
+	  , p = parseInt(req.query.p) || 0
 	
+	// 数据库查询 
 	wishModel
-		.find()
-		.populate('who')
+		.find({
+			status: 0
+		})
+		.populate('she')
 		.sort({
 			created_at: -1
 		})
@@ -37,7 +45,7 @@ router.get('/detail', function(req, res){
 
 	wishModel.findOne({
 		_id: _id
-	}).populate('who').thne(doc => {
+	}).populate('she').thne(doc => {
 		rps.send2000(res, doc); 
 	}).catch(err => {
 		console.log(err); 
@@ -53,7 +61,7 @@ router.post('/', function(req, res){
 	let user = req.user; 
 
 	// 取得 _id
-	req.body.who = user._id; 
+	req.body.she = user._id; 
 
 	if (user.sex !== 2){
 		// 不是女性。。。 

@@ -2,7 +2,7 @@
 const express = require('express')
     , router = express.Router()
     , rps = require('../utils/rps')
-    , { userModel } = require('../utils/db')
+    , { userModel, wishModel } = require('../utils/db')
     , auth = require('../utils/auth')
 
 router.get('/me', function(req, res, next){
@@ -47,5 +47,50 @@ router.post('/update', function(req, res){
 		rps.send5099(res, err); 
 	});
 }); 
+
+router.get('/wish', function(req, res){
+	let user_id = req.query._id
+	  , N = 10
+	  , query = {}
+	  , p = req.query.p || 0
+
+	userModel.findInCache(user_id).then(user => {
+		console.log('Find User', user._id); 
+
+		if (user.sex === 0){
+			// 该用户没有设置性别 ~ 无法访问
+			return rps.send4104(res, {}); 
+		} else if (user.sex === 1){
+			// boy's wish 
+			query.he = user_id; 
+		} else {
+			// Girl's wish 
+			query.she = user_id; 
+		}
+
+		// 待领取 实现中 已实现 
+		if (req.query.status) query.status = req.query.status; 
+
+
+		return wishModel
+			.find(query)
+			.populate('she')
+			.sort({
+				created_at: -1
+			})
+			.skip(p * N)
+			.limit(N)
+			.then(docs => {
+				if (docs.length !== N){
+					rps.send2001(res, docs); 
+				} else {
+					rps.send2000(res, docs); 
+				}
+			})
+	}).catch(err => {
+		console.log(err); 
+		rps.send5005(res, {}, err);
+	});
+});
 
 module.exports = router; 

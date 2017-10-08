@@ -3,10 +3,14 @@ const mongoose = require('../connect');
 
 
 let wishSchema = mongoose.Schema({
-	who: {
+	she: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'user', 
 		required: true
+	}, 
+	he: {
+		type: mongoose.Schema.Types.ObjectId, 
+		ref: 'user'
 	}, 
 	text: {
 		type: String, 
