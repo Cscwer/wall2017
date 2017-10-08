@@ -26,6 +26,7 @@ function getAccessToken(){
 		if (bodyObj.access_token){
 			return bodyObj.access_token;  
 		} else {
+			console.log(bodyObj)
 			return Promise.reject('body has no access_token'); 
 		}
 	}).catch(err => {
