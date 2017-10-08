@@ -25,6 +25,8 @@ var getMusicDetail = hash => {
 var musicFetch = musicDetail => {
 	let { album_img, bitRate, fileSize, url } = musicDetail; 
 
+	if (album_img === '') album_img = '/images/暂无封面'; 
+
 	let duration = (fileSize / (bitRate / 8)) / 1000; 
 	let name = uuid(); 
 
@@ -37,6 +39,8 @@ var musicFetch = musicDetail => {
 		fetch_mp3
 	]).then(allDone => {
 		let [albumResp, mp3Resp] = allDone; 
+
+		console.log('Cover', albumResp); 
 
 		return {
 			cover: albumResp.url, 
