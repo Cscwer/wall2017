@@ -20,6 +20,7 @@
     "request-promise": "^4.2.2",
     "serve-favicon": "~2.4.2",
     "sha1": "^1.1.1",
+    "socket.io": "^2.0.3",
     "then-fs": "^2.0.0",
     "uuid": "^3.1.0"
   }
