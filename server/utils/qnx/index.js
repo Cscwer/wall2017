@@ -66,11 +66,11 @@ function fetch(target_url, key){
 					console.log('[ ERROR ] qnx', err);
 					rej(err); 
 				} else {
-					console.log('[ FETCH ]', respInfo.statusCode);
-
 					if (respInfo.statusCode === 200) {
 						respBody.url = key2url(respBody.key);
 					}
+
+					console.log('[ FETCH ]', respInfo.statusCode, respBody.url);
 
 					res(respBody); 
 				}
