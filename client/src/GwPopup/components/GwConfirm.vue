@@ -61,7 +61,7 @@ export default {
 .gw-confirm-btn {
 	display: block;
 	text-align: center;
-	padding: .6em 0;
+	padding: .45em 0;
 	box-sizing: border-box;
 	
 	color: #FFF; 
