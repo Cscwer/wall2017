@@ -1,40 +1,13 @@
 <template>
 	<div class="gw-popup">
 		<div class="compo-list" v-for="(popupItem, idx) in list">
-			
 			<transition name="fade">
-				<div class="gw-outter" v-if="popupItem.isShow && popupItem.type === 'alert'"
+				<div class="gw-outter" v-if="popupItem.isShow"
 					:style="{ 'z-index': 500 + idx }">
-					<gw-alert class="popup-item"
-						:confirm-text="popupItem.confirmText"
-						:cancel-text="popupItem.cancelText"
-						@confirm="popupItem.handle.confirm"
-						@cancel="popupItem.handle.cancel">
-					</gw-alert>
-				</div>
-			</transition>
-
-			
-			<transition name="fade">
-				<div class="gw-outter" v-if="popupItem.isShow && popupItem.type === 'confirm'"
-					:style="{ 'z-index': 500 + idx }">
-					<gw-confirm class="popup-item"
-						:confirm-text="popupItem.confirmText"
-						@confirm="popupItem.handle.confirm"
-						@cancel="popupItem.handle.cancel">
-					</gw-confirm>
-				</div>
-			</transition>
-
-			<transition name="fade">
-				<div class="gw-outter" v-if="popupItem.isShow && popupItem.type === 'prompt'"
-					:style="{ 'z-index': 500 + idx }">
-					<gw-prompt class="popup-item"
-						:confirm-text="popupItem.confirmText"
-						:placeholder-text="popupItem.placeholderText"
-						@confirm="popupItem.handle.confirm"
-						@cancel="popupItem.handle.cancel">
-					</gw-prompt>
+					<component class="popup-item" :is="'gw-' + popupItem.type"
+						v-bind="popupItem"
+						v-on="popupItem.handle">
+					</component>
 				</div>
 			</transition>
 		</div>
