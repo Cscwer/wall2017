@@ -7,11 +7,10 @@ let jsApiList = [
 	'previewImage', 
 	'uploadImage', 
 	'downloadImage'
-]
+];
 let DEBUG_MODE = false; 
-
 let vwx = {}; 
-var URL = null; 
+let URL = null; 
 
 function get_url(){
 	let { href, hash } = location; 
@@ -92,6 +91,10 @@ vwx.create('getAnImg', function(){
 		return http.get('/api/wx/img', {
 			serverId: serverId
 		});
+	}).catch(err => {
+		console.error('[ ERROR ]', err); 
+
+		return Promise.reject(err); 
 	});
 }); 
 
