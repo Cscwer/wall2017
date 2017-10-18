@@ -5,7 +5,8 @@
 		<div class="imgs">
 			<img :src="localId" v-for="localId in localIds" />
 		</div>
-
+	
+		<img :src="show" alt="">
 	</div>
 </template>
 
@@ -19,14 +20,20 @@ export default {
 	name: 'me', 
 	data(){
 		return {
-			localIds: []
+			localIds: [], 
+			show: ''
 		}
 	}, 
 	created(){
-		vwx.getAnImg().then(serverId => {
-			
-			console.log(serverId)
-		})
+
+		vwx.getAnImg().then(res => {
+			alert('start'); 
+			let img = res.data; 
+			// console.log(img);
+			console.log(JSON.stringify(res)); 
+
+			this.show = img.url; 
+		});
 	}
 }
 </script>

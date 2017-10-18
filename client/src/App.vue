@@ -1,15 +1,16 @@
 <template>
 	<div id="app">
-		<router-view class="page"></router-view>
+		<div :class="{ isBlur: popup.isBlur }" class="blur-area">
+			<router-view class="page"></router-view>
 
-
-		<footer class="footer-tabs">
-			<div class="tab" v-for="(tab, idx) in tabs"
-				@click="routeTo(tab, idx)"
-				v-bind:class="{ 'tab-active': tab.active }">
-				{{ tab.text }}
-			</div>
-		</footer>
+			<footer class="footer-tabs">
+				<div class="tab" v-for="(tab, idx) in tabs"
+					@click="routeTo(tab, idx)"
+					v-bind:class="{ 'tab-active': tab.active }">
+					{{ tab.text }}
+				</div>
+			</footer>
+		</div>
 	</div>
 </template>
 
@@ -46,7 +47,11 @@ export default {
 	name: 'app', 
 	data(){
 		return {
-			tabs: tabs
+			tabs: tabs,
+			popup: {
+				isBlur: false	
+			}
+			
 		}
 	},
 	methods: {
@@ -63,24 +68,40 @@ export default {
 			this.$router.push({
 				path: path
 			}); 
+		}, 
+
+		popupMsg(data){
+			console.log(data); 
+			this.popup.isBlur = data.isBlur; 
 		}
 	}
 }
 </script>
 
 <style>
+#app {
+	transition: transform .3s; 
+}
+
+.blur-area {
+	transition: filter .3s; 
+}
+
+.isBlur {
+	filter: blur(3px); 
+}
+
 .tab-active {
 	color: #FFF; 
 }
 
-#app {
+/*#app {
 	font-family: 'Avenir', Helvetica, Arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	text-align: center;
 	color: #2c3e50;
-	/*margin-top: 60px;*/
-}
+}*/
 
 .footer-tabs {
 	position: fixed;

@@ -2,7 +2,7 @@
 	<div class="music-container">
 		<div v-if="showMp3" class="mp3">
 			<img :src="bigSizeCover" class="cover" />
-			<audio :src="music.url" controls="controls"></audio>			
+			<audio :src="music.mp3" controls="controls"></audio>			
 		</div>
 
 		<div v-else class="list-container">
@@ -24,6 +24,14 @@
 import wait from '@/utils/wait'; 
 import http from '@/utils/http.client'; 
 
+// Promise.all(
+// 	new Array(256).fill(0).map(() => {
+// 		return http.get('/api/wish'); 
+// 	})
+// ).then(res => {
+// 	console.log('All Done'); 
+// })
+
 export default {
 	name: 'music', 
 	data: function(){
@@ -36,8 +44,9 @@ export default {
 	}, 
 	created(){
 		// http.musicSearch({
-		// 	asd: 'asd', 
 		// 	keyword: '初音'
+		// }).then(res => {
+		// 	console.log(JSON.stringify(res)); 
 		// }); 
 
 		// let hash = '6d93f084270ac0540cb84e43b00436dd';
@@ -71,7 +80,16 @@ export default {
 
 		// }
 		
+		// var p = 0;
+		// function ssss(){
+		// 	p ++ ; 
+		// 	p = p % 3; 
+		// 	http.get('/api/wish', {
+		// 		p: p
+		// 	}); 
+		// }
 
+		// setInterval(ssss, 0); 
 	}, 
 	methods: {
 		toSearch(){
@@ -87,17 +105,18 @@ export default {
 
 			http.post('/api/music', {
 				hash: hash
-			}).then(music => {
-				// this.music   =  music; 
-				// this.showMp3 =  true; 
+			}).then(res => {
+				let music = res.data; 
+				this.music   =  music; 
+				this.showMp3 =  true; 
 			})
 		}
 	},
 	computed: {
 		bigSizeCover(){
-			let album_img = this.music.album_img;
+			let cover = this.music.cover;
 
-			if (album_img) return album_img.replace('{size}', '400'); 
+			if (cover) return cover.replace('{size}', '400'); 
 			else return ''; 
 		}
 	}

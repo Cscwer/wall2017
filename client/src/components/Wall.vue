@@ -12,6 +12,13 @@
 		</div>
 
 		<button @click="postWish">发送</button>
+		
+
+		<h1>弹出层</h1>
+		<button @click="present('alert')">alert</button>
+		<button @click="present('confirm')">confirm</button>
+
+		<button @click="present('prompt')">prompt</button>
 
 		<div>
 			{{ wish.text }}
@@ -30,7 +37,7 @@
 <script>
 import wait from '@/utils/wait'; 
 import http from '@/utils/http.client'; 
-
+ 
 
 export default {
 	name: 'hello',
@@ -43,15 +50,42 @@ export default {
 			list: [], 
 			p: 0,
 			loading: false,
-			finish: false
+			finish: false,
+
+			alert: null
 		}
 	},
 	created(){
 		// Call Async Function 
 		this.initAll(); 
-		this.loadMore(); 
+		// this.loadMore(); 
+
+		
+		this.present('prompt')
 	},
 	methods: {
+		present(type){
+			this.$popup.push({
+				type: type, 
+				confirmText: '确定', 
+				cancelText: '否定',
+				placeholderText: '输入给她的留言', 
+				needBlur: true, 
+				handle: {
+					confirm(e){
+						console.log('yes', this);
+						console.log('参数', e); 
+					},
+					cancel(){
+						console.log('no')
+						this.close(); 
+					}
+				}
+			}).launch()
+		},
+		itit: function(){
+			console.log('确认'); 
+		},
 		initAll: async function(){
 			let res = await http.get('/api/user/me'); 
 
@@ -81,7 +115,7 @@ export default {
 			if (rps.code === 2001){
 				this.finish = true; 
 			} else {
-				this.loading = false; 
+				// this.loading = false; 
 			}
 		}
 	}
