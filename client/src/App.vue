@@ -4,10 +4,17 @@
 			<router-view class="page"></router-view>
 
 			<footer class="footer-tabs">
-				<div class="tab" v-for="(tab, idx) in tabs"
-					@click="routeTo(tab, idx)"
-					v-bind:class="{ 'tab-active': tab.active }">
-					{{ tab.text }}
+				<div
+					:class="{
+						'tab': true,
+						'tab-middle': tab.path === '/wish',
+						'tab-active': tab.active
+					}"
+
+					v-for="(tab, idx) in tabs"
+					@click="routeTo(tab, idx)">
+					<!-- {{ tab.text }} -->
+					<img class="tab-icon" :src="tab.active ? tab.icon.fill : tab.icon.outline">
 				</div>
 			</footer>
 		</div>
@@ -15,31 +22,55 @@
 </template>
 
 <script>
+let iconTable = [
+	'home', 'me', 'music', 'ping'
+].reduce((acc, name) => {
+	let outline = require(`./assets/tab/${name}-outline.png`); 
+	let fill = require(`./assets/tab/${name}-fill.png`); 
+
+	acc[name] = {
+		outline, 
+		fill
+	}; 
+
+	return acc; 
+}, {}); 
+
+let wishFill = require(`./assets/tab/wish-fill.png`); 
+
 let tabs = [
 	{
 		text: '许愿',
 		path: '/wall',
-		active: true
+		active: true, 
+		icon: iconTable.home
 	},
 	{
 		text: '电台',
 		path: '/music',
-		active: false
+		active: false,
+		icon: iconTable.music
 	},
 	{
 		text: '发布',
 		path: '/wish',
-		active: false
+		active: false,
+		icon: {
+			outline: wishFill, 
+			fill: wishFill
+		}
 	},
 	{
 		text: '匹配', 
 		path: '/love',
-		active: false
+		active: false,
+		icon: iconTable.ping
 	},
 	{
 		text: '我的', 
 		path: '/me',
-		active: false
+		active: false,
+		icon: iconTable.me
 	}
 ]
 
@@ -50,8 +81,8 @@ export default {
 			tabs: tabs,
 			popup: {
 				isBlur: false	
-			}
-			
+			},
+			pageWidth: window.innerWidth
 		}
 	},
 	methods: {
@@ -80,7 +111,7 @@ export default {
 
 <style>
 #app {
-	transition: transform .3s; 
+	transition: filter .3s; 
 }
 
 .blur-area {
@@ -95,31 +126,38 @@ export default {
 	color: #FFF; 
 }
 
-/*#app {
-	font-family: 'Avenir', Helvetica, Arial, sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+.tab {
+	/*position: relative;*/
+	width: 25%; 
 	text-align: center;
-	color: #2c3e50;
-}*/
+}
+
+.tab-icon {
+	width: 40%; 
+}
+
+.tab-middle img {
+	position: absolute;
+	bottom: -.2em; 
+	left: 37.5%; 
+	width: 25% 
+}
 
 .footer-tabs {
 	position: fixed;
 	bottom: 0; 
 	left: 0;
 	width: 100%; 
-	height: 30px; 
-	background-color: #BBB; 
+	background-color: #FFF; 
 	display: flex;
+	
+	padding: .8em 0; 
+	align-items: center;
 
 	justify-content: space-between;
 }
 
-.tab {
-	width: 25%; 
-	line-height: 30px; 
-	text-align: center;
-}
+
 
 .page {
 /*	position: fixed; 
