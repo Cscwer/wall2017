@@ -15,10 +15,9 @@
 		
 
 		<h1>弹出层</h1>
-		<button @click="present('alert')">alert</button>
-		<button @click="present('confirm')">confirm</button>
-
-		<button @click="present('prompt')">prompt</button>
+		<button class="present" @click="present('alert')">alert</button>
+		<button class="present" @click="present('confirm')">confirm</button>
+		<button class="present" @click="present('prompt')">prompt</button>
 
 		<div>
 			{{ wish.text }}
@@ -61,7 +60,7 @@ export default {
 		// this.loadMore(); 
 
 		
-		this.present('prompt')
+		// this.present('prompt')
 	},
 	methods: {
 		present(type){
@@ -132,6 +131,11 @@ export default {
 
 h1 {
 	font-size: 130%; 
+}
+
+.present {
+	padding: .5em; 
+	margin: .5em; 
 }
 
 .name {
