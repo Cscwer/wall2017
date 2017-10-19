@@ -56,6 +56,33 @@ GwPopup.install = function(Vue, option){
 		return this.list.pop();
 	}
 
+	GwPopupLayout.methods.toast = function(opt){
+		opt.duration = opt.duration || 3000; 
+		opt.canceled = opt.canceled || false; 
+		opt.cancelable = opt.cancelable || false; 
+		opt.moving = false; 
+		
+		opt.active = false; 
+		this.toasts.push(opt); 
+		
+		setTimeout(() => opt.active = true); 
+
+		
+		
+		
+
+		return new Promise((res, rej) => {
+			setTimeout(() => {
+				opt.active = false;
+
+				let onIdx = this.toasts.indexOf(opt); 
+				this.toasts.splice(onIdx, 1); 
+
+				res(); 
+			}, opt.duration); 
+		}); 
+	}
+
 	// Instancing popup; 
 	let popup_vm = new Vue(GwPopupLayout); 
 
