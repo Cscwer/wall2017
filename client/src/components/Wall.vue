@@ -18,6 +18,24 @@
 		<button class="present" @click="present('alert')">alert</button>
 		<button class="present" @click="present('confirm')">confirm</button>
 		<button class="present" @click="present('prompt')">prompt</button>
+		
+		<h1>吐司</h1>
+		<input type="text" placeholder="输入提示内容" v-model="toastText" />
+	
+
+		<label for="top">顶部</label>
+		<input type="radio" id="top" value="top" checked v-model="toastType">
+		
+		<label for="bottom">底部</label>
+		<input type="radio" id="bottom" value="bottom" v-model="toastType">
+		
+		<button class="present" style="display: block;" @click="sendToast">发射</button>
+		
+		<h1>弹出modal</h1>
+		<button class="present" style="display: block;" @click="sendModal">发射</button>
+		
+		<h1>编辑个人资料</h1>
+		<button class="present" style="display: block;" @click="editMyself">开始编辑</button>
 
 		<div>
 			{{ wish.text }}
@@ -36,12 +54,17 @@
 <script>
 import wait from '@/utils/wait'; 
 import http from '@/utils/http.client'; 
- 
+import ui from '@/utils/ui'; 
+
+
+
 
 export default {
 	name: 'hello',
 	data() {
 		return {
+			toastText: '',
+			toastType: 'top',
 			user: {}, 
 			wish: {
 				text: ''
@@ -59,10 +82,67 @@ export default {
 		this.initAll(); 
 		// this.loadMore(); 
 
+		this.$popup.toast({
+			msg: '0v0', 
+			position: 'top',
+			cancelable: true,
+			align: true,
+			duration: 8000
+		})
+
+
+		// let toEdit = {
+		// 	nickname: '',
+		// 	area: '',
+		// 	weid: '',
+		// 	phone: ''
+		// }
+		// this.$popup.push({
+		// 	type: 'prompt', 
+		// 	confirmText: '保存', 
+		// 	component: MyInfo,
+		// 	binding: {
+		// 		toEdit: toEdit
+		// 	},
+		// 	handle: {
+		// 		confirm(e){
+		// 			console.log(toEdit)
+		// 			this.close(); 
+		// 		}
+		// 	}
+		// }).launch(); 
+
 		
-		// this.present('prompt')
+
 	},
 	methods: {
+		editMyself(){
+			ui.editUserInfo().then(res => {
+				console.log('编辑成功', res); 
+			}, cancel => {
+				console.log('用户取消编辑个人资料'); 
+			})
+		},
+		sendModal(){
+			let myModal = this.$popup.push({
+				type: 'modal', 
+				component: {
+					template: `<h1 @click="close" style="font-size: 48px;">点击此处关闭 modal</h1>`,
+					methods: {
+						close(){
+							this.$emit('close'); 
+						}
+					}
+				}
+			}); 
+			myModal.launch(); 
+		},
+		sendToast(){
+			this.$popup.toast({
+				msg: this.toastText, 
+				position: this.toastType, 
+			})
+		},
 		present(type){
 			this.$popup.push({
 				type: type, 
@@ -134,8 +214,19 @@ h1 {
 }
 
 .present {
-	padding: .5em; 
-	margin: .5em; 
+	display: block;
+	width: 90%; 
+	font-size: 18px;
+	
+	padding: .6em 0; 
+
+	border-radius: 4px; 
+	margin: 1em auto; 
+	
+	background-color: rgb(240, 120, 50); 
+	color: #FFF; 
+	border: none;
+	-webkit-appearance: none;
 }
 
 .name {
