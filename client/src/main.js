@@ -20,7 +20,8 @@ Vue.use(infiniteScroll);
 Vue.use(GwPopup, {
 	getApp: function(){
 		return document.getElementById('app'); 
-	}
+	},
+	router
 }); 
 
 
