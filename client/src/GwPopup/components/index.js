@@ -2,11 +2,13 @@
 import GwAlert from './GwAlert'; 
 import GwConfirm from './GwConfirm'; 
 import GwPrompt from './GwPrompt'; 
+import GwModal from './GwModal';
 
 let list = {
 	'gw-alert': GwAlert, 
 	'gw-confirm': GwConfirm,
-	'gw-prompt': GwPrompt
+	'gw-prompt': GwPrompt, 
+	'gw-modal': GwModal
 }
 
 let components = {};

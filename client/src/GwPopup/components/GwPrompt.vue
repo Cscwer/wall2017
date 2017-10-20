@@ -1,6 +1,12 @@
 <template>
 	<div class="gw-prompt">
-		<textarea class="gw-prompt-textarea" v-model="now_input" :placeholder="placeholderText"></textarea>
+		<component class="gw-modal-inner" :is="component"
+			v-if="component"
+			v-bind="binding"
+			v-on="event">
+		</component>
+
+		<textarea v-else class="gw-prompt-textarea" v-model="now_input" :placeholder="placeholderText"></textarea>
 
 		<div class="gw-confirm-btns">
 			<span @click="innerConfirm" class="gw-sent-btn">
@@ -16,7 +22,7 @@ import cancel_png from './static/cancel.png';
 
 export default {
 	name: 'gw-prompt', 
-	props: ['confirmText', 'placeholderText'],
+	props: ['confirmText', 'placeholderText', 'component', 'binding', 'event'],
 	data(){
 		return {
 			now_input: '', 
@@ -59,10 +65,12 @@ export default {
 
 .gw-cancel-btn {
 	position: absolute;
-	top: 10px; 
-	right: 10px; 
+	top: 0px; 
+	right: 0px; 
 	width: 21px; 
 	height: 21px; 
+
+	padding: 10px; 
 
 	background-image: url();
 }

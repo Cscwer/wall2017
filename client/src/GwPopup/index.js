@@ -30,6 +30,7 @@ let COUNT = 0;
 
 GwPopup.install = function(Vue, option){
 	// Init 
+	let router = option.router;
 	popupInit(Vue, option); 
 
 	// Create; 
@@ -67,10 +68,6 @@ GwPopup.install = function(Vue, option){
 		
 		setTimeout(() => opt.active = true); 
 
-		
-		
-		
-
 		return new Promise((res, rej) => {
 			setTimeout(() => {
 				opt.active = false;
@@ -86,8 +83,24 @@ GwPopup.install = function(Vue, option){
 	// Instancing popup; 
 	let popup_vm = new Vue(GwPopupLayout); 
 
+	router.beforeEach((to, from, next) => {
+		let lastOne = popup_vm.getLastActive(); 
+
+		if (lastOne){
+			console.log('[ GwPopup onRouting ]', 'Next(false)'); 
+			lastOne.close(); 
+			next(false); 
+		} else {
+			console.log('[ GwPopup onRouting ]', 'Next()'); 
+			next(); 
+		}
+	})
+
 	// mount to prototype for all vue instances  
 	Vue.prototype.$popup = popup_vm; 
+
+	// Get Instance 
+	GwPopup.getPopup = () => popup_vm; 
 }
 
 export default GwPopup; 
