@@ -65,40 +65,37 @@ let popupInstance = this.$popup.push({
 # 高级运用之 modal, pushWith
 
 ``` js
-
+import mycomponent from 'xxxx.vue'; 
 
 let myModal = this.$popup.push({
     type: 'modal', 
-    component: {
-        template: `<div @click="close">点我关闭</div>`, 
-        methods: {
-            close(){
-                this.$emit('close'); 
-            }
-        }
-    }, 
-    event: {},
-    binding: {}
+    component: mycomponent
 }); 
 
 myModal.launch(); 
 ```
 
-``` js 
-this.$popup.pushWith({
-    type: 'alert', 
-    component: 'component-name',
-    binding: {}, 
-    handle: {
-        click(e){
-            console.log('You Click Me'); 
-        }
+modal 的实现也是依赖 push 的，不过 type 应该填入 `modal`, 该函数将会返回一个 modal 实例，上面有 launch 方法，调用 launch 的时候页面就会被推入。 
+
+---
+
+还有一种情况就是，想要用 confirm 的样式，但是内部是自定义的。 这种情况就需要使用 type 为 `mix` 的 push 了
+
+``` js
+let ins = this.$popup.push({
+    type: 'confirm', 
+    confirmText: 'yes', 
+
+    //  若无此项 则使用默认样式
+    component: {
+        template: `<h1> 你好 </h1>`
     }
-});
+}); 
+
+ins.launch(); 
 ```
 
-
-
+![use_mix](/images/use_mix.png)
 
 # other
 
