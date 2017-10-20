@@ -1,8 +1,21 @@
 <template>
 	<div class="music-container">
+		<div class="music-header" v-if="music">
+			<img class="inline-icon" :src="mtag_png" />
+
+			<span v-if="music.kugou.fileName < 10">正在播放: {{ music.kugou.fileName }}</span>
+			<span v-else>{{ music.kugou.fileName }}</span>
+
+			<span class="new-music" @click="newMusic">我要点歌</span>
+		</div>
+
 		<div v-if="showMp3" class="mp3">
 			<img :src="bigSizeCover" class="cover" />
-			<audio :src="music.mp3" controls="controls"></audio>			
+			<audio :src="music.mp3" autoplay="autoplay" controls="controls"></audio>
+
+			<div class="ta-said">
+				他说 要有光
+			</div>	
 		</div>
 
 		<div v-else class="list-container">
@@ -23,14 +36,9 @@
 <script>
 import wait from '@/utils/wait'; 
 import http from '@/utils/http.client'; 
+import ui from '@/utils/ui';
+import mtag_png from '@/assets/music/mtag.png'; 
 
-// Promise.all(
-// 	new Array(256).fill(0).map(() => {
-// 		return http.get('/api/wish'); 
-// 	})
-// ).then(res => {
-// 	console.log('All Done'); 
-// })
 
 export default {
 	name: 'music', 
@@ -39,7 +47,9 @@ export default {
 			search: '',
 			list: [],
 			music: false, 
-			showMp3: false
+			showMp3: false,
+			mtag_png: mtag_png,
+			onSearching: false
 		}
 	}, 
 	created(){
@@ -49,49 +59,47 @@ export default {
 		// 	console.log(JSON.stringify(res)); 
 		// }); 
 
-		// let hash = '6d93f084270ac0540cb84e43b00436dd';
-		// Promise.all([
-		// 	new Array(5).fill(0).map(() => {
-		// 		return http.post('/api/music', {
-		// 			hash: hash
-		// 		}).then(res => {
-		// 			if (res.code === 4102){
-		// 				console.log('满了'); 
-		// 			} else {
-		// 				console.log('suc'); 
-		// 			}
-		// 		})
-		// 	})
-		// ])
-
-		// for (var i = 0; i <= 2; i++){
-		// let ts = 1400;
-		// http.get('/api/music', {
-		// 	ts: ts
-		// }).then(res => {
-		// 	let data = res.data; 
-		// 	console.log('ts', ts); 
-		// 	console.log('n', data.n); 
-		// 	console.log('start_at', data.start_at); 
-		// 	console.log('duration', data.duration); 
-		// })
-
-		// http.get('/api/system/usage')
-
-		// }
-		
-		// var p = 0;
-		// function ssss(){
-		// 	p ++ ; 
-		// 	p = p % 3; 
-		// 	http.get('/api/wish', {
-		// 		p: p
-		// 	}); 
-		// }
-
-		// setInterval(ssss, 0); 
+		// this.toPlay({
+		// 	hash: '795f55870cea8e6f89c2bdd89a267d20',
+		// }); 
+		this.initPlay(); 
 	}, 
+	// beforeRouteLeave(to, from, next){
+	// 	if (this.onSearching){
+	// 		// 关闭 	
+
+	// 		next(false);
+	// 	} else {
+	// 		next();
+	// 	}
+	// },
 	methods: {
+		initPlay(){
+			http.get('/api/music').then(res => {
+				let music = res.data; 
+
+				if (music) {
+					this.music   =  music; 
+					this.showMp3 =  true; 
+				}
+			}); 
+		},
+		newMusic(){
+			this.onSearching = true; 
+
+			ui.newMusic(this).then(music => {
+				this.onSearching = false; 
+				console.log('!', music); 
+			}, cancel => {
+				this.onSearching = false; 
+				console.log('用户取消'); 
+			}); 
+			// console.log('我要点歌啦')
+			// let ins = this.$popup.push({
+			// 	type: 'prompt', 
+			// 	needBlur: true
+			// })
+		},
 		toSearch(){
 			console.log(this.search)
 			http.musicSearch({
@@ -107,17 +115,24 @@ export default {
 				hash: hash
 			}).then(res => {
 				let music = res.data; 
-				this.music   =  music; 
-				this.showMp3 =  true; 
+
+				if (music){
+					this.music   =  music; 
+					this.showMp3 =  true; 
+				} else {
+					// 点歌人数已满 明天再来 
+				}
 			})
 		}
 	},
 	computed: {
 		bigSizeCover(){
 			let cover = this.music.cover;
+			let album_img = this.music.album_img; 
 
 			if (cover) return cover.replace('{size}', '400'); 
-			else return ''; 
+			else if (album_img) return album_img.replace('{size}', '400'); 
+			else return 'NO_IMG'; 
 		}
 	}
 }
@@ -166,5 +181,37 @@ export default {
 	padding: .2em .4em; 
 	box-sizing: border-box;
 	font-size: 18px; 
+}
+
+.music-header {
+	/*line-height: 48px; */
+	position: relative;
+	font-size: 16px;
+	padding: 14px 1em;
+	background-color: rgb(255, 171, 166);
+	color: #FFF; 
+}
+
+.new-music {
+	position: absolute;
+	right: 1em; 
+	font-size: 12px; 
+	padding: 4px 8px; 
+	/*margin-top: -4px; */
+	top: 50%; 
+	transform: translateY(-50%);
+	
+	border-radius: 20px;
+		
+	background-color: #FFF; 
+
+	color: rgb(255, 171, 166);
+}
+
+.inline-icon {
+	height: 1em; 
+	margin-top: -.2em; 
+	padding-right: .2em; 
+	vertical-align: middle;
 }
 </style>
