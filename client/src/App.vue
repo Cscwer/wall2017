@@ -1,7 +1,11 @@
 <template>
 	<div id="app">
 		<div :class="{ isBlur: popup.isBlur }" class="blur-area">
-			<router-view class="page"></router-view>
+			<router-view :style="{
+					'margin-bottom': tabHeight
+				}"
+				class="tab-page">
+			</router-view>
 
 			<footer class="footer-tabs">
 				<div
@@ -22,6 +26,8 @@
 </template>
 
 <script>
+let tabHeight = (window.innerWidth / 4) + 'px'; 
+
 let iconTable = [
 	'home', 'me', 'music', 'ping'
 ].reduce((acc, name) => {
@@ -78,6 +84,7 @@ export default {
 	name: 'app', 
 	data(){
 		return {
+			tabHeight: tabHeight,
 			tabs: tabs,
 			popup: {
 				isBlur: false	
@@ -85,21 +92,40 @@ export default {
 			pageWidth: window.innerWidth
 		}
 	},
+	created(){
+		this.updateIcon(); 
+	},
+	watch:{
+		// onChnaging Route Path 
+		$route(to, from){
+			this.updateIcon(); 
+		}
+	},
 	methods: {
 		routeTo: function(tab, idx){
 			let { path } = tab; 
-			console.log(tab, idx); 
-
-			this.tabs.forEach(tab => {
-				tab.active = false; 
-			}); 
-
-			tab.active = true; 
+			// console.log(tab, idx); 
 
 			this.$router.push({
 				path: path
 			}); 
+
+			// this.updateIcon(); 
+
+			// tab.active = true; 
+
+			
+
+			// console.log();
 		}, 
+
+		updateIcon(){
+			let nowPath = this.$route.path; 
+
+			this.tabs.forEach(tab => {
+				tab.active = tab.path === nowPath
+			}); 
+		},
 
 		popupMsg(data){
 			console.log(data); 
@@ -116,6 +142,7 @@ export default {
 
 .blur-area {
 	transition: filter .3s; 
+	/*transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);*/
 }
 
 .isBlur {
@@ -129,6 +156,7 @@ export default {
 .tab {
 	/*position: relative;*/
 	width: 25%; 
+	font-size: 0; 
 	text-align: center;
 }
 
@@ -159,12 +187,7 @@ export default {
 
 
 
-.page {
-/*	position: fixed; 
-	width: 100%; 
-	left: 0; 
-	top: 0; 
-	height: 100%; 
-	overflow-y: scroll;*/
+.tab-page {
+	
 }
 </style>
