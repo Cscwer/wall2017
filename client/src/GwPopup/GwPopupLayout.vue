@@ -1,9 +1,29 @@
 <template>
 	<div class="gw-popup">
 		<div class="compo-list" v-for="(popupItem, idx) in list">
-			<transition name="fade">
-				<div class="gw-outter" v-if="popupItem.isShow"
-					:style="{ 'z-index': 500 + idx }">
+
+
+			<transition v-if="popupItem.type === 'modal'" name="modal">
+				<div class="gw-outter"
+					v-if="popupItem.isShow"
+					:style="{
+						'z-index': 200 + idx
+					}">
+					<component class="popup-item popup-item-toast" is="gw-modal"
+						:style="{ 'background-color': popupItem.bg ? popupItem.bg : '#FFF' }"
+						v-bind="popupItem"
+						v-on="popupItem.handle"
+						@close="closeModal(popupItem)">
+					</component>
+				</div>
+			</transition>			
+
+			<transition v-else name="fade">
+				<div class="gw-outter"
+					v-if="popupItem.isShow"
+					:style="{
+						'z-index': 200 + idx
+					}">
 					<component class="popup-item" :is="'gw-' + popupItem.type"
 						v-bind="popupItem"
 						v-on="popupItem.handle">
@@ -11,8 +31,6 @@
 				</div>
 			</transition>
 		</div>
-
-
 
 		<div class="toast-list" :class="'toast-pos-' + position" v-for="(position, pidx) in positions">
 
@@ -81,6 +99,19 @@ export default {
 
 			this.toasts.splice(delete_idx, 1); 
 		
+		},
+		closeModal(popupItem){
+			console.log('!')
+			popupItem.close();
+		},
+
+		getLastActive(){
+			for (let i = this.list.length - 1; i >= 0; i --) {
+				let item = this.list[i];
+				if (item.isShow) return item;
+			}
+
+			return null; 
 		}
 	}
 }
@@ -101,17 +132,37 @@ export default {
 }
 
 .popup-item, .gw-outter {
-	transition: all .3s; 
+	transition: all .3s; 	
+	/*transition-timing-function: cubic-bezier(0.18, 0.65, 0, 1);  */
+}
+
+.popup-item-toast {
+	overflow: scroll;
+	-webkit-overflow-scrolling : touch;
 }
 
 .fade-enter-active, .fade-leave-active {
-	transition: all .2s; 
+	transition: all .3s; 
+
+	transition-timing-function: cubic-bezier(0.74, 0, 0.36, 1.55);
 }
 
 /* .fade-leave-active in below version 2.1.8 */ 
 .fade-enter, .fade-leave-to {
 	transform: scale(1.5);
+
 	opacity: 0; 
+}
+
+/*modal*/
+.modal-enter-active, .modal-leave-active {
+	transition: all .6s; 
+	transition-timing-function: cubic-bezier(0.18, 0.65, 0, 1); 
+}
+
+.modal-enter, .modal-leave-to {
+	top: 100%; 
+	/*opacity: 0; */
 }
 
 .top-enter-active, .top-leave-active, .bottom-enter-active, .bottom-leave-active {

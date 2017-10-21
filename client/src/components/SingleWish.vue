@@ -15,6 +15,8 @@
 import wait from '@/utils/wait';
 import http from '@/utils/http.client';
 
+
+
 export default {
 	name: 'SingleWish'
 }

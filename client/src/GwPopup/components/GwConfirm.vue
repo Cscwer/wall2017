@@ -1,12 +1,22 @@
 <template>
 	<div class="gw-confirm">
-		<img class="gw-confirm-picture" :src="snowStick_png" />
+		<component class="gw-modal-inner" :is="component"
+			v-if="component"
+			v-bind="binding"
+			v-on="event">
+		</component>
+
+		<img v-else class="gw-confirm-picture" :src="snowStick_png" />
+	
+
 		<div class="gw-confirm-btns">
 			<span @click="innerConfirm" class="gw-confirm-btn gw-confirm-yes">
 				{{ confirmText }}
 			</span>
 			<img :src="cancel_png" @click="innerCancel" class="gw-cancel-btn"></img>
 		</div>
+
+		
 	</div>
 </template>
 
@@ -16,7 +26,7 @@ import cancel_png from './static/cancel.png';
 
 export default {
 	name: 'gw-confirm', 
-	props: ['confirmText', 'img'],
+	props: ['confirmText', 'img', 'component', 'binding', 'event'],
 	data(){
 		return {
 			snowStick_png: snowStick_png,
@@ -55,7 +65,7 @@ export default {
 }
 
 .gw-confirm-btns {
-	margin-top: 1em; 
+	
 }
 
 .gw-confirm-btn {
@@ -80,6 +90,6 @@ export default {
 .gw-confirm-picture {
 	width: 60%; 
 	display: block;
-	margin: 0 auto; 
+	margin: 0 auto 1em auto; 
 }
 </style>
