@@ -73,7 +73,7 @@ export default {
 
 
 [ios-checkbox] .hidden-input:checked ~ .slider {
-	stroke: rgb(103, 203, 103);
+	stroke: rgb(256, 151, 146);
 	stroke-width: 50px;
 }
 
