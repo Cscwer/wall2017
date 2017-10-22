@@ -45,7 +45,9 @@ IO.init = function(io){
 
 	io.use((socket, next) => {
 		let user_token = socket.handshake.query.user_token;
-		de(user_token).then(user => {
+		
+
+		auth.de(user_token).then(user => {
 			socket.user = user; 
 
 			next(); 
@@ -57,7 +59,7 @@ IO.init = function(io){
 		let { user } = socket;
 		socketTable[user._id] = socket; 
 
-		console.log('default on connection')
+		console.log(user.nickname, 'connected'); 
 
 		R.fullQueue('UNREAD-MSG-' + user._id).then(unreads => {
 			socket.emit('login-success', {

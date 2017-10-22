@@ -3,12 +3,12 @@ const R = require('../utils/redis')
 
 module.exports = function(io, socket){
 	socket.on('sendMsg', function(data){
-		let { her_id, content } = data; 
+		let { her_id, content, type } = data; 
 		let { user } = socket;
 		let herSocket = io.socketTable[her_id]; 
 		
 		let msg = {
-			type: 'chat', 
+			type: type || 'chat', 
 			from: user,
 			content: content,
 			create_at: + new Date()
