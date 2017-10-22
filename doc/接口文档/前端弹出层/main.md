@@ -79,7 +79,7 @@ modal 的实现也是依赖 push 的，不过 type 应该填入 `modal`, 该函�
 
 ---
 
-还有一种情况就是，想要用 confirm 的样式，但是内部是自定义的。 这种情况就需要使用 type 为 `mix` 的 push 了
+还有一种情况就是，想要用 confirm 的样式，但是内部是自定义的。 这种情况只需要显式地给出对应组件就可以了。 
 
 ``` js
 let ins = this.$popup.push({
