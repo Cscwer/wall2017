@@ -147,15 +147,7 @@ export default {
 			current: 0, 
 			danmakuText: '',
 			danmakuMode: true,
-			danmakus: [
-				{
-					content: '日啊', 
-					style: {
-						color: '#FFF'
-					},
-					active: true
-				}
-			],
+			danmakus: [],
 			danmakuCtrl: null,
 			colors: colors,
 			eMode: false,
@@ -174,17 +166,12 @@ export default {
 		// 	console.log(JSON.stringify(res)); 
 		// }); 
 
-		// setTimeout(() => {
-		// 	this.danmakus[0].active = true;
-		// })
-		setTimeout(() => {
-			// this.danmakus.forEach(e => e.active = false); 
-			this.danmakus[0].active = false;
-		}, 1000)
+		
 
 		// this.toPlay({
 		// 	hash: '13e76abea5e097e8f10fa321883840b4',
 		// }); 
+
 		this.initPlay(); 
 	}, 
 	// beforeRouteLeave(to, from, next){
@@ -196,6 +183,10 @@ export default {
 	// 		next();
 	// 	}
 	// },
+	destroyed(){
+		console.log('Bye');
+		this.danmakuCtrl.bye(); 
+	},
 	methods: {
 		sendDanmaku(){
 			let content = this.danmakuText; 
@@ -226,12 +217,33 @@ export default {
 			http.get('/api/music').then(res => {
 				let music = res.data; 
 
-				if (music) {
-					this.music   =  music; 
-					this.showMp3 =  true; 
+				if (res.code === 2003){
+					let cover = 'https://io.chenpt.cc/gw-init/album.jpg'; 
 
-					this.initPlayer(); 
+					this.music = {
+						cover: cover, 
+						mp3: 'https://io.chenpt.cc/gw-init/%E3%83%98%E3%82%AF%E3%81%A8%E3%83%91%E3%82%B9%E3%82%AB%E3%83%AB%20-%20fish%20in%20the%20pool%20%E3%83%BB%E8%8A%B1%E5%B1%8B%E6%95%B7.mp3', 
+						duration: 276,
+						n: 0,
+						start_at: 0,
+						kugou: {
+							album_img: cover, 
+							singerName: '', 
+							songName: '',
+							fileName: 'fish in the pool ・花屋敷'
+						},
+						content: '女生节快乐', 
+						who: {
+							headimgurl: cover,
+							nickname: 'Admin'
+						}
+					}
+				} else {
+					this.music = music; 
 				}
+
+				this.showMp3 =  true; 
+				this.initPlayer(); 
 			}); 
 		},
 		initPlayer(){

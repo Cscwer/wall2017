@@ -1,21 +1,27 @@
 // danmaku.js 
+import cookie from '../cookie'; 
 import ws from '../ws.client'; 
+
+const USER_TOKEN = cookie.get('user-token')
+
 
 let danmaku = {}; 
 let vm = null; 
+
 danmaku.init = function(_vm){
 	vm = _vm; 
 
-	// 连接到弹幕频道
-	ws.socket.emit('join-danmaku');
-
-	ws.socket.on('shot', danmaku.on); 
-
+	console.log('On Component Init')
+	ws.socket.emit('join-danmaku'); 
+	
 	return danmaku; 
 }
 
-danmaku.on = function(e){
-	if (!vm) return; 
+ws.socket.on('shot', function(e){
+	if (!vm) {
+		console.log('On Connection But No VM Get It');
+		return
+	};
 
 	console.log('[ On Danmaku ]', e); 
 	if (e.content){
@@ -29,19 +35,38 @@ danmaku.on = function(e){
 		e.active = true; 
 		vm.danmakus.push(e); 
 		setTimeout(() => e.active = false, 300); 
+		setTimeout(() => {
+			vm && vm.danmakus.pop(); 
+		}, 3300); 
 	} else {
 		console.log('[ WARN ] this danma has no content');
 	}
-}
+})
+
+
+
+let n = 0; 
+// danmaku.on = 
 
 danmaku.shot = function(e){
 	if (!vm) return; 
 	// vm.danmakus.push(e); 
+	e.n = n; 
+	n++; 
+	ws.socket.emit('shot-send', e);
 
-	ws.socket.emit('shot', e);
+	// danmaku.on(e)
 }
 
+danmaku.bye = function(){
+	vm = null 
 
+	// Bye Bye 
+	ws.socket.emit('leave-danmaku'); 
+}
 
+window.danmaku = danmaku;
+window.vm = vm; 
+window.n = n; 
 
 export default danmaku; 
