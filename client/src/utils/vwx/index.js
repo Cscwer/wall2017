@@ -29,7 +29,7 @@ function check(){
 	}
 }
 
-vwx.config = () => {
+vwx.config = cb => {
 	let config_url = get_url(); 
 	return http.get('/api/wx/config', {
 		url: encodeURIComponent( config_url )
@@ -43,9 +43,16 @@ vwx.config = () => {
 		return new Promise((res, rej) => {
 			wx.ready(function(){
 				URL = config_url; 
+
+				// 在 ready 里面
+				cb && cb(); 
+
 				res(config_url); 
 			}); 
-			wx.error(rej); 
+			wx.error(err => {
+				console.log('CONFIG ERR', err); 
+				rej(err); 
+			}); 
 		})
 	})
 }
