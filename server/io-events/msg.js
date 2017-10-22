@@ -29,4 +29,6 @@ module.exports = function(io, socket){
 			R.enQueue('UNREAD-MSG-' + her_id, msg); 
 		}
 	});
+
+	return ['sendMsg']
 }

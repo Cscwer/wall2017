@@ -73,13 +73,17 @@ IO.init = function(io){
 
 
 		// io-event
-		msg(io, socket); 
-		danmaku(io, socket); 
+		let eventNames = msg(io, socket); 
+		let eventNamesDanmaku = danmaku(io, socket); 
 
 
 		socket.on('disconnect', reason => {
 			if (!user) return; 
 
+			socket.removeAllListeners(
+				eventNames.concat(eventNamesDanmaku)
+			);
+			
 			console.log(user.nickname, 'exit'); 
 			socketTable[user._id] = null; 
 		});

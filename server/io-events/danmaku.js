@@ -29,4 +29,6 @@ module.exports = function(io, socket){
 			console.log(user.nickname, 'leave danmaku channel'); 
 		}); 
 	})
+
+	return ['leave-danmaku', 'join-danmaku']
 }
