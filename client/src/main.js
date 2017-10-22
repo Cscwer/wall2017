@@ -4,7 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import infiniteScroll from 'vue-infinite-scroll'
 import router from './router'
-
+import ws from '@/utils/ws.client'; 
 // import GwPopup from '@/components/global/GwPopup'
 // import GwAlert from '@/components/global/GwAlert'
 
@@ -16,6 +16,8 @@ Vue.use(infiniteScroll);
 // Vue.component('gw-popup', GwPopup);
 
 
+import iOSCheckbox from '@/components/ios-view/checkbox'; 
+Vue.component('ios-checkbox', iOSCheckbox); 
 
 Vue.use(GwPopup, {
 	getApp: function(){
