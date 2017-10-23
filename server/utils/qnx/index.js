@@ -56,6 +56,7 @@ function upload(localFile, key){
 }
 
 function fetch(target_url, key){
+	console.log('[ ToFetch ]', target_url); 
 	return new Promise((res, rej) => {
 		bucketManager.fetch(
 			target_url,
