@@ -6,7 +6,6 @@ const { httpGet } = require('../http.client')
     , R = require('../redis')
     , MUSIC_KEY = 'dailymusic'
     , KUGOU_URL = 'http://m.kugou.com/app/i/getSongInfo.php'
-    , MAX_TIME = 600
     , pwd = "asd123"
 
 
@@ -23,9 +22,12 @@ var getMusicDetail = hash => {
 }
 
 var musicFetch = musicDetail => {
-	let { album_img, bitRate, fileSize, url } = musicDetail; 
+	let { album_img, bitRate, fileSize, url, cover, imgUrl } = musicDetail; 
+
+	album_img = album_img || cover || imgUrl || ''; 
 
 	if (album_img === '') album_img = '/images/暂无封面'; 
+	else album_img = album_img.replace('{size}', '400'); 
 
 	let duration = (fileSize / (bitRate / 8)) / 1000; 
 	let name = uuid(); 
@@ -45,7 +47,8 @@ var musicFetch = musicDetail => {
 		return {
 			cover: albumResp.url, 
 			mp3: mp3Resp.url, 
-			duration: duration
+			duration: duration,
+			kugou: musicDetail
 			// n 
 			// start_at 
 		}
@@ -68,13 +71,22 @@ var getMusicer = hash => {
 			}); 
 		}
 	}).then(suc => {
+		temp.duration = temp.duration || 10; 
 		return temp; 
 	});
 }
 
+function todayZero(ts){
+	return parseInt(ts % 86400000 / 1000);
+}
+
 var count = 0; 
 var musicQueue = []; 
-var zero = 0; 
+// var zero = 0;
+var zero = todayZero(Date.now()); 
+// var MAX_TIME = 86400;
+var MAX_TIME = zero + 1200; 
+
 var enQueue = (hash, content, who) => {
 	if (zero > MAX_TIME){
 		// Max 
@@ -90,7 +102,7 @@ var enQueue = (hash, content, who) => {
 			musicer.n = count;
 
 			// Set base info  
-			musicer.content = content; 
+			musicer.content = content || '__未设置'; 
 			musicer.who     = who; 
 
 			// enQueue
@@ -104,33 +116,53 @@ var enQueue = (hash, content, who) => {
 
 var now = null;
 var getNowPlaying = ts => {
+	ts = todayZero(ts); 
+
 	let length = musicQueue.length; 
 	let next = musicQueue.pop(); 
 
 	if (!now) {
+		// 尚无播放的 
 		if (next){
+			// 如果有 next 那么走next 
+			console.log('MQ', 1)
 			now = next; 
 			return now; 
 		} else {
+			// 否则就 null 返回 
+			console.log('MQ', 2);
+			zero = todayZero(Date.now()); 
 			return null; 
 		}
 	} else {
+		// 有正在播放的 
 		if (next){
+			// 而且下一首是存在的 
 			if (ts >= next.start_at){
+				// 该切换了 
 				now = next; 
+
+				console.log('MQ', 3)
 				return now;
 			} else {
+				// 额 不该切换 把下一首压回去 
 				musicQueue.push(next); 
+
+				console.log('MQ', 4)
 				return now; 
 			}
 		} else {
+			// 下一首并不存在 说明是最后一首
 			if (ts >= now.start_at + now.duration){
 				now = null; 
 
+				zero = todayZero(Date.now()); 
 				// 此处应该 reset 
-
+				console.log('MQ', 5)
 				return now; 
 			} else {
+				// 播着。。。
+				console.log('MQ', 6)
 				return now;
 			}
 		}
