@@ -84,6 +84,16 @@ R.enQueue = (key, obj) => {
 	}); 
 }
 
+R.initQueue = (key, list) => {
+	key = JS_QUEUE_NS + key; 
+
+	return R.del(key).then(done => {
+		let temp = list.map(JSON.stringify); 
+		
+		return R.lpush(key, temp); 
+	})
+}
+
 R.deQueue = key => {
 	key = JS_QUEUE_NS + key; 
 
@@ -114,10 +124,24 @@ R.lenQueue = key => {
 	return R.llen(key); 
 }
 
-R.fullQueue = key => {
+R.page = (key, p, N) => {
 	key = JS_QUEUE_NS + key;  
 
-	return R.lrange(key, 0, -1).then(arr => arr.map(JSON.parse)); 
+	return R.lrange(
+		key,
+		-((p + 1) * N),
+		-(1 + p * N)
+	).then(arr => arr.map(JSON.parse)); 
+}
+
+// R.rangeQueue = key => {
+// 	key = JS_QUEUE_NS + key; 
+
+// 	return R.
+// }
+R.fullQueue = key => {
+    key = JS_QUEUE_NS + key;  
+    return R.lrange(key, 0, -1).then(arr => arr.map(JSON.parse)); 
 }
 
 R.delQueue = key => {
