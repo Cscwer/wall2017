@@ -75,9 +75,11 @@ export default {
 		bigSizeCover(){
 			let cover = this.music_detail.cover;
 			let album_img = this.music_detail.album_img; 
+			let imgUrl = this.music_detail.imgUrl; 
 
 			if (cover) return cover.replace('{size}', '400'); 
 			else if (album_img) return album_img.replace('{size}', '400'); 
+			else if (imgUrl) return imgUrl.replace('{size}', '400'); 
 			else return 'NO_IMG'; 
 		}
 	}
