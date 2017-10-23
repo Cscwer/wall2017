@@ -5,9 +5,9 @@ const express = require('express')
     , M = require('../utils/music-queue')
 
 router.get('/', function(req, res){
-	let ts = parseInt(req.query.ts); 
+	// let ts = parseInt(req.query.ts); 
 	
-	let now = M.getNowPlaying(ts)
+	let now = M.getNowPlaying(new Date()); 
 
 	if (now) {
 		rps.send2000(res, now); 
