@@ -22,8 +22,8 @@
 			}"></div>
 
 
-			<audio @playing="onPlaying" id="audio-player">
-				<source :src="music.mp3">
+			<audio id="audio-player" @ended="musicEnded">
+				<source v-if="music" :src="music.mp3">
 			</audio>
 			
 			<div v-if="danmakuMode" class="danmaku-area" :style="{ height: screenWidth + 'px' }">
@@ -171,7 +171,6 @@ export default {
 		// this.toPlay({
 		// 	hash: '13e76abea5e097e8f10fa321883840b4',
 		// }); 
-
 		this.initPlay(); 
 	}, 
 	// beforeRouteLeave(to, from, next){
@@ -186,8 +185,12 @@ export default {
 	destroyed(){
 		console.log('Bye');
 		this.danmakuCtrl.bye(); 
+		clearInterval(timer); 
 	},
 	methods: {
+		musicEnded(){
+			this.$router.go(0);
+		},
 		sendDanmaku(){
 			let content = this.danmakuText; 
 			this.danmakuText = ''; 
@@ -210,9 +213,6 @@ export default {
 			this.colors.forEach(color => color.selected = false); 
 			color.selected = true; 
 		},
-		onPlaying(e){
-			console.log(e)
-		},
 		initPlay(){
 			http.get('/api/music').then(res => {
 				let music = res.data; 
@@ -225,7 +225,7 @@ export default {
 						mp3: 'https://io.chenpt.cc/gw-init/%E3%83%98%E3%82%AF%E3%81%A8%E3%83%91%E3%82%B9%E3%82%AB%E3%83%AB%20-%20fish%20in%20the%20pool%20%E3%83%BB%E8%8A%B1%E5%B1%8B%E6%95%B7.mp3', 
 						duration: 276,
 						n: 0,
-						start_at: 0,
+						start_at: parseInt(Date.now() % 86400000 / 1000),
 						kugou: {
 							album_img: cover, 
 							singerName: '', 
@@ -247,19 +247,27 @@ export default {
 			}); 
 		},
 		initPlayer(){
+			let now = parseInt(Date.now() % 86400000 / 1000); 
+
+			this.$music && this.$music.pause(); 
+
 			vwx.config(() => {
+				let start_at = this.music.start_at;
+				let now_at = now - start_at; 
 				let $music = document.getElementById('audio-player'); 
 				this.$music = $music; 
 
-				window.$music = $music; 
+				// window.$music = $music; 
+
+				console.log('now_at', now_at); 
+
 				$music.play(); 
+				$music.currentTime = now_at;
 
 				clearInterval(timer); 
 				timer = setInterval(() => {
 					this.current = $music.currentTime;
 				}, 500); 
-
-				// console.log('config')
 			}, err => {
 				console.log(err)
 			})
@@ -270,38 +278,55 @@ export default {
 
 			ui.newMusic(this).then(music => {
 				this.onSearching = false; 
-				console.log('!', music); 
+				// console.log('!', music); 
+				let hash = music.selected.hash; 
+				let content = music.content; 
+
+				this.toPlay({
+					hash: hash,
+					content: content
+				}); 
 			}, cancel => {
 				this.onSearching = false; 
 				console.log('用户取消'); 
 			}); 
-			// console.log('我要点歌啦')
-			// let ins = this.$popup.push({
-			// 	type: 'prompt', 
-			// 	needBlur: true
-			// })
-		},
-		toSearch(){
-			console.log(this.search)
-			http.musicSearch({
-				keyword: this.search
-			}).then(res => {
-				this.list = res.data.info; 
-			}); 
 		},
 		toPlay(item){
-			let { hash } = item; 
-
-			http.post('/api/music', {
-				hash: hash
-			}).then(res => {
+			http.post('/api/music', item).then(res => {
 				let music = res.data; 
 
-				if (music){
-					this.music   =  music; 
-					this.showMp3 =  true;  
+				if (res.code === 2000){
+					let now_time = Date.now(); 
+					let { duration, mp3, n, start_at } = music; 
+					let will_at = new Date(
+						parseInt(Date.now() / 86400000) * 86400000 + 
+						start_at * 1000
+					); 
+
+					console.log(will_at); 
+
+					// if (now_time > (+will_at) + duration * 1000){
+						// 错过了 重试 
+						// ui.failPostMusic(); 
+						// this.$router.go(0);
+					// } else {
+					
+					ui.successPostMusic(n, will_at); 
+
+					if (now_time > (+will_at)) {
+						console.log('!!'); 
+						setTimeout(() => {
+							this.$router.go(0); 
+						}, 500)
+					}
+					// this.$router.go(0);
+					// }
+
+					// this.music   =  music; 
+					// this.showMp3 =  true; 
 				} else {
 					// 点歌人数已满 明天再来 
+					ui.failPostMusic(); 
 				}
 			})
 		},
@@ -315,9 +340,11 @@ export default {
 		bigSizeCover(){
 			let cover = this.music.cover;
 			let album_img = this.music.album_img; 
+			let imgUrl = this.music.imgUrl; 
 
 			if (cover) return cover.replace('{size}', '400'); 
 			else if (album_img) return album_img.replace('{size}', '400'); 
+			else if (imgUrl) return imgUrl.replace('{size}', '400'); 
 			else return 'NO_IMG'; 
 		},
 		minSec(){

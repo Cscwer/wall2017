@@ -93,4 +93,59 @@ ui.openMusicSearch = function(){
 	});
 }
 
+ui.failPostMusic = function(){
+	return GwPopup.getPopup().push({
+		type: 'prompt', 
+		confirmText: '明天再来', 
+		needBlur: true, 
+		component: {
+			template: `
+				<div class="post-music-fail">
+					<p align-center>点歌失败！/(ToT)/~~</p>
+					<p align-center>今天点歌人数已满啦 !</p>
+					<p align-center>00:00 开始新一轮点歌哦！ 记得参加！</p>
+					<p align-center>n(*≥▽≤*)n</p>
+				</div>
+			`
+		},
+		binding: {
+			style: {
+				'text-align': 'center', 
+				'color': '#BBB',
+				'margin-bottom': '1em'
+			}
+		}
+	}).launch(); 
+}
+
+ui.successPostMusic = function(n, date){
+	let hours = ('00' + date.getHours()).slice(-2); 
+	let mins = ('00' + date.getMinutes()).slice(-2);
+	let playOn = hours + ':' + mins; 
+
+	return GwPopup.getPopup().push({
+		type: 'prompt', 
+		confirmText: '好哒~', 
+		needBlur: true, 
+		component: {
+			template: `
+				<div class="post-music-fail">
+					<p align-center>点歌成功啦！</p>
+					<p align-center>O(∩_∩)O</p>
+					<p align-center>您是今天第 ${n} 位点歌的同学</p>
+					<p align-center>您的歌曲将于今天的 ${playOn} 播出</p>
+					<p align-center>记得上来跟大家一起吐槽哦！</p>
+				</div>
+			`
+		},
+		binding: {
+			style: {
+				'text-align': 'center', 
+				'color': '#BBB',
+				'margin-bottom': '1em'
+			}
+		}
+	}).launch(); 
+}
+
 export default ui; 
