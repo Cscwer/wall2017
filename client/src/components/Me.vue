@@ -1,12 +1,26 @@
 <template>
 	<div>
-		<h1>我的个人中心</h1>
-	
-		<div class="imgs">
-			<img :src="localId" v-for="localId in localIds" />
+
+		<div class="header-wrap">
+			<div class="msg-icon-wrap">
+				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
+			</div>
+			<div class="userinfo-wrap">
+				<img :src="user.headimgurl" class="avatar" />
+				<div class="name-wrap">
+					<img src="../assets/me/male.png" alt="" class="sex-img">
+					<p class="user-nickname">{{user.nickname}}ChenPt</p>
+					<img src="../assets/me/edit.png" alt="" class="edit-img">
+				</div>
+				<p class="user-from">{{user.from}}大学城校区</p>
+			</div>
+			<ul class="metab-wrap">
+				<li class="me-tab">待领取</li>
+				<li class="me-tab">实现中</li>
+				<li class="me-tab">已实现</li>
+			</ul>
 		</div>
-	
-		<img :src="show" alt="">
+
 	</div>
 </template>
 
@@ -21,11 +35,13 @@ export default {
 	data(){
 		return {
 			localIds: [], 
-			show: ''
+			show: '',
+			user: {}
 		}
 	}, 
 	created(){
-
+		console.log("page created");
+		this.init();
 		vwx.getAnImg().then(res => {
 			alert('start'); 
 			let img = res.data; 
@@ -34,11 +50,87 @@ export default {
 
 			this.show = img.url; 
 		});
-	}
+	},
+	// methods: {
+	// 	init: async function(){
+	// 		let res = await http.get('./api/user/me');
+	// 		console.log(res);
+	// 		// console.log("init ok");
+	// 	},
+	// 	getUserInfo: function(){
+	// 		return http.get('./api/user/me')
+	// 	}
+	// }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+	.header-wrap {
+		position: relative;
+		min-height: 250px;
+		background-image: url("../assets/me/bg-img.png");
+		background-color: rgba(240,240,240,.5);
+	}
 
+	.metab-wrap {
+		position: absolute;
+		bottom: 0;
+	}
+
+	.me-tab {
+		display: inline-block;
+	}
+
+	.msg-icon-wrap {
+		padding-top: 15px;
+		padding-right: 20px;
+		text-align: right;
+	}
+
+	.msg-icon {
+		display: inline-block;
+		width: 26px;
+		height: 26px;
+	}
+
+	.userinfo-wrap {
+		text-align: center;
+	}
+
+	.avatar {
+		width: 6.2em;
+		height: 6.2em;
+		border: 1px solid rgba(200,200,200,.5);
+		border-radius: 25px;
+	}
+
+	.sex-img {
+		display: inline-block;
+		height: 18px;
+	}
+
+	.edit-img {
+		display: inline-block;
+		width: 15px;
+	}
+
+	.user-nickname {
+		display: inline-block;
+		padding-left: 3px;
+		padding-right: 5px;
+		font-size: 0.5rem;
+		color: rgb(255, 255, 255);
+	}
+
+	.name-wrap {
+		padding-top: 6px;
+	}
+
+	.user-from {
+		padding-top: 2px;
+		color: #fff;
+	}
+
+	
 </style>
