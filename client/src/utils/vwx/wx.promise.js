@@ -13,7 +13,7 @@ function wxPromisify(fn) {
 }
 
 export default [
-	'chooseImage', 'uploadImage', 'downloadImage'
+	'chooseImage', 'uploadImage', 'downloadImage', 'previewImage'
 ].reduce((acc, cur) => {
 	acc[cur] = wxPromisify(wx[cur]); 
 

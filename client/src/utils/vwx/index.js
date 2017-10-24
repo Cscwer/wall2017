@@ -6,7 +6,8 @@ let jsApiList = [
 	'chooseImage', 
 	'previewImage', 
 	'uploadImage', 
-	'downloadImage'
+	'downloadImage',
+	'previewImage'
 ];
 let DEBUG_MODE = false; 
 let vwx = {}; 
@@ -101,6 +102,11 @@ vwx.create('getAnImg', function(){
 		return Promise.reject(err); 
 	});
 }); 
+
+// vwx.create('previewImage', function(o){
+// 	return _.previewImage(o); 
+// })
+vwx.previewImage = wx.previewImage; 
 
 // window.vwx = vwx; 
 

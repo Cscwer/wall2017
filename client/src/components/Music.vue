@@ -16,11 +16,11 @@
 			
 			<img :src="bigSizeCover" class="cover" :class="{
 				'cover-inner': danmakuMode
-			}" />
+			}"/>
 			
 			<div class="danmaku-black-bg" :style="{
 				'background-color': danmakuMode ? 'rgba(254, 181, 177, .2)' : 'rgba(254, 181, 177 ,0)'
-			}"></div>
+			}" @click="previewImg(bigSizeCover)"></div>
 
 
 			<audio id="audio-player" @ended="musicEnded">
@@ -345,6 +345,20 @@ export default {
 					ui.failPostMusic(); 
 				}
 			})
+		},
+		previewImg(u){
+			// alert(u); 
+			let urls = [
+				this.music.cover,
+				this.music.album_img,
+				this.music.imgUrl
+			].filter(e => !!e); 
+
+			console.log(urls)
+			vwx.previewImage({
+				current: u, 
+				urls: urls
+			})
 		}
 	},
 	computed: {
@@ -637,7 +651,7 @@ export default {
 	width: 50px; 
 	border-radius: 50px; 
 	font-size: 0; 
-	box-shadow: 0 20px 16px -8px rgba(0, 0, 0, .3);
+	box-shadow: 0 10px 16px -4px rgba(0, 0, 0, .2);
 }
 
 .name-content {
@@ -653,11 +667,14 @@ export default {
 
 .music-content {
 	background-color: rgba(255, 255, 255, .8);
-	padding: .25em .8em; 
+	padding: .35em .8em; 
 	min-height: 4em; 
 	color: rgb(221, 152, 148);
 	border-radius: 0 16px 16px 16px; 
 	word-wrap: break-word;
+	font-size: 14px;
+	line-height: 1.28; 
+	box-shadow: 3px 12px 16px -4px rgba(0, 0, 0, .2);
 }
 
 .danmaku-init-enter-active  {
