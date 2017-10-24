@@ -1,236 +1,254 @@
-<template>
-	<div v-infinite-scroll="loadMore"
-		infinite-scroll-disabled="loading" 
+<template id="home">
+	<!-- <div v-infinite-scroll="loadMore"
+		infinite-scroll-disabled="loading"
 		infinite-scroll-distance="20"
-		
-		class="hello">
-		<img :src="user.headimgurl" class="avatar" />
-		<p class="name">{{ user.nickname }} {{ user.sex }}</p>
+		class="hello"> -->
+	<div class="hello">
 
-		<div class="test">
-			<input v-model="wish.text" type="text" />
+		<div @click.stop="toSearch" class="search-container">
+			<img class="search" src="../assets/home/search.png">
+			<span class="ps-text">搜索</span>
 		</div>
 
-		<button @click="postWish">发送</button>
-		
+		<swiper class="gw-swiper" :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
+		<!-- slides -->
+			<swiper-slide class="slider-img" v-for="banner in banners">
+				<img :src="banner">
+			</swiper-slide>
+			<!-- Optional controls -->
+			<!-- <div class="swiper-pagination"  slot="pagination"></div>
+			<div class="swiper-button-prev" slot="button-prev"></div>
+			<div class="swiper-button-next" slot="button-next"></div>
+			<div class="swiper-scrollbar"   slot="scrollbar"></div> -->
+		</swiper>
 
-		<h1>弹出层</h1>
-		<button class="present" @click="present('alert')">alert</button>
-		<button class="present" @click="present('confirm')">confirm</button>
-		<button class="present" @click="present('prompt')">prompt</button>
-		
-		<h1>吐司</h1>
-		<input type="text" placeholder="输入提示内容" v-model="toastText" />
-	
-
-		<label for="top">顶部</label>
-		<input type="radio" id="top" value="top" checked v-model="toastType">
-		
-		<label for="bottom">底部</label>
-		<input type="radio" id="bottom" value="bottom" v-model="toastType">
-		
-		<button class="present" style="display: block;" @click="sendToast">发射</button>
-		
-		<h1>弹出modal</h1>
-		<button class="present" style="display: block;" @click="sendModal">发射</button>
-		
-		<h1>编辑个人资料</h1>
-		<button class="present" style="display: block;" @click="editMyself">开始编辑</button>
-
-		<div>
-			{{ wish.text }}
+		<div class="wish-container">
+			<wish class="wish-on-wall" v-for="wish in list" :userData=wish.user :userWish=wish.wish></wish>
 		</div>
-
-		<ul>
-			<li v-for="wish in list">
-				{{ wish.text }}
-			</li>
-		</ul>
-
-		<footer>Night's Watch</footer>
 	</div>
 </template>
 
 <script>
-import wait from '@/utils/wait'; 
-import http from '@/utils/http.client'; 
-import ui from '@/utils/ui'; 
-
-
-
+import wait from '@/utils/wait';
+import http from '@/utils/http.client';
+import ui from '@/utils/ui';
+import Wish from './SingleWish';
+import WishSearch from './WishSearch';
+import banner from '../assets/home/slider.jpg';
 
 export default {
 	name: 'hello',
+	components: {
+		'wish': Wish
+	},
+
 	data() {
 		return {
 			toastText: '',
 			toastType: 'top',
-			user: {}, 
-			wish: {
-				text: ''
+			banners: [ banner, banner, banner ],
+			swiperOption: {
+				autoplay: 3000,
+				initialSlide: 1,
+				freeMode: false,
+				slidesPerView : 1.25,
+				loop: true,
+				// spaceBetween: 16,
+				effect: 'coverflow',
+				// direction: 'centered-auto',
+				centeredSlides: true,
+				pagination: '.swiper-pagination'
 			},
-			list: [], 
+			list: [
+				{
+					user: {
+						name: '中国首穷',
+						area: 1,
+						headimgurl: '',
+						sex: 2
+					},
+					wish: '我要上王者'
+				},
+				{
+					user: {
+						name: 'legilis',
+						area: 2,
+						headimgurl: '',
+						sex: 2
+					},
+					wish: '我要上王者我，我沃尔夫见多识广覅ulUI我耳机不好 就回来维护费'
+				},
+				{
+					user: {
+						name: 'legilis',
+						area: 0,
+						headimgurl: '',
+						sex: 2
+					},
+					wish: '我要上王者wekiuajsliofaksvgjxjlasieujlfksdzjushoduiflhajkdfnuaps;dlkjfkahdlfiasjdkfdnlfiwqe'
+				},
+				{
+					user: {
+						name: 'legilis',
+						area: 1,
+						headimgurl: '',
+						sex: 2
+					},
+					wish: '这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。'
+				}
+
+			],
 			p: 0,
 			loading: false,
 			finish: false,
-
 			alert: null
 		}
 	},
 	created(){
-		// Call Async Function 
-		this.initAll(); 
-		// this.loadMore(); 
-
-		this.$popup.toast({
-			msg: '0v0', 
-			position: 'top',
-			cancelable: true,
-			align: true,
-			duration: 8000
-		})
-
-
-		// let toEdit = {
-		// 	nickname: '',
-		// 	area: '',
-		// 	weid: '',
-		// 	phone: ''
-		// }
-		// this.$popup.push({
-		// 	type: 'prompt', 
-		// 	confirmText: '保存', 
-		// 	component: MyInfo,
-		// 	binding: {
-		// 		toEdit: toEdit
-		// 	},
-		// 	handle: {
-		// 		confirm(e){
-		// 			console.log(toEdit)
-		// 			this.close(); 
-		// 		}
-		// 	}
-		// }).launch(); 
-
-		
-
+		// Call Async Function
+		// this.initAll();
+		// this.loadMore();
 	},
 	methods: {
-		editMyself(){
-			ui.editUserInfo().then(res => {
-				console.log('编辑成功', res); 
-			}, cancel => {
-				console.log('用户取消编辑个人资料'); 
-			})
-		},
 		sendModal(){
 			let myModal = this.$popup.push({
-				type: 'modal', 
+				type: 'modal',
 				component: {
 					template: `<h1 @click="close" style="font-size: 48px;">点击此处关闭 modal</h1>`,
 					methods: {
 						close(){
-							this.$emit('close'); 
+							this.$emit('close');
 						}
 					}
 				}
-			}); 
-			myModal.launch(); 
+			});
+			myModal.launch();
+		},
+		toSearch() {
+			let ins = this.$popup.push({
+				type: 'modal',
+				component: WishSearch
+			});
+
+			ins.launch();
 		},
 		sendToast(){
 			this.$popup.toast({
-				msg: this.toastText, 
-				position: this.toastType, 
+				msg: this.toastText,
+				position: this.toastType,
 			})
 		},
 		present(type){
 			this.$popup.push({
-				type: type, 
-				confirmText: '确定', 
+				type: type,
+				confirmText: '确定',
 				cancelText: '否定',
-				placeholderText: '输入给她的留言', 
-				needBlur: true, 
+				placeholderText: '输入给她的留言',
+				needBlur: true,
 				handle: {
 					confirm(e){
 						console.log('yes', this);
-						console.log('参数', e); 
+						console.log('参数', e);
 					},
 					cancel(){
 						console.log('no')
-						this.close(); 
+						this.close();
 					}
 				}
 			}).launch()
 		},
-		itit: function(){
-			console.log('确认'); 
-		},
-		initAll: async function(){
-			let res = await http.get('/api/user/me'); 
+		// initAll: async function(){
+		// 	let res = await http.get('/api/user/me');
 
-			this.user = res.data;
-		},
-		getUser: function(){
-			return http.get('/api/user/me');
-		},
-		postWish: function(){
-			let o = JSON.parse(JSON.stringify(this.wish)); 
-			
-			http.post('/api/wish', o); 
-		}, 
-		loadMore: async function(){
-			let p = this.p; 
+		// 	this.user = res.data;
+		// },
+		// getUser: function(){
+		// 	return http.get('/api/user/me');
+		// },
+		// loadMore: async function(){
+		// 	let p = this.p;
 
-			this.loading = true; 
+		// 	this.loading = true;
 
-			let rps = await http.get('/api/wish', {
-				p: p
-			}); 
+		// 	let rps = await http.get('/api/wish', {
+		// 		p: p
+		// 	});
 
-			this.p = p + 1; 
+		// 	this.p = p + 1;
 
-			this.list = this.list.concat(rps.data);
+		// 	this.list = this.list.concat(rps.data);
 
-			if (rps.code === 2001){
-				this.finish = true; 
-			} else {
-				// this.loading = false; 
-			}
-		}
+		// 	if (rps.code === 2001){
+		// 		this.finish = true;
+		// 	} else {
+		// 		// this.loading = false;
+		// 	}
+		// }
 	}
 }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.avatar {
-	width: 10em; 
-	height: 10em; 
-	border-radius: 10em; 
+.hello {
+	padding-top: 14px;
+	width: 100%;
+	height: 100%;
+	background-color: rgb(255, 241, 241);
 }
 
-h1 {
-	font-size: 130%; 
+.search-container {
+	width: 100%;
+	padding: 8px 0;
+	border: 0;
+	color: #f6b4c5;
+	font-size: 16px;
+	background-color: #fff;
+}
+
+.search {
+	margin-left: 5%;
+	margin-right: 2px;
+	width: 20px;
+	height: 20px;
+	vertical-align: middle;
+}
+
+.gw-swiper {
+	margin: 14px 0;
+}
+
+.ps-search {
+	vertical-align: middle;
+}
+
+.wish-on-wall {
+	margin: 14px auto;
+	width: 93%;
 }
 
 .present {
+	padding: .5em;
+	margin: .5em;
 	display: block;
-	width: 90%; 
+	width: 90%;
 	font-size: 18px;
-	
-	padding: .6em 0; 
-
-	border-radius: 4px; 
-	margin: 1em auto; 
-	
-	background-color: rgb(240, 120, 50); 
-	color: #FFF; 
+	padding: .6em 0;
+	border-radius: 4px;
+	margin: 1em auto;
+	background-color: rgb(240, 120, 50);
+	color: #FFF;
 	border: none;
 	-webkit-appearance: none;
 }
 
-.name {
-	margin: 1em; 
-	font-size: 140%; 
+.slider-img img {
+	display: block;
+	width: 100%;
+	border-radius: 10px;
+
+	margin: 0 auto;
 }
+
 </style>

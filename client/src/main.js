@@ -4,27 +4,32 @@ import Vue from 'vue'
 import App from './App'
 import infiniteScroll from 'vue-infinite-scroll'
 import router from './router'
-import ws from '@/utils/ws.client'; 
+import ws from '@/utils/ws.client';
+import router from './router';
+require('swiper/dist/css/swiper.css');
+import VueAwesomeSwiper from 'vue-awesome-swiper';
+import { swiper, swiperSlide } from 'vue-awesome-swiper';
 // import GwPopup from '@/components/global/GwPopup'
 // import GwAlert from '@/components/global/GwAlert'
 
-import GwPopup from '@/GwPopup'; 
+import GwPopup from '@/GwPopup';
 
 
 Vue.config.productionTip = false
-Vue.use(infiniteScroll); 
+Vue.use(infiniteScroll);
+Vue.use(VueAwesomeSwiper);
 // Vue.component('gw-popup', GwPopup);
 
 
-import iOSCheckbox from '@/components/ios-view/checkbox'; 
-Vue.component('ios-checkbox', iOSCheckbox); 
+import iOSCheckbox from '@/components/ios-view/checkbox';
+Vue.component('ios-checkbox', iOSCheckbox);
 
 Vue.use(GwPopup, {
 	getApp: function(){
-		return document.getElementById('app'); 
+		return document.getElementById('app');
 	},
 	router
-}); 
+});
 
 
 /* eslint-disable no-new */
@@ -32,5 +37,5 @@ new Vue({
 	el: '#app',
 	router,
 	template: '<App/>',
-	components: { App }
+	components: { App, swiper, swiperSlide }
 })
