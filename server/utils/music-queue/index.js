@@ -33,6 +33,7 @@ var musicFetch = musicDetail => {
 	let name = uuid(); 
 
 	// Fetch 
+	console.log('FETCH', album_img); 
 	let fetch_album = qnx.fetch(album_img, `music-album/${name}.jpg`); 
 	let fetch_mp3 = qnx.fetch(url, `music-mp3/${name}.mp3`); 
 
@@ -88,6 +89,10 @@ var zero = todayZero(Date.now());
 var MAX_TIME = zero + 1200; 
 
 var enQueue = (hash, content, who) => {
+	console.log('MAX_TIME', MAX_TIME); 
+	console.log('zero', zero); 
+	console.log('count', count); 
+
 	if (zero > MAX_TIME){
 		// Max 
 		return Promise.resolve(null); 
