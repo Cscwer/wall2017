@@ -4,7 +4,6 @@ import ws from '../ws.client';
 
 const USER_TOKEN = cookie.get('user-token')
 
-
 let danmaku = {}; 
 let vm = null; 
 
@@ -50,12 +49,7 @@ let n = 0;
 
 danmaku.shot = function(e){
 	if (!vm) return; 
-	// vm.danmakus.push(e); 
-	e.n = n; 
-	n++; 
 	ws.socket.emit('shot-send', e);
-
-	// danmaku.on(e)
 }
 
 danmaku.bye = function(){
@@ -65,8 +59,8 @@ danmaku.bye = function(){
 	ws.socket.emit('leave-danmaku'); 
 }
 
-window.danmaku = danmaku;
-window.vm = vm; 
-window.n = n; 
+// window.danmaku = danmaku;
+// window.vm = vm; 
+// window.n = n; 
 
 export default danmaku; 
