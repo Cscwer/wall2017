@@ -118,6 +118,25 @@ ui.failPostMusic = function(){
 	}).launch(); 
 }
 
+// ui.notice = function(){
+// 	return GwPopup.getPopup().push({
+// 		type: 'confirm', 
+// 		confirmText: '哦哦', 
+// 		needBlur: true,
+// 		component: {
+// 			template: `
+// 				<p align-center>请勿发空消息喔</p>
+// 			`
+// 		},
+// 		binding: {
+// 			style: {
+// 				'text-align': 'center',
+// 				'margin': '2em 0'
+// 			}
+// 		}
+// 	}).launch()
+// }
+
 ui.successPostMusic = function(n, date){
 	let hours = ('00' + date.getHours()).slice(-2); 
 	let mins = ('00' + date.getMinutes()).slice(-2);
