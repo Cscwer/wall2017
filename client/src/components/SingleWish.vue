@@ -77,12 +77,11 @@ export default {
 <style scoped>
 	.wish-container {
 		position: relative;
-		margin: 10px auto;
 		padding: 15px 10px;
-		width: 90%;
 		background-color: #fff;
 		border-radius: 0 10px 10px 10px;
 		box-shadow: 4px 4px 4px #ffc5c5;
+		box-sizing: border-box;
 	}
 
 	.user-info {
@@ -126,6 +125,7 @@ export default {
 		/*float: left;*/
 		color: #888;
 		word-break: break-all;
+		font-size: 14px;
 	}
 
 	.delete {
@@ -140,11 +140,13 @@ export default {
 		position: absolute;
 		bottom: 5px;
 		right: 10px;
+		height: 22px;
+		font-size: 14px;
 		padding: 2px 10px;
 		color: #fff;
 		border: none;
 		outline: none;
-		border-radius: 5px;
+		border-radius: 11px;
 		background-color: #f9d52c;
 	}
 </style>

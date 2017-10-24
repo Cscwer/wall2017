@@ -5,22 +5,25 @@
 		class="hello"> -->
 	<div class="hello">
 
-		<div class="search-container">
+		<div @click.stop="toSearch" class="search-container">
 			<img class="search" src="../assets/home/search.png">
 			<span class="ps-text">搜索</span>
 		</div>
 
-		<div v-swiper:mySwiper="swiperOption">
-			<div class="swiper-wrapper">
-				<div class="swiper-slide" v-for="banner in banners">
-					<img :src="banner">
-				</div>
-			</div>
-			<div class="swiper-pagination swiper-pagination-bullets"></div>
-		</div>
+		<swiper class="gw-swiper" :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
+		<!-- slides -->
+			<swiper-slide class="slider-img" v-for="banner in banners">
+				<img :src="banner">
+			</swiper-slide>
+			<!-- Optional controls -->
+			<!-- <div class="swiper-pagination"  slot="pagination"></div>
+			<div class="swiper-button-prev" slot="button-prev"></div>
+			<div class="swiper-button-next" slot="button-next"></div>
+			<div class="swiper-scrollbar"   slot="scrollbar"></div> -->
+		</swiper>
 
 		<div class="wish-container">
-			<wish v-for="wish in list" :userData=wish.user :userWish=wish.wish></wish>
+			<wish class="wish-on-wall" v-for="wish in list" :userData=wish.user :userWish=wish.wish></wish>
 		</div>
 	</div>
 </template>
@@ -30,21 +33,30 @@ import wait from '@/utils/wait';
 import http from '@/utils/http.client';
 import ui from '@/utils/ui';
 import Wish from './SingleWish';
+import WishSearch from './WishSearch';
+import banner from '../assets/home/slider.jpg';
 
 export default {
 	name: 'hello',
 	components: {
 		'wish': Wish
 	},
+
 	data() {
 		return {
 			toastText: '',
 			toastType: 'top',
-			banners: [ '@/assets/home/slider.jpg', '@/assets/home/slider.jpg', '@/assets/home/slider.jpg' ],
+			banners: [ banner, banner, banner ],
 			swiperOption: {
 				autoplay: 3000,
 				initialSlide: 1,
+				freeMode: false,
+				slidesPerView : 1.25,
 				loop: true,
+				// spaceBetween: 16,
+				effect: 'coverflow',
+				// direction: 'centered-auto',
+				centeredSlides: true,
 				pagination: '.swiper-pagination'
 			},
 			list: [
@@ -112,6 +124,14 @@ export default {
 			});
 			myModal.launch();
 		},
+		toSearch() {
+			let ins = this.$popup.push({
+				type: 'modal',
+				component: WishSearch
+			});
+
+			ins.launch();
+		},
 		sendToast(){
 			this.$popup.toast({
 				msg: this.toastText,
@@ -171,12 +191,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-html, body, #home {
-	height: 100%;
-}
-
 .hello {
-	padding-top: 10px;
+	padding-top: 14px;
 	width: 100%;
 	height: 100%;
 	background-color: rgb(255, 241, 241);
@@ -199,8 +215,17 @@ html, body, #home {
 	vertical-align: middle;
 }
 
+.gw-swiper {
+	margin: 14px 0;
+}
+
 .ps-search {
 	vertical-align: middle;
+}
+
+.wish-on-wall {
+	margin: 14px auto;
+	width: 93%;
 }
 
 .present {
@@ -216,6 +241,14 @@ html, body, #home {
 	color: #FFF;
 	border: none;
 	-webkit-appearance: none;
+}
+
+.slider-img img {
+	display: block;
+	width: 100%;
+	border-radius: 10px;
+
+	margin: 0 auto;
 }
 
 </style>
