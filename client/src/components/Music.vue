@@ -1,5 +1,6 @@
 <template>
 	<div class="music-container">
+		<!-- <p>{{ log }}</p> -->
 		<div class="music-header" v-if="music">
 			<img class="inline-icon" :src="mtag_png" />
 
@@ -23,8 +24,10 @@
 
 
 			<audio id="audio-player" @ended="musicEnded">
-				<source v-if="music" :src="music.mp3">
+				<source :src="music.mp3">
 			</audio>
+
+			
 			
 			<div v-if="danmakuMode" class="danmaku-area" :style="{ height: screenWidth + 'px' }">
 				<transition name="danmaku-init" v-for="(danma, idx) in danmakus" :key="idx">
@@ -58,7 +61,7 @@
 			</span>
 		</div>
 
-		<div class="music-progress-container">
+		<div v-if="music" class="music-progress-container">
 			<div class="progress-track music-progress">	
 				<span class="had-play" :style="{
 					width: (current / music.duration) * 100 + 1 + '%'
@@ -141,7 +144,6 @@ export default {
 			search: '',
 			list: [],
 			music: false, 
-			showMp3: false,
 			mtag_png: mtag_png,
 			onSearching: false,
 			current: 0, 
@@ -152,54 +154,54 @@ export default {
 			colors: colors,
 			eMode: false,
 			screenWidth: window.innerWidth
+			// log: 'asd'
 		}
 	}, 
-	watch: {
-
-	},
 	created(){
+		// window.t = this; 
 		this.danmakuCtrl = danmaku.init(this); 
-
-		// http.musicSearch({
-		// 	keyword: '初音'
-		// }).then(res => {
-		// 	console.log(JSON.stringify(res)); 
-		// }); 
-
-		
-
-		// this.toPlay({
-		// 	hash: '13e76abea5e097e8f10fa321883840b4',
-		// }); 
 		this.initPlay(); 
 	}, 
-	// beforeRouteLeave(to, from, next){
-	// 	if (this.onSearching){
-	// 		// 关闭 	
-
-	// 		next(false);
-	// 	} else {
-	// 		next();
-	// 	}
-	// },
 	destroyed(){
 		console.log('Bye');
 		this.danmakuCtrl.bye(); 
 		clearInterval(timer); 
 	},
 	methods: {
+		reload(){
+			this.initPlay(); 
+		},
 		musicEnded(){
-			this.$router.go(0);
+			// alert('ended'); 
+			this.reload();
 		},
 		sendDanmaku(){
+			// Get Input 
 			let content = this.danmakuText; 
-			this.danmakuText = ''; 
 
+			// If It Is No Gooood... 
+			if (content.length === 0){
+				// 不能发送空消息 
+				// ui.doNotSendNullMsg(); 
+				this.$popup.toast({
+					msg: '请勿发空弹幕喔',
+					position: 'top',
+					cancelable: true,
+					align: true
+				})
+				return; 
+			}
+
+			// Drop Text Input 
+			this.danmakuText = ''; 
 			
+			// Get Selected Color 
 			let selectededColor = this.colors.filter(e => e.selected)[0]; 
 
+			// And Close Edit Mode 
 			this.eMode = false; 
 
+			// And Sent The Msg To Danmaku Channel; 
 			this.danmakuCtrl.shot({
 				content: content,
 				style: {
@@ -210,14 +212,18 @@ export default {
 			return false; 
 		},
 		colorOnSelecting(color){
+			// When Clicking Color Selector 
 			this.colors.forEach(color => color.selected = false); 
 			color.selected = true; 
 		},
 		initPlay(){
+			// Init this.music 
+			this.music = null; 
 			http.get('/api/music').then(res => {
 				let music = res.data; 
 
 				if (res.code === 2003){
+					// No Music, As Default 
 					let cover = 'https://io.chenpt.cc/gw-init/album.jpg'; 
 
 					this.music = {
@@ -239,38 +245,57 @@ export default {
 						}
 					}
 				} else {
+					// Use Http Result 
 					this.music = music; 
 				}
 
-				this.showMp3 =  true; 
+				// Next Step Is To Init Player 
 				this.initPlayer(); 
 			}); 
 		},
 		initPlayer(){
+			// Now::Zero
 			let now = parseInt(Date.now() % 86400000 / 1000); 
 
-			this.$music && this.$music.pause(); 
+			// Not The First Time 
+			if (this.$music) {
+				this.$music.pause();
+			}
 
+			// To Config To Play Music; 
 			vwx.config(() => {
 				let start_at = this.music.start_at;
 				let now_at = now - start_at; 
 				let $music = document.getElementById('audio-player'); 
+
+				// Set Dom 
 				this.$music = $music; 
 
-				// window.$music = $music; 
-
+				// And Log now_at 
 				console.log('now_at', now_at); 
 
+				// AutoPlay 
 				$music.play(); 
-				$music.currentTime = now_at;
 
+				// AutoPlay For iOS 
+				WeixinJSBridge.invoke('getNetworkType', {}, function(e) {
+					$music.play(); 
+				});
+
+				// And Set CurrentTime
+				setTimeout(() => $music.currentTime = now_at, 300); 
+
+				// For Progressing 
 				clearInterval(timer); 
 				timer = setInterval(() => {
 					this.current = $music.currentTime;
 				}, 500); 
 			}, err => {
-				console.log(err)
-			})
+				// Error When Config 
+				console.log('[ Error When Config ]', err);
+			});
+
+
 
 		},
 		newMusic(){
@@ -305,35 +330,21 @@ export default {
 
 					console.log(will_at); 
 
-					// if (now_time > (+will_at) + duration * 1000){
-						// 错过了 重试 
-						// ui.failPostMusic(); 
-						// this.$router.go(0);
-					// } else {
-					
 					ui.successPostMusic(n, will_at); 
 
 					if (now_time > (+will_at)) {
 						console.log('!!'); 
 						setTimeout(() => {
-							this.$router.go(0); 
-						}, 500)
+							this.reload()
+						}, 1000)
 					}
-					// this.$router.go(0);
-					// }
 
 					// this.music   =  music; 
-					// this.showMp3 =  true; 
 				} else {
 					// 点歌人数已满 明天再来 
 					ui.failPostMusic(); 
 				}
 			})
-		},
-		scroll2Top(){
-			setTimeout(() => {
-				document.body.scrollTop = document.documentElement.scrollTop = 0;
-			}, 500)
 		}
 	},
 	computed: {
@@ -367,7 +378,7 @@ export default {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	z-index: 800; 
+	z-index: 200; 
 	background-color: rgba(0, 0, 0, .5);
 }
 
@@ -488,11 +499,13 @@ export default {
 
 .music-header {
 	/*line-height: 48px; */
+	overflow: hidden;
 	position: relative;
 	font-size: 16px;
 	padding: 14px 1em;
 	background-color: rgb(255, 171, 166);
 	color: #FFF; 
+	white-space: nowrap;
 }
 
 .new-music {
@@ -568,7 +581,7 @@ export default {
 	align-items: center;
 	padding: .5em 0 ;
 	margin: 0 auto;
-	width: 90%; 
+	width: 94%; 
 	margin-bottom: 1em; 
 }
 
@@ -600,7 +613,7 @@ export default {
 
 .danma-instance {
 	position: absolute;
-	z-index: 800; 
+	z-index: 199; 
 	word-wrap: break-word;
 	white-space: nowrap;
 	left: 100%; 
@@ -624,6 +637,7 @@ export default {
 	width: 50px; 
 	border-radius: 50px; 
 	font-size: 0; 
+	box-shadow: 0 20px 16px -8px rgba(0, 0, 0, .3);
 }
 
 .name-content {
