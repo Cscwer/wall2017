@@ -41,11 +41,8 @@ vwx.config = cb => {
 		wx.config(info); 
 
 		return new Promise((res, rej) => {
-			wx.ready(function(){
+			wx.ready(cb || function(){
 				URL = config_url; 
-
-				// 在 ready 里面
-				cb && cb(); 
 
 				res(config_url); 
 			}); 
@@ -104,5 +101,7 @@ vwx.create('getAnImg', function(){
 		return Promise.reject(err); 
 	});
 }); 
+
+// window.vwx = vwx; 
 
 export default vwx; 
