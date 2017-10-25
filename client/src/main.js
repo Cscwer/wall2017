@@ -1,17 +1,14 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+require('swiper/dist/css/swiper.css');
+
 import Vue from 'vue'
 import App from './App'
 import infiniteScroll from 'vue-infinite-scroll'
-import router from './router'
 import ws from '@/utils/ws.client';
 import router from './router';
-require('swiper/dist/css/swiper.css');
 import VueAwesomeSwiper from 'vue-awesome-swiper';
 import { swiper, swiperSlide } from 'vue-awesome-swiper';
-// import GwPopup from '@/components/global/GwPopup'
-// import GwAlert from '@/components/global/GwAlert'
-
 import GwPopup from '@/GwPopup';
 
 
