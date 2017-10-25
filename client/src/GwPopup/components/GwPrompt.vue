@@ -48,8 +48,8 @@ export default {
 	position: absolute;
 	width: 80%; 
 	left: 10%; 
-	bottom: 50%; 
-	transform: translateY(20%);
+	bottom: 60%; 
+	transform: translateY(50%);
 	background-color: #FFF; 
 
 	box-sizing: border-box;
@@ -61,6 +61,14 @@ export default {
 	border-radius: 12px;
 
 	box-shadow: 0 8px 60px -6px rgba(0, 0, 0, .4); 
+}
+
+@media screen and (max-width: 370px) and (min-width: 320px) {
+	.gw-prompt {
+		bottom: 55%; 
+		width: 88%!important; 
+		left: 6%!important;
+	}
 }
 
 .gw-cancel-btn {
