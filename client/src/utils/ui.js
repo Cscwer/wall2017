@@ -41,8 +41,63 @@ ui.editUserInfo = function(toEdit){
 	})
 }
 
-import NewMusic from '@/components/NewMusic'; 
+import PostWish from '@/components/PostWish'; 
 
+function checkWish(data){
+	if (data.text === ''){
+		return false; 
+	}
+
+	return true; 
+}
+
+ui.postWish = function(){
+	let wish = {
+		text: '',
+		img: '',
+		wishtype: 0
+	}
+    
+	return new Promise((res, rej) => {
+		let open = GwPopup.getPopup().push({
+			type: 'prompt',
+			component: PostWish, 
+			needBlur: true,
+			confirmText: '发布', 
+			binding: {
+				wish: wish
+			},
+			handle: {
+				confirm(e){
+					let toCheck = copy(wish); 
+
+					console.log('Get Wish', toCheck); 
+
+					if (checkWish(toCheck)){
+						res(toCheck); 
+						this.close(); 
+					} else {
+						GwPopup.getPopup().toast({
+					        msg: '还有信息没填呢 ~ 请检查输入', 
+					        position: 'bottom', 
+					        cancelable: true,
+					        align: true, 
+					        duration: 4000
+					    }); 
+					}
+				},
+				cancel(err){
+					rej(err); 
+					this.close(); 
+				}
+			}
+		}); 
+
+		open.launch(); 
+	});
+}
+
+import NewMusic from '@/components/NewMusic'; 
 ui.newMusic = function(){
 	let music = {
 		content: '',
