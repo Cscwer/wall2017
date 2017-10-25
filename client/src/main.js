@@ -5,6 +5,7 @@ require('swiper/dist/css/swiper.css');
 import Vue from 'vue'
 import App from './App'
 import infiniteScroll from 'vue-infinite-scroll'
+
 import ws from '@/utils/ws.client';
 import router from './router';
 import VueAwesomeSwiper from 'vue-awesome-swiper';
