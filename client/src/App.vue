@@ -2,7 +2,7 @@
 	<div id="app">
 		<div :class="{ isBlur: popup.isBlur }" class="blur-area">
 			<router-view :style="{
-					'margin-bottom': tabHeight
+					'padding-bottom': tabHeight
 				}"
 				class="tab-page">
 			</router-view>
