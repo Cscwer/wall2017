@@ -14,4 +14,14 @@ router.get('/usage', function(req, res){
 	}); 
 }); 
 
+router.get('/clear-cookie', function(req, res){
+	res.cookie('user-token', 'no~~', {
+		expires: new Date()
+	});
+
+	res.json({
+		msg: '好了 清空了'
+	}); 
+})
+
 module.exports = router; 
