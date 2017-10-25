@@ -26,6 +26,9 @@
 </template>
 
 <script>
+import ui from '@/utils/ui'; 
+import http from '@/utils/http.client';
+
 let tabHeight = (window.innerWidth / 4) + 'px'; 
 
 let iconTable = [
@@ -94,6 +97,8 @@ export default {
 	},
 	created(){
 		this.updateIcon(); 
+
+		this.openWish();
 	},
 	watch:{
 		// onChnaging Route Path 
@@ -104,20 +109,36 @@ export default {
 	methods: {
 		routeTo: function(tab, idx){
 			let { path } = tab; 
-			// console.log(tab, idx); 
+			
+			if (path === '/wish') {
+				this.openWish(); 
+				return; 
+			}
 
 			this.$router.push({
 				path: path
 			}); 
-
-			// this.updateIcon(); 
-
-			// tab.active = true; 
-
-			
-
-			// console.log();
 		}, 
+
+		openWish(){
+			ui.postWish().then(wish => {
+				http.post('/api/wish', wish).then(res => {
+					if (res.code === 2000){
+						this.$popup.toast({
+							msg: '许愿成功 ~ 请到主页查看',
+							position: 'bottom'
+						}); 
+					} else {
+						this.$popup.toast({
+							msg: `许愿失败请重试 errcode: ${res.code}`,
+							position: 'bottom',
+							cancelable: true,
+							duration: 99999
+						}); 
+					}
+				}); 
+			}); 
+		},
 
 		updateIcon(){
 			let nowPath = this.$route.path; 
