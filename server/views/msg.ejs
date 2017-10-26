@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>选择 Cookie</title>
+	<link rel="stylesheet" href="/gw-console/main.css">
+</head>
+<body>
+	<h1 class="title"><%= msg %></h1>
+
+	<div class="result">
+		<%= data && JSON.stringify(data) %>
+	</div>
+
+	<div class="btns">
+		<a href="/"><button>
+			回到应用
+		</button></a>
+		<button onclick="history.back()">
+			返回上一页
+		</button>
+	</div>
+</body>
+</html>

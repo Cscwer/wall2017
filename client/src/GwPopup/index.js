@@ -83,18 +83,33 @@ GwPopup.install = function(Vue, option){
 	// Instancing popup; 
 	let popup_vm = new Vue(GwPopupLayout); 
 
-	router.beforeEach((to, from, next) => {
+	let timer = null; 
+	function backer(to, from, next){
 		let lastOne = popup_vm.getLastActive(); 
 
 		if (lastOne){
 			console.log('[ GwPopup onRouting ]', 'Next(false)'); 
 			lastOne.close(); 
-			next(false); 
+			next && next(false); 
 		} else {
 			console.log('[ GwPopup onRouting ]', 'Next()'); 
-			next(); 
+			next && next(); 
 		}
-	})
+	}
+
+	window.addEventListener('popstate', function(e){
+		clearTimeout(timer);
+		timer = setTimeout(function(){
+			backer(e); 
+		})
+	});
+
+	router.beforeEach((to, from, next) => {
+		clearTimeout(timer);
+		timer = setTimeout(function(){
+			backer(to, from, next); 
+		});
+	}); 
 
 	// mount to prototype for all vue instances  
 	Vue.prototype.$popup = popup_vm; 
