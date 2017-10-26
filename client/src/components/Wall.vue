@@ -5,7 +5,7 @@
 		class="hello"> -->
 	<div class="hello">
 
-		<div @click.stop="toSearch" class="search-container">
+		<div @click.stop="toSearch" class="search-container" :style="{ display: scrollDown ? block : none }">
 			<img class="search" src="../assets/home/search.png">
 			<span class="ps-text">搜索</span>
 		</div>
@@ -15,11 +15,6 @@
 			<swiper-slide class="slider-img" v-for="banner in banners">
 				<img :src="banner">
 			</swiper-slide>
-			<!-- Optional controls -->
-			<!-- <div class="swiper-pagination"  slot="pagination"></div>
-			<div class="swiper-button-prev" slot="button-prev"></div>
-			<div class="swiper-button-next" slot="button-next"></div>
-			<div class="swiper-scrollbar"   slot="scrollbar"></div> -->
 		</swiper>
 
 		<div class="wish-container">
