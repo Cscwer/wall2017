@@ -187,15 +187,16 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .hello {
-	padding-top: 14px;
 	width: 100%;
 	height: 100%;
+	padding-top: 1px;
 	background-color: rgb(255, 241, 241);
 }
 
 .search-container {
 	width: 100%;
 	padding: 8px 0;
+	margin-top: 14px;
 	border: 0;
 	color: #f6b4c5;
 	font-size: 16px;
@@ -242,7 +243,6 @@ export default {
 	display: block;
 	width: 100%;
 	border-radius: 10px;
-
 	margin: 0 auto;
 }
 
