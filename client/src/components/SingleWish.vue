@@ -4,6 +4,7 @@
 	<div class="wish-container" v-if="me.sex == 2">
 		<div class="user-info">
 			<!-- <img :src="user.headimgurl" class="avatar" /> -->
+			<!-- <div class="avatar" ：style="{ backgroundImage: user.avatar }"></div> -->
 			<div class="avatar"></div>
 			<span class="user-name">{{user.name}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
@@ -16,14 +17,15 @@
 	<div class="wish-container" v-else="me.sex == 1">
 		<div class="user-info">
 			<!-- <img :src="user.headimgurl" class="avatar" /> -->
+			<!-- <div class="avatar" ：style="{ backgroundImage: user.avatar }"></div> -->
 			<div class="avatar"></div>
 			<span class="user-name">{{user.name}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
 		</div>
 		<div class="wish">
 			{{wish}}
+			<button class="pickWish" @click="present('confirm')">领取愿望</button>
 		</div>
-		<button class="pickWish" @click="present('confirm')">领取愿望</button>
 	</div>
 </template>
 
@@ -122,24 +124,14 @@ export default {
 	}
 
 	.wish {
-		/*float: left;*/
 		color: #888;
-		word-break: break-all;
 		font-size: 14px;
-	}
-
-	.delete {
-		float: right;
-		margin-top: .1rem;
-		height: .8rem;
-		width: .8rem;
-		vertical-align: middle;
+		line-height: 22px;
+		word-break: break-all;
 	}
 
 	.pickWish {
-		position: absolute;
-		bottom: 5px;
-		right: 10px;
+		float: right;
 		height: 22px;
 		font-size: 14px;
 		padding: 2px 10px;
@@ -148,5 +140,22 @@ export default {
 		outline: none;
 		border-radius: 11px;
 		background-color: #f9d52c;
+	}
+
+	.wish:after {
+		visibility: hidden;
+		display: block;
+		font-size: 0;
+		content: ".";
+		clear: both;
+		height: 0;
+	}
+
+	.delete {
+		float: right;
+		margin-top: .1rem;
+		height: .8rem;
+		width: .8rem;
+		vertical-align: middle;
 	}
 </style>

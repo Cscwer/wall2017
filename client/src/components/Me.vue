@@ -8,18 +8,20 @@
 			<div class="userinfo-wrap">
 				<img :src="user.headimgurl" class="avatar" />
 				<div class="name-wrap">
-					<img src="../assets/me/male.png" alt="" class="sex-img">
-					<p class="user-nickname">{{user.nickname}}ChenPt</p>
+					<img src="../assets/me/female.png" alt="" class="sex-img" v-if="isFemale">
+					<img src="../assets/me/male.png" alt="" class="sex-img" v-else>
+					<p class="user-nickname">{{user.nickname}}</p>
 					<img src="../assets/me/edit.png" alt="" class="edit-img">
 				</div>
 				<p class="user-from">{{user.from}}大学城校区</p>
 			</div>
 			<ul class="metab-wrap">
-				<li class="me-tab">待领取</li>
-				<li class="me-tab">实现中</li>
-				<li class="me-tab">已实现</li>
+				<li class="me-tab" data-id="receive" v-if="isFemale">待领取</li>
+				<li class="me-tab  active" data-id="achieving">实现中</li>
+				<li class="me-tab" data-id="achieved">已实现</a></li>
 			</ul>
 		</div>
+		<swiper :options="swiperOption" class="swiper-box"></swiper>
 
 	</div>
 </template>
@@ -36,12 +38,30 @@ export default {
 		return {
 			localIds: [], 
 			show: '',
-			user: {}
+			user: {},
+			sex: 'female',
+			swiperOption: {
+				// autoplay: 300,
+				initialSlide: 1,
+				paginationClickable: true,
+				freeMode: false,
+				slidesPerView : 1.25,
+				loop: true,
+				centeredSlides: true,
+				pagination: '.swiper-pagination',
+				scrollbar:'.swiper-scrollbar',
+				scrollbarHide:false,
+			}
 		}
 	}, 
+	computed: {
+		isFemale: function() {
+			return this.user.sex === 0
+		}
+	},
 	created(){
-		console.log("page created");
 		this.init();
+		console.log("page created");
 		vwx.getAnImg().then(res => {
 			alert('start'); 
 			let img = res.data; 
@@ -51,16 +71,16 @@ export default {
 			this.show = img.url; 
 		});
 	},
-	// methods: {
-	// 	init: async function(){
-	// 		let res = await http.get('./api/user/me');
-	// 		console.log(res);
-	// 		// console.log("init ok");
-	// 	},
-	// 	getUserInfo: function(){
-	// 		return http.get('./api/user/me')
-	// 	}
-	// }
+	methods: {
+		init: async function(){
+			let res = await http.get('./api/user/me');
+			this.user = res.data;
+			console.log("init ok");
+		},
+		getUserInfo: function(){
+			return http.get('./api/user/me')
+		}
+	}
 }
 </script>
 
@@ -71,15 +91,28 @@ export default {
 		min-height: 250px;
 		background-image: url("../assets/me/bg-img.png");
 		background-color: rgba(240,240,240,.5);
+		box-shadow: 0px 10px 10px 0px rgba(254, 162, 140, .6);
 	}
 
 	.metab-wrap {
+		width: 100%;
+		display: flex;
+		justify-content: space-around;
 		position: absolute;
 		bottom: 0;
 	}
 
 	.me-tab {
 		display: inline-block;
+		color: #fff;
+		text-align: center;
+		width: 90px;
+		padding-bottom: 15px;
+		font-size: 16px;
+	}
+
+	.active {
+		border-bottom: 4px solid #fff;
 	}
 
 	.msg-icon-wrap {
@@ -130,6 +163,11 @@ export default {
 	.user-from {
 		padding-top: 2px;
 		color: #fff;
+	}
+
+	.swiper-box {
+		width: 100%;
+		height: 100%;
 	}
 
 	
