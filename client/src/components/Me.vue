@@ -17,7 +17,7 @@
 			</div>
 			<ul class="metab-wrap">
 				<li class="me-tab" data-id="receive" v-if="isFemale">待领取</li>
-				<li class="me-tab" data-id="achieving">实现中</li>
+				<li class="me-tab  active" data-id="achieving">实现中</li>
 				<li class="me-tab" data-id="achieved">已实现</a></li>
 			</ul>
 		</div>
@@ -91,15 +91,28 @@ export default {
 		min-height: 250px;
 		background-image: url("../assets/me/bg-img.png");
 		background-color: rgba(240,240,240,.5);
+		box-shadow: 0px 10px 10px 0px rgba(254, 162, 140, .6);
 	}
 
 	.metab-wrap {
+		width: 100%;
+		display: flex;
+		justify-content: space-around;
 		position: absolute;
 		bottom: 0;
 	}
 
 	.me-tab {
 		display: inline-block;
+		color: #fff;
+		text-align: center;
+		width: 90px;
+		padding-bottom: 15px;
+		font-size: 16px;
+	}
+
+	.active {
+		border-bottom: 4px solid #fff;
 	}
 
 	.msg-icon-wrap {
