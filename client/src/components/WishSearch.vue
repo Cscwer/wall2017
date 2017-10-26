@@ -128,13 +128,15 @@ html, body {
 .select-type-container {
 	padding-top: 15px;
 	box-sizing: border-box;
-	background-color: #efefef;
-	font-size: 0;
+	background-color: #f9f9f9;
+	font-size: 0 !important;
 }
 
 .certain {
 	margin: 0 auto;
-	width: 85%;
+	/*width: 85%;*/
+	padding: 0 5%;
+	font-size: 0 !important;
 }
 
 .select-type-container:first-of-type {
@@ -150,6 +152,7 @@ html, body {
 	line-height: 30px;
 	color: #fff;
 	text-align: center;
+	box-sizing: border-box;
 	border-radius: 5px;
 	background-color: #ffd0d0;
 }
@@ -168,6 +171,7 @@ html, body {
 }
 
 .radio {
+	display: none;
 	width: 0;
 	height: 0;
 	opacity: 0;
