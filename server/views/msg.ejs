@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>选择 Cookie</title>
+</head>
+<style>
+	* {
+		margin: 0;
+		padding: 0; 
+	}
+
+	.title {
+		margin-bottom: 1em; 
+	}
+
+	.users {
+		
+	}
+
+	body {
+		margin: 20px 10px; 
+		color: #555; 
+		font-family: "menlo", "consolas"; 
+	}
+
+	.user {
+		display: block;
+		margin-bottom: 1.5em; 
+		font-size: 20px; 
+		text-decoration: none; 
+		line-height: 1.5;
+		color: #555; 
+	}
+
+	.sex {
+		color: #BBB; 
+	}
+
+	._id {
+		color: #BBB; 
+		font-size: 14px;
+	}
+
+	.nickname {
+		text-decoration: underline;
+		padding: 0 .2em; 
+	}
+</style>
+<body>
+	<h1 class="title"><%= msg %></h1>
+
+	<div class="result">
+		<%= data && JSON.stringify(data) %>
+	</div>
+</body>
+</html>
