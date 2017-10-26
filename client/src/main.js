@@ -29,6 +29,14 @@ Vue.use(GwPopup, {
 	router
 });
 
+history.pushState({
+	name: '外层'
+}, "1", "11");
+// history.pushState({
+// 	name: '中层'
+// }, "2", "22");
+
+
 
 /* eslint-disable no-new */
 new Vue({
@@ -37,3 +45,5 @@ new Vue({
 	template: '<App/>',
 	components: { App, swiper, swiperSlide }
 })
+
+
