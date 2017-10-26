@@ -33,6 +33,7 @@ GwPopup.install = function(Vue, option){
 	let router = option.router;
 	popupInit(Vue, option); 
 
+
 	// Create; 
 	let $popup = dom_util.createRoot(); 
 
@@ -79,6 +80,8 @@ GwPopup.install = function(Vue, option){
 			}, opt.duration); 
 		}); 
 	}
+
+
 
 	// Instancing popup; 
 	let popup_vm = new Vue(GwPopupLayout); 

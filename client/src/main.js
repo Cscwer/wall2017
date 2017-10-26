@@ -13,14 +13,19 @@ import { swiper, swiperSlide } from 'vue-awesome-swiper';
 import GwPopup from '@/GwPopup';
 
 
+
 Vue.config.productionTip = false
 Vue.use(infiniteScroll);
 Vue.use(VueAwesomeSwiper);
+
+
 // Vue.component('gw-popup', GwPopup);
 
 
 import iOSCheckbox from '@/components/ios-view/checkbox';
 Vue.component('ios-checkbox', iOSCheckbox);
+
+
 
 Vue.use(GwPopup, {
 	getApp: function(){
@@ -29,14 +34,14 @@ Vue.use(GwPopup, {
 	router
 });
 
+
+
 history.pushState({
 	name: '外层'
-}, "1", "11");
+}, '', '');
 // history.pushState({
 // 	name: '中层'
 // }, "2", "22");
-
-
 
 /* eslint-disable no-new */
 new Vue({

@@ -5,9 +5,7 @@ util.createRoot = function(){
 	let body = document.getElementsByTagName('body')[0]; 
 	let $popup = document.createElement('div');
 	
-	// $popup.setAttribute('class', 'gw-popup'); 
-
-	body.prepend($popup); 
+	body.appendChild($popup);
 
 	return $popup; 
 }
