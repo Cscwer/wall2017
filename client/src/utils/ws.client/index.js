@@ -2,7 +2,7 @@
 import cookie from '../cookie'; 
 
 const USER_TOKEN = cookie.get('user-token')
-    , socket = io('http://192.168.199.242:6677/?user_token=' + USER_TOKEN)
+    , socket = io('http://gw.chenpt.cc:6677/?user_token=' + USER_TOKEN)
     , ws = {
 		socket: socket, 
 		user: null
