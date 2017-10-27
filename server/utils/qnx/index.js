@@ -6,7 +6,7 @@ const qiniu = require('qiniu')
     , config = new qiniu.conf.Config()
     , wait = require('../wait')
     , bucketManager = new qiniu.rs.BucketManager(mac, config)
-    , QINIU_DOMAIN = 'http://source.ijarvis.cn'
+    , QINIU_DOMAIN = 'https://io.chenpt.cc'
     , opt = {
 		scope: 'gw-wall',
 		bucket: 'gw-wall', 
