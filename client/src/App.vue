@@ -97,8 +97,6 @@ export default {
 	},
 	created(){
 		this.updateIcon(); 
-
-		this.openWish();
 	},
 	watch:{
 		// onChnaging Route Path 
