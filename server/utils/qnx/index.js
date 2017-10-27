@@ -8,8 +8,8 @@ const qiniu = require('qiniu')
     , bucketManager = new qiniu.rs.BucketManager(mac, config)
     , QINIU_DOMAIN = 'http://source.ijarvis.cn'
     , opt = {
-		scope: 'h5game',
-		bucket: 'h5game', 
+		scope: 'gw-wall',
+		bucket: 'gw-wall', 
 		expires: 1200, 
 	}
 
