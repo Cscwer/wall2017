@@ -1,8 +1,15 @@
 // ws.client.js
 import cookie from '../cookie'; 
 
+let wsurl = location.origin;
+
+if (wsurl.indexOf('https') === -1){
+	// http 
+	wsurl = 'http://gw.chenpt.cc:6677'; 
+}
+
 const USER_TOKEN = cookie.get('user-token')
-    , socket = io('http://gw.chenpt.cc:6677/?user_token=' + USER_TOKEN)
+    , socket = io(wsurl + '/?user_token=' + USER_TOKEN)
     , ws = {
 		socket: socket, 
 		user: null
