@@ -10,7 +10,13 @@ function findInDB(_id){
 				obj && R.setObj(_id, obj); 
 
 				return obj; 
-			}); 
+			})
+}
+
+function removeFromDB(_id){
+	return wishModel.remove({
+		_id: _id
+	}); 
 }
 
 one.set = function(_id, obj){
@@ -28,7 +34,17 @@ one.find = function(_id){
 		} else {
 			return findInDB(_id); 
 		}
+	}).catch(err => {
+		console.log('[ ERROR ]', err); 
 	})
+}
+
+one.remove = function(_id){
+	R.delObj(_id).catch(err => {
+		console.log('err', err)
+	}); 
+
+	return removeFromDB(_id); 
 }
 
 // wishModel.findOne().then(wish => {

@@ -97,6 +97,25 @@ router.post('/', function(req, res){
 }); 
 
 /***
+ * 删除愿望 
+ */
+router.post('/delete', function(req, res){
+	let user = req.user; 
+	let _id = req.body._id; 
+
+	one.find(_id).then(wish => {
+		if (!wish) return rps.send4000(res, '此 id 不存在'); 
+		if (wish.she._id !== user._id) return rps.send4000(res, '不是你的愿望'); 
+
+		return one.remove(_id).then(ok => {
+			rps.send2000(res, ok); 
+		}) 
+	}).catch(err => {
+		rps.send5000(res, err); 
+	})
+})
+
+/***
  * 领取
  */
 router.post('/pull', function(req, res){
@@ -147,7 +166,9 @@ router.post('/end', function(req, res){
 	.populate('he')
 	.then(wish => {
 		if (wish){
-			if (wish.she.toString() === user._id){
+			console.log(wish, user); 
+
+			if (wish.she._id == user._id){
 				if (wish.status === 1){
 					wish.status = 2; 
 

@@ -55,7 +55,7 @@ R.setObj = (key, obj) => {
 
 	let obj_json = JSON.stringify(obj); 
 
-	return R.set(key, obj_json, 200); 
+	return R.set(key, obj_json); 
 }
 
 R.delObj = key => {
