@@ -5,6 +5,7 @@ const express = require('express')
     , rps = require('../../utils/rps')
     , R = require('../../utils/redis')
     , page = require('./page')
+    , one = require('./one')
     // 常数 
     , WISH_LIST_NS = 'WISH-LIST'
     , N = 10
@@ -38,10 +39,7 @@ router.get('/', function(req, res){
 router.get('/detail', function(req, res){
 	let _id = req.query._id; 
 
-	wishModel.findOne({
-		_id: _id
-	}).populate('she')
-	  .populate('he').then(doc => {
+	one.find(_id).then(doc => {
 		rps.send2000(res, doc); 
 	}).catch(err => {
 		console.log(err); 
@@ -51,6 +49,10 @@ router.get('/detail', function(req, res){
 			rps.send5005(res, {}, err); 
 		}
 	});
+	// wishModel.findOne({
+	// 	_id: _id
+	// }).populate('she')
+	//   .populate('he')
 }); 
 
 /***
@@ -105,7 +107,9 @@ router.post('/pull', function(req, res){
 
 	wishModel.findOne({
 		_id: _id
-	}).then(wish => {
+	})
+	.populate('she')
+	.then(wish => {
 		if (wish){
 			if (wish.status === 0){
 				wish.status = 1; 
@@ -113,6 +117,10 @@ router.post('/pull', function(req, res){
 
 				return wish.save().then(ok => {
 					rps.send2000(res, ok); 
+
+					// User 
+					wish.he = user; 
+					return one.set(_id, wish);
 				}); 
 			} else {
 				rps.send4108(res, wish); 
@@ -134,7 +142,10 @@ router.post('/end', function(req, res){
 
 	wishModel.findOne({
 		_id: _id
-	}).then(wish => {
+	})
+	.populate('she')
+	.populate('he')
+	.then(wish => {
 		if (wish){
 			if (wish.she.toString() === user._id){
 				if (wish.status === 1){
@@ -143,6 +154,8 @@ router.post('/end', function(req, res){
 					return wish.save().then(ok => {
 						// 2000: ok 
 						rps.send2000(res, wish); 
+
+						return one.set(_id, wish);
 					})
 				} else {
 					// 状态不对 必须要 2 
