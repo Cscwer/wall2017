@@ -5,56 +5,21 @@ const express = require('express')
     , rps = require('../../utils/rps')
     , R = require('../../utils/redis')
     , page = require('./page')
+    // 常数 
     , WISH_LIST_NS = 'WISH-LIST'
     , N = 10
+    , GIRL_FLAG = 2
+    , BOY_FLAG = 1
+    , NOT_FLAG = 0
 
-// Init Queue 
-wishModel.find({
-	status: 0
-}).populate('she').sort({
-	created_at: -1
-}).limit(N * 100).then(list => {
-	return R.initQueue(WISH_LIST_NS, list); 
-})
-
-function find(p){
-
-	return R.page(WISH_LIST_NS, p, N).then(arr => {
-		if (arr.length === 0){
-			return wishModel
-				.find({
-					status: 0
-				})
-				.populate('she')
-				.sort({
-					created_at: -1
-				})
-				.skip(p * N)
-				.limit(N)
-		} else {
-			return arr; 
-		}
-	})
-}
-
-
+/***
+ * 首页 
+ * @param p
+ */
 router.get('/', function(req, res){
 	let p = parseInt(req.query.p) || 0
-	
-	// 数据库查询 
-	// wishModel
-	// 	.find({
-	// 		status: 0
-	// 	})
-	// 	.populate('she')
-	// 	.sort({
-	// 		created_at: -1
-	// 	})
-	// 	.skip(p * N)
-	// 	.limit(N)
 
-	// find 
-	find(p).then(docs => {
+	page.find(p).then(docs => {
 		if (docs.length !== N){
 			rps.send2001(res, docs); 
 		} else {
@@ -66,12 +31,17 @@ router.get('/', function(req, res){
 	});
 }); 
 
+/***
+ * 愿望详情
+ * @param _id
+ */
 router.get('/detail', function(req, res){
 	let _id = req.query._id; 
 
 	wishModel.findOne({
 		_id: _id
-	}).populate('she').thne(doc => {
+	}).populate('she')
+	  .populate('he').then(doc => {
 		rps.send2000(res, doc); 
 	}).catch(err => {
 		console.log(err); 
@@ -83,27 +53,36 @@ router.get('/detail', function(req, res){
 	});
 }); 
 
-
-
+/***
+ * 未设置性别的会被弹出 
+ */
 router.all('*', function(req, res, next){
-	if (req.user.sex === 0){
+	if (req.user.sex === NOT_FLAG){
 		return rps.send4103(res, {}); 
 	} else {
 		next(); 
 	}
 }); 
 
+/***
+ * 创建愿望
+ */
 router.post('/', function(req, res){
 	let user = req.user; 
 
 	// 取得 _id
 	req.body.she = user._id; 
 
-	if (user.sex !== 2){
+	if (user.sex !== GIRL_FLAG){
 		// 不是女性。。。 
 		rps.send4101(res, {}); 
 	} else {
-		wishModel.saveAndCache(req.body).then(wish => {
+		req.body.he && delete req.body.he; 
+		req.body.status && delete req.body.status; 
+
+		let data = new wishModel(req.body);
+
+		data.save().then(wish => {
 			rps.send2000(res, wish);
 		}).catch(err => {
 			if (err.name === 'ValidationError') {
@@ -114,5 +93,70 @@ router.post('/', function(req, res){
 		}); 
 	}
 }); 
+
+/***
+ * 领取
+ */
+router.post('/pull', function(req, res){
+	let user = req.user; 
+	let _id = req.body._id; 
+
+	if (user.sex !== BOY_FLAG) return rps.send4106(res); 
+
+	wishModel.findOne({
+		_id: _id
+	}).then(wish => {
+		if (wish){
+			if (wish.status === 0){
+				wish.status = 1; 
+				wish.he = req.user._id; 
+
+				return wish.save().then(ok => {
+					rps.send2000(res, ok); 
+				}); 
+			} else {
+				rps.send4108(res, wish); 
+			}
+		} else {
+			rps.send4000(res, '此 id 对应愿望不存在'); 
+		}
+	})
+})
+
+/***
+ * 确认完成
+ */
+router.post('/end', function(req, res){
+	let user = req.user; 
+	let _id = req.body._id; 
+
+	if (user.sex !== GIRL_FLAG) return rps.send4107(res); 
+
+	wishModel.findOne({
+		_id: _id
+	}).then(wish => {
+		if (wish){
+			if (wish.she.toString() === user._id){
+				if (wish.status === 1){
+					wish.status = 2; 
+
+					return wish.save().then(ok => {
+						// 2000: ok 
+						rps.send2000(res, wish); 
+					})
+				} else {
+					// 状态不对 必须要 2 
+					rps.send4105(res, wish); 
+				}
+			} else {
+				// 此愿望不是 user 的 
+				rps.send4107(res);
+			}
+		} else {
+			// 不存在 
+			rps.send4000(res, '此 id 对应愿望不存在'); 
+		}
+	})
+})
 
 module.exports = router;
