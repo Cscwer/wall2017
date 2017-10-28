@@ -113,7 +113,7 @@ export default {
 		padding-left: 10px;
 		padding-right: 10px;
 		text-align: center;
-		width: 1rem;
+		min-width: 45px;
 		height: 15px;
 		color: #fff;
 		font-size: 12px;
