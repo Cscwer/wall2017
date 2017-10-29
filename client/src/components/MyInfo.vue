@@ -15,10 +15,10 @@
 				</span>
 				<select class="gw-input-area" id="my-info-area" v-model="toEdit.area">
 					<option disabled value="">请选择</option>
-					<option>大学城</option>
-					<option>东风路</option>
-					<option>龙洞</option>
-					<option>番禺</option>
+					<option :value="0">大学城</option>
+					<option :value="1">东风路</option>
+					<option :value="2">龙洞</option>
+					<option :value="3">番禺</option>
 				</select>
 			</div>
 		
