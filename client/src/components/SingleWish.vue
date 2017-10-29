@@ -5,9 +5,9 @@
 		<div class="user-info">
 			<!-- <img :src="user.headimgurl" class="avatar" /> -->
 			<div class="avatar"></div>
-			<span class="user-name">{{user.name}}</span>
+			<span class="user-name">{{user.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
-			<img v-if="me.id === user.name" src="../assets/home/delete.png" class="delete" @click="present('alert')">
+			<img v-if="me.id === user.nickname" src="../assets/home/delete.png" class="delete" @click="present('alert')">
 		</div>
 		<div class="wish">
 			{{wish}}
@@ -17,7 +17,7 @@
 		<div class="user-info">
 			<!-- <img :src="user.headimgurl" class="avatar" /> -->
 			<div class="avatar"></div>
-			<span class="user-name">{{user.name}}</span>
+			<span class="user-name">{{user.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
 		</div>
 		<div class="wish">
