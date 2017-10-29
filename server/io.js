@@ -38,6 +38,27 @@ function de(){
 	return Promise.resolve(__users[i]); 
 }
 
+IO.serverPush = function(user, msg){
+	// let { user } = socket;
+	let io = IO.io; 
+	let { _id } = user; 
+	let socket = io.socketTable[_id]; 
+
+	// msg.type = 'serverPush'; 
+	console.log(
+		`[ ServerPush ] To ${user.nickname}`
+	); 
+	console.log(msg); 
+
+	if (socket) {
+		console.log(`${user.nickname} Is Online, Data Pushed To Client`);
+		socket.emit('serverPush', msg); 
+	} else {
+		// 不在线 需要缓存聊天信息 
+		console.log(`${user._id} Is Offline, Cacheed It`);
+		R.enQueue('UNREAD-MSG-' + user._id, msg); 
+	}
+}
 
 IO.init = function(io){
 	io.socketTable = socketTable; 
