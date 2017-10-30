@@ -1,5 +1,6 @@
 // ws.client.js
 import cookie from '../cookie'; 
+import chat from '../chat'; 
 
 let wsurl = location.origin;
 
@@ -21,18 +22,18 @@ ws.ready = new Promise((res, rej) => {
 		console.log(info); 
 		ws.user = user;
 
+		// On Msg; 
+		unreads.forEach(chat.onMsg); 
+
 		res(info);		
 	});
 })
 
 
-
-socket.on('revMsg', function(msg){
-	console.log('revMsg'); 
-	console.log(msg); 
-});
+// On Msg; 
+socket.on('revMsg', chat.onMsg);
 
 
-window.ws = ws; 
+// window.ws = ws; 
 
 export default ws; 
