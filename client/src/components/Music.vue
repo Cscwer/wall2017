@@ -219,39 +219,39 @@ export default {
 		initPlay(){
 			// Init this.music 
 			this.music = null; 
-			http.get('/api/music').then(res => {
-				let music = res.data; 
+			http.get('/api/music').then(this.onMusicData); 
+		},
+		onMusicData(res){
+			let music = res.data;
+			if (res.code === 2003){
+				// No Music, As Default 
+				let cover = 'https://io.chenpt.cc/gw-init/album.jpg'; 
 
-				if (res.code === 2003){
-					// No Music, As Default 
-					let cover = 'https://io.chenpt.cc/gw-init/album.jpg'; 
-
-					this.music = {
-						cover: cover, 
-						mp3: 'https://io.chenpt.cc/gw-init/%E3%83%98%E3%82%AF%E3%81%A8%E3%83%91%E3%82%B9%E3%82%AB%E3%83%AB%20-%20fish%20in%20the%20pool%20%E3%83%BB%E8%8A%B1%E5%B1%8B%E6%95%B7.mp3', 
-						duration: 276,
-						n: 0,
-						start_at: parseInt(Date.now() % 86400000 / 1000),
-						kugou: {
-							album_img: cover, 
-							singerName: '', 
-							songName: '',
-							fileName: 'fish in the pool ・花屋敷'
-						},
-						content: '女生节快乐', 
-						who: {
-							headimgurl: cover,
-							nickname: 'Admin'
-						}
+				this.music = {
+					cover: cover, 
+					mp3: 'https://io.chenpt.cc/gw-init/%E3%83%98%E3%82%AF%E3%81%A8%E3%83%91%E3%82%B9%E3%82%AB%E3%83%AB%20-%20fish%20in%20the%20pool%20%E3%83%BB%E8%8A%B1%E5%B1%8B%E6%95%B7.mp3', 
+					duration: 276,
+					n: 0,
+					start_at: parseInt(Date.now() % 86400000 / 1000),
+					kugou: {
+						album_img: cover, 
+						singerName: '', 
+						songName: '',
+						fileName: 'fish in the pool ・花屋敷'
+					},
+					content: '女生节快乐', 
+					who: {
+						headimgurl: cover,
+						nickname: 'Admin'
 					}
-				} else {
-					// Use Http Result 
-					this.music = music; 
 				}
+			} else {
+				// Use Http Result 
+				this.music = music; 
+			}
 
-				// Next Step Is To Init Player 
-				this.initPlayer(); 
-			}); 
+			// Next Step Is To Init Player 
+			this.initPlayer(); 
 		},
 		initPlayer(){
 			// Now::Zero
@@ -259,9 +259,11 @@ export default {
 
 			// Not The First Time 
 			if (this.$music) {
+				console.log('!!! Stop')
 				this.$music.pause();
 			}
 
+	
 			// To Config To Play Music; 
 			vwx.config(() => {
 				let start_at = this.music.start_at;

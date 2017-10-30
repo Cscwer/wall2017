@@ -3,6 +3,7 @@ const express = require('express')
     , router = express.Router()
     , rps = require('../utils/rps')
     , M = require('../utils/music-queue')
+    , IO = require('../io')
 
 router.get('/', function(req, res){
 	// let ts = parseInt(req.query.ts); 
@@ -23,6 +24,14 @@ router.post('/', function(req, res){
 	M.enQueue(hash, content, who).then(musicer => {
 		if (musicer){
 			rps.send2000(res, musicer); 
+
+			if (musicer.n === 1){
+				IO.io.to('danmaku-channel').emit('musicReload', {
+					type: 'music-reload',
+					data: musicer,
+					msg: '刷新'
+				}); 
+			}
 		} else {
 			rps.send4102(res, null); 
 		}

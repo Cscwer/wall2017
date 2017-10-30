@@ -42,6 +42,25 @@ ws.socket.on('shot', function(e){
 	}
 })
 
+ws.socket.on('musicReload', function(e){
+	let musicer = e.data; 
+
+	console.log('[ On Music Reload ]', musicer); 
+	
+	
+	// vm && vm.onMusicData({
+	// 	code: 2000, 
+	// 	data: musicer, 
+	// })
+
+	if (vm){
+		vm.music = null; 
+		setTimeout(() => {
+			vm.music = musicer; 
+			vm.initPlayer(); 
+		}, 500); 
+	}
+})
 
 
 let n = 0; 

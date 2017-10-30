@@ -107,12 +107,16 @@ GwPopup.install = function(Vue, option){
 		})
 	});
 
-	router.beforeEach((to, from, next) => {
-		clearTimeout(timer);
-		timer = setTimeout(function(){
-			backer(to, from, next); 
-		});
-	}); 
+	setTimeout(() => {
+		// 解决白屏 
+		// 不可以过早监听事件 这样会干扰 redirect 的正常处理 
+		router.beforeEach((to, from, next) => {
+			clearTimeout(timer);
+			timer = setTimeout(function(){
+				backer(to, from, next); 
+			});
+		}); 
+	}, 88); 
 
 	// mount to prototype for all vue instances  
 	Vue.prototype.$popup = popup_vm; 

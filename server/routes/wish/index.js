@@ -12,6 +12,7 @@ const express = require('express')
     , GIRL_FLAG = 2
     , BOY_FLAG = 1
     , NOT_FLAG = 0
+    , IO = require('../../io')
 
 /***
  * 首页 
@@ -33,6 +34,36 @@ router.get('/', function(req, res){
 }); 
 
 /***
+ * 对应用户的愿望
+ * @param p
+ * @param status
+ */
+router.get('/user', function(req, res){
+	let p = parseInt(req.query.p) || 0; 
+	let status = parseInt(req.query.status) || 0; 
+	let she = req.query.she || req.user._id; 
+
+	wishModel.find({
+		she: she,
+		status: status
+	}).populate('she')
+	.sort({
+		created_at: -1
+	})
+	.skip(p * N)
+	.limit(N).then(docs => {
+		if (docs.length !== N){
+			rps.send2001(res, docs); 
+		} else {
+			rps.send2000(res, docs); 
+		}
+	}).catch(err => {
+		console.log(err); 
+		rps.send5005(res, {}, err);
+	});
+});
+
+/***
  * 愿望详情
  * @param _id
  */
@@ -49,10 +80,6 @@ router.get('/detail', function(req, res){
 			rps.send5005(res, {}, err); 
 		}
 	});
-	// wishModel.findOne({
-	// 	_id: _id
-	// }).populate('she')
-	//   .populate('he')
 }); 
 
 /***
@@ -119,6 +146,7 @@ router.post('/delete', function(req, res){
  * 领取
  */
 router.post('/pull', function(req, res){
+	let { io } = IO;
 	let user = req.user; 
 	let _id = req.body._id; 
 
@@ -139,6 +167,15 @@ router.post('/pull', function(req, res){
 
 					// User 
 					wish.he = user; 
+
+					// Server Push 
+					IO.serverPush(wish.she, {
+						type: 'wish-pull', 
+						data: wish,
+						msg: `你的愿望被 ${ user.nickname } 领走了 ~ ` ,
+						created_at: Date.now()
+					}); 
+
 					return one.set(_id, wish);
 				}); 
 			} else {
@@ -175,6 +212,14 @@ router.post('/end', function(req, res){
 					return wish.save().then(ok => {
 						// 2000: ok 
 						rps.send2000(res, wish); 
+
+						// 发送 Socket 
+						IO.serverPush(wish.he, {
+							type: 'wish-end', 
+							data: wish,
+							msg: '你成功实现了她的愿望 ~ ',
+							created_at: Date.now()
+						}); 
 
 						return one.set(_id, wish);
 					})
