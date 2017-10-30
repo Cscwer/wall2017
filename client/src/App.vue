@@ -28,6 +28,7 @@
 <script>
 import ui from '@/utils/ui'; 
 import http from '@/utils/http.client';
+import chat from '@/utils/chat'; 
 
 let tabHeight = (window.innerWidth / 4) + 'px'; 
 
@@ -92,11 +93,15 @@ export default {
 			popup: {
 				isBlur: false	
 			},
-			pageWidth: window.innerWidth
+			pageWidth: window.innerWidth,
+			status: null
 		}
 	},
 	created(){
 		this.updateIcon(); 
+
+		// Object Init 
+		this.status = chat.appStatus.toObject(); 
 	},
 	watch:{
 		// onChnaging Route Path 
