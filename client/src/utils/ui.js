@@ -1,11 +1,11 @@
 // ui.js
-import GwPopup from '@/GwPopup'; 
-import MyInfo from '@/components/MyInfo'; 
+import GwPopup from '@/GwPopup';
+import MyInfo from '@/components/MyInfo';
 
-let ui = {}; 
+let ui = {};
 
 function copy(o){
-	return JSON.parse(JSON.stringify(o)); 
+	return JSON.parse(JSON.stringify(o));
 }
 
 ui.editUserInfo = function(toEdit){
@@ -18,37 +18,37 @@ ui.editUserInfo = function(toEdit){
 
 	return new Promise((res, rej) => {
 		let instance = GwPopup.getPopup().push({
-			type: 'prompt', 
-			confirmText: '保存', 
+			type: 'prompt',
+			confirmText: '保存',
 			component: MyInfo,
-			needBlur: true, 
+			needBlur: true,
 			binding: {
 				toEdit: toEdit
 			},
 			handle: {
 				confirm(e){
-					res(copy(toEdit)); 
-					this.close(); 
+					res(copy(toEdit));
+					this.close();
 				},
 				cancel(e){
-					rej(); 
-					this.close(); 
+					rej();
+					this.close();
 				}
 			}
 		})
 
-		instance.launch(); 
+		instance.launch();
 	})
 }
 
-import PostWish from '@/components/PostWish'; 
+import PostWish from '@/components/PostWish';
 
 function checkWish(data){
 	if (data.text === ''){
-		return false; 
+		return false;
 	}
 
-	return true; 
+	return true;
 }
 
 ui.postWish = function(){
@@ -57,57 +57,57 @@ ui.postWish = function(){
 		img: '',
 		wishtype: 0
 	}
-    
+
 	return new Promise((res, rej) => {
 		let open = GwPopup.getPopup().push({
 			type: 'prompt',
-			component: PostWish, 
+			component: PostWish,
 			needBlur: true,
-			confirmText: '发布', 
+			confirmText: '发布',
 			binding: {
 				wish: wish
 			},
 			handle: {
 				confirm(e){
-					let toCheck = copy(wish); 
+					let toCheck = copy(wish);
 
-					console.log('Get Wish', toCheck); 
+					console.log('Get Wish', toCheck);
 
 					if (checkWish(toCheck)){
-						res(toCheck); 
-						this.close(); 
+						res(toCheck);
+						this.close();
 					} else {
 						GwPopup.getPopup().toast({
-					        msg: '还有信息没填呢 ~ 请检查输入', 
-					        position: 'bottom', 
+					        msg: '还有信息没填呢 ~ 请检查输入',
+					        position: 'bottom',
 					        cancelable: true,
-					        align: true, 
+					        align: true,
 					        duration: 4000
-					    }); 
+					    });
 					}
 				},
 				cancel(err){
-					rej(err); 
-					this.close(); 
+					rej(err);
+					this.close();
 				}
 			}
-		}); 
+		});
 
-		open.launch(); 
+		open.launch();
 	});
 }
 
-import NewMusic from '@/components/NewMusic'; 
+import NewMusic from '@/components/NewMusic';
 ui.newMusic = function(){
 	let music = {
 		content: '',
 		selected: null
 	}
-	
+
 	return new Promise((res, rej) => {
 		let i = GwPopup.getPopup().push({
-			type: 'prompt', 
-			needBlur: true, 
+			type: 'prompt',
+			needBlur: true,
 			confirmText: '马上点歌',
 			component: NewMusic,
 			binding: {
@@ -115,44 +115,44 @@ ui.newMusic = function(){
 			},
 			handle: {
 				confirm(e){
-					res(copy(music)); 
-					this.close(); 
+					res(copy(music));
+					this.close();
 				},
 				cancel(){
-					rej(); 
-					this.close(); 
+					rej();
+					this.close();
 				}
 			}
-		}); 
+		});
 
-		i.launch(); 
+		i.launch();
 	});
 }
 
-import MusicSearch from '@/components/MusicSearch'; 
+import MusicSearch from '@/components/MusicSearch';
 ui.openMusicSearch = function(){
 	return new Promise((res, rej) => {
 		let i = GwPopup.getPopup().push({
-			type: 'modal', 
-			needBlur: false, 
+			type: 'modal',
+			needBlur: false,
 			component: MusicSearch,
 			bg: 'rgb(255, 241, 241)',
 			event: {
 				finishSearch(data){
 					res(data)
-					i.close(); 
+					i.close();
 				}
 			}
-		}); 
-		i.launch(); 
+		});
+		i.launch();
 	});
 }
 
 ui.failPostMusic = function(){
 	return GwPopup.getPopup().push({
-		type: 'prompt', 
-		confirmText: '明天再来', 
-		needBlur: true, 
+		type: 'prompt',
+		confirmText: '明天再来',
+		needBlur: true,
 		component: {
 			template: `
 				<div class="post-music-fail">
@@ -165,18 +165,18 @@ ui.failPostMusic = function(){
 		},
 		binding: {
 			style: {
-				'text-align': 'center', 
+				'text-align': 'center',
 				'color': '#BBB',
 				'margin-bottom': '1em'
 			}
 		}
-	}).launch(); 
+	}).launch();
 }
 
 // ui.notice = function(){
 // 	return GwPopup.getPopup().push({
-// 		type: 'confirm', 
-// 		confirmText: '哦哦', 
+// 		type: 'confirm',
+// 		confirmText: '哦哦',
 // 		needBlur: true,
 // 		component: {
 // 			template: `
@@ -193,14 +193,14 @@ ui.failPostMusic = function(){
 // }
 
 ui.successPostMusic = function(n, date){
-	let hours = ('00' + date.getHours()).slice(-2); 
+	let hours = ('00' + date.getHours()).slice(-2);
 	let mins = ('00' + date.getMinutes()).slice(-2);
-	let playOn = hours + ':' + mins; 
+	let playOn = hours + ':' + mins;
 
 	return GwPopup.getPopup().push({
-		type: 'prompt', 
-		confirmText: '好哒~', 
-		needBlur: true, 
+		type: 'prompt',
+		confirmText: '好哒~',
+		needBlur: true,
 		component: {
 			template: `
 				<div class="post-music-fail">
@@ -214,12 +214,37 @@ ui.successPostMusic = function(n, date){
 		},
 		binding: {
 			style: {
-				'text-align': 'center', 
+				'text-align': 'center',
 				'color': '#BBB',
 				'margin-bottom': '1em'
 			}
 		}
-	}).launch(); 
+	}).launch();
 }
 
-export default ui; 
+import choose from '@/components/chooseLove';
+
+ui.chooseLover = function() {
+	return new Promise((res, rej) => {
+		console.log('promise');
+		let tabLover = GwPopup.getPopup().push({
+			type: 'prompt',
+			confirmText: '确定',
+			needBlur: true,
+			component: choose,
+			handle: {
+				confirm(){
+					res();
+					// this.close();
+				},
+				cancel(){
+					rej();
+					this.close();
+				}
+			}
+		});
+		tabLover.launch();
+	})
+}
+
+export default ui;

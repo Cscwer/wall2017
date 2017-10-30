@@ -18,8 +18,9 @@
 		</swiper>
 
 		<div class="wish-container">
-			<wish class="wish-on-wall" v-for="wish in list" :userData=wish.user :userWish=wish.wish></wish>
+			<wish class="wish-on-wall" v-for="wish in list" :userData="wish.user" :userWish="wish.wish"></wish>
 		</div>
+		<div class="bg-cover"></div>
 	</div>
 </template>
 
@@ -246,4 +247,13 @@ export default {
 	margin: 0 auto;
 }
 
+.bg-cover {
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: -100;
+	width: 100%;
+	height: 100%;
+	background-color: rgb(255, 241, 241);
+}
 </style>
