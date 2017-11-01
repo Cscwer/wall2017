@@ -3,27 +3,39 @@
 <template>
 	<div class="wish-container" v-if="me.sex == 2">
 		<div class="user-info">
-			<!-- <img :src="user.headimgurl" class="avatar" /> -->
+			<img :src="user.headimgurl" class="avatar" />
 			<!-- <div class="avatar" ：style="{ backgroundImage: user.avatar }"></div> -->
-			<div class="avatar"></div>
+			<!-- <div class="avatar" v-bind:style="{ backgroundImage: user.headimgurl }"></div> -->
 			<span class="user-name">{{user.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
-			<img v-if="me.id === user.nickname" src="../assets/home/delete.png" class="delete" @click="present('alert')">
+			<img v-if="me._id === user._id" src="../assets/home/delete.png" class="delete" @click="present('alert')">
 		</div>
 		<div class="wish">
-			{{wish}}
+			{{wishText}}
+			<input type="radio" class="img-radio" name="preview-toggle" :id="wishId">
+			<label v-if="user.headimgurl" class="wish-img-con" :for="wishId" v-bind:style="{ backgroundImage: 'url(' + user.headimgurl + ')' }">
+				<img :src="user.headimgurl" class="img-detail">
+
+				<input type="radio" class="preview-cancel" name="preview-toggle"></input>
+			</label>
 		</div>
 	</div>
 	<div class="wish-container" v-else="me.sex == 1">
 		<div class="user-info">
 			<!-- <img :src="user.headimgurl" class="avatar" /> -->
-			<!-- <div class="avatar" ：style="{ backgroundImage: user.avatar }"></div> -->
-			<div class="avatar"></div>
+			<div class="avatar" v-bind:style="{ backgroundImage: user.headimgurl }"></div>
+			<!-- <div class="avatar"></div> -->
 			<span class="user-name">{{user.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
 		</div>
 		<div class="wish">
-			{{wish}}
+			{{wishText}}
+			<input type="radio" class="img-radio" name="preview-toggle" :id="wishId">
+			<label v-if="user.headimgurl" class="wish-img-con" :for="wishId" v-bind:style="{ backgroundImage: 'url(' + user.headimgurl + ')' }">
+				<img :src="user.headimgurl" class="img-detail">
+
+				<input type="radio" class="preview-cancel" name="preview-toggle"></input>
+			</label>
 			<button class="pickWish" @click="present('confirm')">领取愿望</button>
 		</div>
 	</div>
@@ -35,23 +47,21 @@ import http from '@/utils/http.client';
 
 export default {
 	name: 'SingleWish',
-	props: ['userData', 'userWish'],
+	props: ['wish', 'myInfo'],
 	data() {
 		return {
-			me: {
-				sex: 1,
-				id: '中国首穷'
-			},
-			user: this.userData,
-			wish: this.userWish,
+			me: this.myInfo,
+			user: this.wish.she,
+			wishText: this.wish.text,
+			img: this.wish.img,
 			area: ['大学城', '东风路', '龙洞'],
 			bgcolor: ['#b5d1ff', '#ffb9b5', '#ffe88d']
 		}
 	},
+	created(){
+		// console.log(this.user);
+	},
 	methods: {
-		getUser: function() {
-			return http.get('/api/user/me');
-		},
 		present(type){
 			this.$popup.push({
 				type: type,
@@ -96,9 +106,9 @@ export default {
 		display: inline-block;
 		width: 1rem;
 		height: 1rem;
-		background-color: #000;
 		border-radius: .5rem;
 		vertical-align: middle;
+		background-size: 100%;
 	}
 
 	.user-name {
@@ -126,6 +136,7 @@ export default {
 	.wish {
 		color: #888;
 		font-size: 14px;
+		position: relative;
 		line-height: 22px;
 		word-break: break-all;
 	}
@@ -157,5 +168,55 @@ export default {
 		height: .8rem;
 		width: .8rem;
 		vertical-align: middle;
+	}
+
+	.wish-img-con {
+		display: block;
+	   	width: 100px;
+		min-height: 100px;
+		background-size: 100% auto;
+		background-position: center;
+		position: relative;
+		/*background-repeat: no-repeat;*/
+	}
+
+	.img-radio {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		/*width: 0;
+		height: 0;*/
+		/*opacity: 0;*/
+	}
+
+	.img-detail {
+		display: none;
+		width: 100%;
+	}
+
+	.img-radio:checked + label {
+		width: 100%;
+		/*padding-top: 100%;*/
+		background-image: none;
+		/*display: none;*/
+		/*min-height: 100px;*/
+	}
+
+	.img-radio:checked + label .img-detail {
+		display: block;
+	}
+
+	.preview-cancel {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		display: none;
+		opacity: 0;
+	}
+
+	.img-radio:checked + label .preview-cancel {
+		display: block;
 	}
 </style>
