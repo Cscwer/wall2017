@@ -51,7 +51,7 @@ IO.serverPush = function(user, msg){
 	console.log(msg); 
 
 	msg.from = {
-		_id: 'The_Gw_Sys_Io'; 
+		_id: 'The_Gw_Sys_Io',
 		nickname: '客服小哥'
 	}
 
