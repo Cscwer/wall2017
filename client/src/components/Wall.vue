@@ -1,10 +1,9 @@
 <template id="home">
-	<!-- <div v-infinite-scroll="loadMore"
-		infinite-scroll-disabled="loading"
+	<div v-infinite-scroll="loadMore"
+		infinite-scroll-disabled="loading || !finish"
 		infinite-scroll-distance="20"
-		class="hello"> -->
-	<div class="hello">
-
+		class="hello">
+	<!-- <div class="hello"> -->
 		<div @click.stop="toSearch" class="search-container" :style="{ display: scrollDown ? block : none }">
 			<img class="search" src="../assets/home/search.png">
 			<span class="ps-text">搜索</span>
@@ -18,7 +17,7 @@
 		</swiper>
 
 		<div class="wish-container">
-			<wish class="wish-on-wall" v-for="wish in list" :userData="wish.user" :userWish="wish.wish"></wish>
+			<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
 		</div>
 		<div class="bg-cover"></div>
 	</div>
@@ -55,54 +54,17 @@ export default {
 				centeredSlides: true,
 				pagination: '.swiper-pagination'
 			},
-			list: [
-				{
-					user: {
-						name: '中国首穷',
-						area: 1,
-						headimgurl: '',
-						sex: 2
-					},
-					wish: '我要上王者'
-				},
-				{
-					user: {
-						name: 'legilis',
-						area: 2,
-						headimgurl: '',
-						sex: 2
-					},
-					wish: '我要上王者我，我沃尔夫见多识广覅ulUI我耳机不好 就回来维护费'
-				},
-				{
-					user: {
-						name: 'legilis',
-						area: 0,
-						headimgurl: '',
-						sex: 2
-					},
-					wish: '我要上王者wekiuajsliofaksvgjxjlasieujlfksdzjushoduiflhajkdfnuaps;dlkjfkahdlfiasjdkfdnlfiwqe'
-				},
-				{
-					user: {
-						name: 'legilis',
-						area: 1,
-						headimgurl: '',
-						sex: 2
-					},
-					wish: '这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。'
-				}
-
-			],
+			user: {},
+			list: [],
 			p: 0,
-			loading: false,
+			loading: true,
 			finish: false,
 			alert: null
 		}
 	},
 	created(){
 		// Call Async Function
-		// this.initAll();
+		this.initAll();
 		// this.loadMore();
 	},
 	methods: {
@@ -153,33 +115,33 @@ export default {
 				}
 			}).launch()
 		},
-		// initAll: async function(){
-		// 	let res = await http.get('/api/user/me');
+		initAll: async function(){
+			let res = await http.get('/api/user/me');
+			this.user = res.data;
+		},
+		getUser: function(){
+			return http.get('/api/user/me');
+		},
+		loadMore: async function(){
+			let p = this.p;
+			this.loading = true;
 
-		// 	this.user = res.data;
-		// },
-		// getUser: function(){
-		// 	return http.get('/api/user/me');
-		// },
-		// loadMore: async function(){
-		// 	let p = this.p;
+			let rps = await http.get('/api/wish', {
+				p: p
+			});
 
-		// 	this.loading = true;
+			this.p = p + 1;
 
-		// 	let rps = await http.get('/api/wish', {
-		// 		p: p
-		// 	});
+			this.list = this.list.concat(rps.data);
 
-		// 	this.p = p + 1;
-
-		// 	this.list = this.list.concat(rps.data);
-
-		// 	if (rps.code === 2001){
-		// 		this.finish = true;
-		// 	} else {
-		// 		// this.loading = false;
-		// 	}
-		// }
+			if (rps.code === 2001){
+				this.finish = true;
+				console.log(p + ' : end!!');
+			} else {
+				console.log(p + ' : not end');
+			}
+			this.loading = false;
+		}
 	}
 }
 
