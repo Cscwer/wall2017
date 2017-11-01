@@ -25,7 +25,7 @@
 			</div>
 		</div>
 		<div v-else>
-			<wish class="wish-on-wall" v-for="wish in list" :userData=wish.user :userWish=wish.wish></wish>
+			<wish class="wish-on-wall" v-for="wish in list" :userData="wish.user" :userWish="wish.wish"></wish>
 		</div>
 	</div>
 </template>

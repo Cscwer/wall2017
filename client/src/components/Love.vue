@@ -13,32 +13,75 @@
 		</div>
 
 		<div class="middle-container" v-else-if="state == 2">
-			22
+			<img class="waiting-img" src="../assets/love/together.png">
+			<img class="just-wait success" src="../assets/love/success.png">
+			<img class="practicing love-dog" src="../assets/love/love-dog.png">
+			<img class="points" src="../assets/love/points.png">
 		</div>
 
 		<div class="middle-container" v-else>
-
+			<div class="avatar-container">
+				<div class="personal-avatar my-avatar">
+					<img class="avatar" src="../assets/love/question.png">
+					<p class="name my-name">{{me.nickname}}</p>
+				</div>
+				<div class="personal-avatar ta-avatar" v-on:click="choose">
+					<img class="avatar" src="../assets/love/question.png">
+					<p class="name ta-name">{{!ta.nickname ? '点击选择TA' : ta.nickname}}</p>
+				</div>
+			</div>
+			<img class="phone" src="../assets/love/call.png">
+			<button class="confirm" v-bind:class="{ 'confirming': confirming }">确认匹配</button>
 		</div>
+		<div class="bg-cover"></div>
 	</div>
 
 
 </template>
 
 <script>
+import ui from '@/utils/ui';
 import wait from '@/utils/wait';
 import http from '@/utils/http.client';
 
+
 export default {
 	name: 'love',
+	props: ['chooseLover'],
 	data() {
 		return {
 			me: {
-				sex: 2
+				sex: 2,
+				nickname: '中国首穷'
 			},
+			ta: {
+	            _id: "59ce82b6013ab732301dc8d7",
+	            openid: "002-openid-fake",
+	            nickname: "",
+	            sex: 1,
+	            headimgurl: "http://wx.qlogo.cn/mmopen/vi_32/sBlxQJd2SyVeyroibMblibJyoINHpLnfPwGDib8mNzfMibAsrdxeSOyYqOtYjrglx04mJ2TeM3Pr4juMKjpHJJFcZA/0",
+	            __v: 0,
+	            created_at: "2017-09-29T17:28:22.850Z",
+	            phone: "未设置"
+	        },
 			lover: {
-				name: '233'
+				nickname: '233'
 			},
-			state: 1
+			state: 0,
+			confirming: true
+		}
+	},
+	methods: {
+		choose: function(value) {
+			console.log('click');
+			if(!this.ta.nickname) {
+				console.log(this.lover.nickname);
+				let lover = this.lover.nickname;
+				ui.chooseLover().then(lover => {
+					console.log(chooseLover);
+					console.log(this.lover.nickname + '!!!');
+				});
+			}
 		}
 	}
 }
@@ -59,7 +102,7 @@ export default {
 
 	.title {
 		margin: 0 auto;
-		padding-top: 1rem;
+		margin-top: 1.2rem;
 		text-align: center;
 	}
 
@@ -74,6 +117,7 @@ export default {
 		text-align: center;
 		border-radius: 10px;
 		background-color: #fff;
+		box-shadow: 3px 3px 3px #ffc5c5;
 	}
 
 	.waiting-img {
@@ -87,14 +131,80 @@ export default {
 		width: 3rem;
 	}
 
+	.success {
+		width: 	5rem;
+		margin-top: .7rem;
+	}
+
 	.practicing {
 		display: block;
 		margin: 0 auto;
 		width: 2rem;
 	}
 
+	.love-dog {
+		width: 3rem;
+	}
+
 	.points {
 		width: 3.5rem;
 		margin-bottom: 30px;
+	}
+
+	.avatar-container {
+		padding-top: 1.2rem;
+		position: relative;
+		font-size: 0 !important;
+	}
+
+	.personal-avatar {
+		display: inline-block;
+		width: 43%;
+		text-align: center;
+	}
+
+	.avatar {
+		width: 2rem;
+		height: 2rem;
+		border-radius: 15px;
+	}
+
+	.name {
+		color: #727272;
+		font-size: 14px;
+		margin-top: 10px;
+	}
+
+	.phone {
+		width: 70%;
+		margin-top: -1rem;
+	}
+
+	.confirm {
+		margin: 1rem auto;
+		width: 4.5rem;
+		height: 1.2rem;
+		border: 0;
+		font-size: 18px;
+		background-color: #dad9d9;
+		color: #fff;
+		outline: 0;
+		border-radius: .6rem;
+		letter-spacing: 2px;
+	}
+
+	.confirming {
+		background-color: #ff7777;
+		box-shadow: 0 0 10px #ff7777;
+	}
+
+	.bg-cover {
+		position: fixed;
+		left: 0;
+		top: 0;
+		z-index: -100;
+		width: 100%;
+		height: 100%;
+		background-color: rgb(255, 241, 241);
 	}
 </style>
