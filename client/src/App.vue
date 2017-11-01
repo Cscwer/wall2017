@@ -12,7 +12,8 @@
 					:class="{
 						'tab': true,
 						'tab-middle': tab.path === '/wish',
-						'tab-active': tab.active
+						'tab-active': tab.active,
+						'shake-animation': tab.onMsg
 					}"
 
 					v-for="(tab, idx) in tabs"
@@ -29,60 +30,11 @@
 import ui from '@/utils/ui'; 
 import http from '@/utils/http.client';
 import chat from '@/utils/chat'; 
+import { tabs, appCtrl } from '@/utils/app.status'; 
 
 let tabHeight = (window.innerWidth / 4) + 'px'; 
 
-let iconTable = [
-	'home', 'me', 'music', 'ping'
-].reduce((acc, name) => {
-	let outline = require(`./assets/tab/${name}-outline.png`); 
-	let fill = require(`./assets/tab/${name}-fill.png`); 
-
-	acc[name] = {
-		outline, 
-		fill
-	}; 
-
-	return acc; 
-}, {}); 
-
-let wishFill = require(`./assets/tab/wish-fill.png`); 
-
-let tabs = [
-	{
-		text: '许愿',
-		path: '/wall',
-		active: true, 
-		icon: iconTable.home
-	},
-	{
-		text: '电台',
-		path: '/music',
-		active: false,
-		icon: iconTable.music
-	},
-	{
-		text: '发布',
-		path: '/wish',
-		active: false,
-		icon: {
-			outline: wishFill, 
-			fill: wishFill
-		}
-	},
-	{
-		text: '匹配', 
-		path: '/love',
-		active: false,
-		icon: iconTable.ping
-	},
-	{
-		text: '我的', 
-		path: '/me',
-		active: false,
-		icon: iconTable.me
-	}
-]
+// window.tabs = tabs; 
 
 export default {
 	name: 'app', 
@@ -111,11 +63,16 @@ export default {
 	},
 	methods: {
 		routeTo: function(tab, idx){
-			let { path } = tab; 
+			let { path, onMsg } = tab; 
 			
 			if (path === '/wish') {
 				this.openWish(); 
 				return; 
+			}
+
+			if (onMsg){
+				onMsg = false; 
+				appCtrl.off(`${path}-hasMsg`); 
 			}
 
 			this.$router.push({
@@ -214,4 +171,40 @@ export default {
 .tab-page {
 	
 }
+
+.shake-animation {
+	animation-name: shake_box;
+	animation-duration: 1.2s;
+	animation-timing-function: ease-in-out;
+	animation-delay: .5s;
+	animation-iteration-count: infinite;
+}
+
+@keyframes shake_box {
+	0%, 50% {
+		transform: translateY(0%) rotate(0deg);
+	}
+
+	12.5% {
+		transform: translateY(-10%) rotate(15deg);
+	}
+
+	25% {
+		transform: translateY(-20%) rotate(-15deg);
+	}
+
+	37.5% {
+		transform: translateY(-40%) rotate(5deg);
+	}
+
+	42.5% {
+		transform: translateY(-20%) rotate(-5deg);
+	}
+
+	100% {
+		transform: translateY(0%) rotate(0deg);
+	}
+}
+
+
 </style>
