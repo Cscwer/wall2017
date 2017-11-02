@@ -21,16 +21,10 @@ export default {
 	},
 	methods: {
 		search: function() {
+			this.lover = this.lover.trim();
 			console.log('search');
 			console.log(this.lover + '   ChooseLove');
-			this.$emit('pick', this.lover);
-			// let myModal = this.$popup.push({
-			// 	type: 'confirm',
-			// 	confirmText: '确定',
-			// 	needBlur: true,
-			// 	component: select
-			// });
-			// myModal.launch();
+			this.$emit('click', this.lover);
 		}
 	}
 }
