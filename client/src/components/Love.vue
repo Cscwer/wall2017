@@ -25,7 +25,7 @@
 					<img class="avatar" src="../assets/love/question.png">
 					<p class="name my-name">{{me.nickname}}</p>
 				</div>
-				<div class="personal-avatar ta-avatar" v-on:click="choose">
+				<div class="personal-avatar ta-avatar" v-on:click="pichLover">
 					<img class="avatar" src="../assets/love/question.png">
 					<p class="name ta-name">{{!ta.nickname ? '点击选择TA' : ta.nickname}}</p>
 				</div>
@@ -72,16 +72,15 @@ export default {
 		}
 	},
 	methods: {
-		choose: function(value) {
+		pichLover: function(value) {
 			console.log('click');
-			if(!this.ta.nickname) {
-				console.log(this.lover.nickname);
-				let lover = this.lover.nickname;
-				ui.chooseLover().then(lover => {
-					console.log(chooseLover);
-					console.log(this.lover.nickname + '!!!');
-				});
-			}
+			console.log(this.lover.nickname);
+			let lover = this.lover.nickname;
+			ui.chooseLover().then(() => {
+				console.log('res');
+				console.log();
+				ui.loversList();
+			});
 		}
 	}
 }

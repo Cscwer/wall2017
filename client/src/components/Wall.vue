@@ -1,6 +1,6 @@
 <template id="home">
 	<div v-infinite-scroll="loadMore"
-		infinite-scroll-disabled="loading || !finish"
+		infinite-scroll-disabled="loading && !finish"
 		infinite-scroll-distance="20"
 		class="hello">
 	<!-- <div class="hello"> -->

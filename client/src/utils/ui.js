@@ -235,10 +235,37 @@ ui.chooseLover = function() {
 			handle: {
 				confirm(){
 					res();
-					// this.close();
+					console.log('confirm');
+					this.close();
 				},
 				cancel(){
 					rej();
+					this.close();
+				}
+			}
+		});
+		tabLover.launch();
+	})
+}
+
+import lovers from '@/components/loversList';
+
+ui.loversList = function() {
+	return new Promise((res, rej) => {
+		console.log('lover promise');
+		let tabLover = GwPopup.getPopup().push({
+			type: 'confirm',
+			confirmText: '这里没有TA',
+			needBlur: true,
+			component: lovers,
+			handle: {
+				confirm(){
+					// res();
+					console.log('这里没有他');
+					this.close();
+				},
+				cancel(){
+					// rej();
 					this.close();
 				}
 			}
