@@ -22,12 +22,12 @@
 		<div class="middle-container" v-else>
 			<div class="avatar-container">
 				<div class="personal-avatar my-avatar">
-					<img class="avatar" src="../assets/love/question.png">
+					<img class="avatar" :src="me.headimgurl">
 					<p class="name my-name">{{me.nickname}}</p>
 				</div>
 				<div class="personal-avatar ta-avatar" v-on:click="pichLover">
-					<img class="avatar" src="../assets/love/question.png">
-					<p class="name ta-name">{{!ta.nickname ? '点击选择TA' : ta.nickname}}</p>
+					<img class="avatar" :src="ta.headimgurl">
+					<p class="name ta-name">{{ ta.nickname }}</p>
 				</div>
 			</div>
 			<img class="phone" src="../assets/love/call.png">
@@ -44,6 +44,8 @@ import ui from '@/utils/ui';
 import wait from '@/utils/wait';
 import http from '@/utils/http.client';
 
+// Load Img In Base64 With Webpack
+import question_img from '../assets/love/question.png'; 
 
 export default {
 	name: 'love',
@@ -52,17 +54,14 @@ export default {
 		return {
 			me: {
 				sex: 2,
-				nickname: '中国首穷'
+				nickname: '加载中', 
+				headimgurl: question_img
 			},
 			ta: {
-	            _id: "59ce82b6013ab732301dc8d7",
-	            openid: "002-openid-fake",
-	            nickname: "",
-	            sex: 1,
-	            headimgurl: "http://wx.qlogo.cn/mmopen/vi_32/sBlxQJd2SyVeyroibMblibJyoINHpLnfPwGDib8mNzfMibAsrdxeSOyYqOtYjrglx04mJ2TeM3Pr4juMKjpHJJFcZA/0",
-	            __v: 0,
-	            created_at: "2017-09-29T17:28:22.850Z",
-	            phone: "未设置"
+	            _id: null,
+	            openid: null,
+	            nickname: "点击选择 TA",
+	            headimgurl: question_img
 	        },
 			lover: {
 				nickname: '233'
@@ -71,15 +70,27 @@ export default {
 			confirming: true
 		}
 	},
+	created(){
+		http.get('/api/user/me', ui.showLoading()).then(res => {
+			if (res.code === 2000){
+				this.me = res.data; 
+			} else {
+				this.$popup.toast({
+					msg: `出错啦, 请重试, 错误码 ${res.code}`,
+					position: 'bottom'
+				}); 
+			}
+		}); 
+	},
 	methods: {
 		pichLover: function(value) {
 			console.log('click');
 			console.log(this.lover.nickname);
 			let lover = this.lover.nickname;
-			ui.chooseLover().then(() => {
-				console.log('res');
-				console.log();
-				ui.loversList();
+			ui.chooseLover().then(person => {
+				console.log('on love.vue after choosePerson', person); 
+				// 设置 ta 
+				this.ta = person; 
 			});
 		}
 	}

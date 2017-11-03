@@ -2,8 +2,8 @@
 
 <template id="loversList">
 	<ul class="list-container">
-		<li v-for="person in list" class="single-list">
-			<img :src="person.avatar" class="avatar">
+		<li v-for="person in list" class="single-list" @click.stop="chooseUser(person)">
+			<img :src="person.headimgurl" class="avatar">
 			<span class="nickname">{{person.nickname}}</span>
 			<input type="radio" name="lover" class="checkbox" :value="person._id" :id="person._id" v-model="lover">
 			<label class="check-con" :for="person._id">
@@ -16,38 +16,60 @@
 <script>
 import wait from '@/utils/wait';
 import http from '@/utils/http.client';
+import ui from '@/utils/ui';
 // import select from './loversList';
 
 export default {
 	name: 'loversList',
+	props: ['input'],
 	data() {
 		return {
 			lover: {},
 			list: [
-				{
-					avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
-					nickname: 'hhh',
-					_id: 'jhgajhfjadsfjk1'
-				},
-				{
-					avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
-					nickname: 'hhh',
-					_id: 'jhgajhfjadsfjk2'
-				},
-				{
-					avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
-					nickname: 'hhh',
-					_id: 'jhgajhfjadsfjk3'
-				},{
-					avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
-					nickname: 'hhh',
-					_id: 'jhgajhfjadsfjk4'
-				}
+				// {
+				// 	avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
+				// 	nickname: 'hhh',
+				// 	_id: 'jhgajhfjadsfjk1'
+				// },
+				// {
+				// 	avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
+				// 	nickname: 'hhh',
+				// 	_id: 'jhgajhfjadsfjk2'
+				// },
+				// {
+				// 	avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
+				// 	nickname: 'hhh',
+				// 	_id: 'jhgajhfjadsfjk3'
+				// },{
+				// 	avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
+				// 	nickname: 'hhh',
+				// 	_id: 'jhgajhfjadsfjk4'
+				// }
 			]
 		}
 	},
-	methods: {
+	created(){
+		// this.input.keyword
+		let loading = ui.showLoading(); 
 
+		http.get('/api/user', {
+		    q: this.input.keyword
+		}, loading).then(res => {
+			if (res.code === 2000){
+				this.list = res.data; 
+			} else {
+				this.$popup.toast({
+					msg: `出错了, 请重试, 错误码: ${res.code}`, 
+					position: 'top'
+				}); 
+			}
+		})
+	},
+	methods: {
+		chooseUser(person){
+			console.log('inner loverlist', person); 
+			this.$emit('finishChoose', person); 
+		}
 	}
 }
 </script>

@@ -3,7 +3,7 @@
 <template>
 	<div class="main-container">
 		<img src="../assets/love/bread.png" class="bread">
-		<input @keyup.enter="search()" type="text" name="lover" class="input" placeholder="输入ta的微信名" v-model="lover">
+		<input @keyup.enter="search()" type="text" name="lover" class="input" placeholder="输入ta的微信名" v-model="input.lover">
 	</div>
 </template>
 
@@ -14,17 +14,16 @@ import http from '@/utils/http.client';
 
 export default {
 	name: 'ChooseLove',
+	props: ['input'], 
 	data() {
-		return {
-			lover: ''
-		}
+		return {}
 	},
 	methods: {
 		search: function() {
-			this.lover = this.lover.trim();
+			this.input.lover = this.input.lover.trim();
 			console.log('search');
-			console.log(this.lover + '   ChooseLove');
-			this.$emit('click', this.lover);
+			console.log(this.input.lover + '   ChooseLove');
+			this.$emit('click', this.input.lover);
 		}
 	}
 }
