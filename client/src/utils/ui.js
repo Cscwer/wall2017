@@ -225,6 +225,10 @@ ui.successPostMusic = function(n, date){
 import choose from '@/components/chooseLove';
 
 ui.chooseLover = function() {
+	let input = {
+		lover: ''
+	}
+
 	return new Promise((res, rej) => {
 		console.log('promise');
 		let tabLover = GwPopup.getPopup().push({
@@ -232,11 +236,16 @@ ui.chooseLover = function() {
 			confirmText: '确定',
 			needBlur: true,
 			component: choose,
+			binding: {
+				input: input
+			},
 			handle: {
 				confirm(){
-					res();
-					console.log('confirm');
-					this.close();
+					ui.loversList(input.lover).then(person => {
+						console.log('in ui person', person); 
+						res(person); 
+						this.close();
+					}); 
 				},
 				cancel(){
 					rej();
@@ -250,7 +259,11 @@ ui.chooseLover = function() {
 
 import lovers from '@/components/loversList';
 
-ui.loversList = function() {
+ui.loversList = function(keyword) {
+	let input = {
+		keyword: keyword
+	}
+
 	return new Promise((res, rej) => {
 		console.log('lover promise');
 		let tabLover = GwPopup.getPopup().push({
@@ -258,10 +271,19 @@ ui.loversList = function() {
 			confirmText: '这里没有TA',
 			needBlur: true,
 			component: lovers,
+			binding: {
+				input: input
+			}, 
+			event: {
+				finishChoose(person){
+					console.log('ui loverlist finishChoose', person);
+					res(person); 
+					tabLover.close();
+				}
+			},
 			handle: {
-				confirm(){
-					// res();
-					console.log('这里没有他');
+				confirm(confirm){
+					res();
 					this.close();
 				},
 				cancel(){
@@ -272,6 +294,22 @@ ui.loversList = function() {
 		});
 		tabLover.launch();
 	})
+}
+
+ui.showLoading = function(d = 8000){
+	let loading = GwPopup.getPopup().push({
+		type: 'loading'
+	}); 
+
+	loading.launch(); 
+
+	function cancel(){
+		loading.close(); 
+	}
+
+	setTimeout(cancel, d); 
+
+	return cancel; 
 }
 
 export default ui;
