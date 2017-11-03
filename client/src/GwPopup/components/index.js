@@ -4,13 +4,15 @@ import GwConfirm from './GwConfirm';
 import GwPrompt from './GwPrompt'; 
 import GwModal from './GwModal';
 import GwAlertSheet from './GwAlertSheet'; 
+import GwLoading from './GwLoading'; 
 
 let list = {
 	'gw-alert': GwAlert, 
 	'gw-confirm': GwConfirm,
 	'gw-prompt': GwPrompt, 
 	'gw-modal': GwModal, 
-	'gw-alert-sheet': GwAlertSheet
+	'gw-alert-sheet': GwAlertSheet,
+	'gw-loading': GwLoading
 }
 
 let components = {};
