@@ -13,6 +13,8 @@ const express = require('express')
 	, { userModel } = require('../utils/db')
 	, auth = require('../utils/auth')
 	, R = require('../utils/redis')
+	, qnx = require('../utils/qnx')
+	, uuid = require('uuid/V1')
 
 
 let redirectTo = 
@@ -30,6 +32,7 @@ router.get('/', function(req, res, next) {
 	}
 });
 
+let USER_AVATAR = 'user-avatar/'; 
 router.get('/code', function(req, res){
 	// URL Such As: 
 	// https://gw.chenpt.cc/?code=0814YGn215ypHM1afTn21zSHn214YGne&state=0 
@@ -40,9 +43,15 @@ router.get('/code', function(req, res){
 		// User openid
 		openid = user.openid; 
 
-		let data = new userModel(user); 
+		// user.headimgurl
+		
+		return qnx.fetch(user.headimgurl, USER_AVATAR + uuid()).then(respBody => {
+			user.headimgurl = respBody.url; 
 
-		return data.save()
+			let data = new userModel(user); 
+
+			return data.save()
+		}); 
 	}).then(user => {
 		// 用户注册成功 
 		// 设置 cookie 表示用户已经注册 
