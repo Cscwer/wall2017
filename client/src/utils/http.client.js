@@ -4,7 +4,17 @@ import logger from './logger';
 
 let http = {}; 
 
-http.send = method => function(path, query = {}, data = {}){
+http.send = method => function(path, query = {}, data = {}, cb){
+	if (typeof query === 'function'){
+		cb = query; 
+		query = {}; 
+	}
+
+	if (typeof data === 'function'){
+		cb = data;
+		data = {}; 
+	}
+
 	let toSend = {}; 
 
 	if (arguments.length === 2){
@@ -24,6 +34,8 @@ http.send = method => function(path, query = {}, data = {}){
 
 	return axios[method](path, toSend).then(httpRes => {
 		logger.res(method, path, httpRes); 
+
+		cb && cb(httpRes.data); 
 
 		return httpRes.data; 
 	}, err => {
