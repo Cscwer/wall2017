@@ -11,7 +11,9 @@ router.get('/me', function(req, res, next){
 
 router.get('/', function(req, res){
 	let N = 10; 
-	let { q } = req.query; 
+	let q = decodeURIComponent(req.query.q); 
+
+	console.log('q:', q); 
 
 	let EXP = new RegExp(q); 
 

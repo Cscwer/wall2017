@@ -31,12 +31,12 @@ function inMongo(p){
 		.find({
 			status: 0
 		})
-		.populate('she')
 		.sort({
 			created_at: -1
 		})
 		.skip(p * N)
 		.limit(N)
+		.populate('she')
 }
 
 function inCache(p){
