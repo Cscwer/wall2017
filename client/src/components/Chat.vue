@@ -55,7 +55,7 @@ export default {
         this.list = chats.toArray();
         chats_global = chats; 
         console.log(chats.toArray());
-        ws.bus.$on('onMsg',function(newMsg) {
+        ws.bus.$on('onMsg',(newMsg) => {
             if(newMsg.from._id === id) {
                 this.list.unshift(newMsg);
             }
