@@ -10,11 +10,10 @@
 <script>
 import wait from '@/utils/wait';
 import http from '@/utils/http.client';
-// import select from './loversList';
 
 export default {
 	name: 'ChooseLove',
-	props: ['input'], 
+	props: ['input'],
 	data() {
 		return {}
 	},

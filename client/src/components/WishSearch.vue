@@ -6,31 +6,33 @@
 			<div class="select-container">
 				<div class="select-type-container">
 					<div class="certain">
-						<input type="checkbox" name="type" value="time" class="radio" id="time" v-model="type">
+						<input type="checkbox" name="type" :value="0" class="radio" id="time" v-model="type">
 						<label class="select-box" for="time">耗时类</label>
-						<input type="checkbox" name="type" value="staff" class="radio" id="staff" v-model="type">
+						<input type="checkbox" name="type" :value="1" class="radio" id="staff" v-model="type">
 						<label class="select-box" for="staff">实物类</label>
 					</div>
 				</div>
 				<div class="select-type-container">
 					<div class="certain">
-						<input type="checkbox" name="area" value="town" class="radio" id="town" v-model="area">
+						<input type="checkbox" name="area" :value="0" class="radio" id="town" v-model="area">
 						<label class="select-box" for="town">大学城校区</label>
-						<input type="checkbox" name="area" value="road" class="radio" id="road" v-model="area">
+						<input type="checkbox" name="area" :value="1" class="radio" id="road" v-model="area">
 						<label class="select-box" for="road">东风路校区</label>
-						<input type="checkbox" name="area" value="hole" class="radio" id="hole" v-model="area">
+						<input type="checkbox" name="area" :value="2" class="radio" id="hole" v-model="area">
 						<label class="select-box" for="hole">龙洞校区</label>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div v-else>
-			<wish class="wish-on-wall" v-for="wish in list" :userData="wish.user" :userWish="wish.wish"></wish>
+			<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
 		</div>
 	</div>
 </template>
 
 <script>
+	import wait from '@/utils/wait';
+	import http from '@/utils/http.client';
 	import Wish from './SingleWish';
 	export default {
 		name: 'wish-search',
@@ -41,56 +43,36 @@
 			return {
 				searching: false,
 				text: '',
-				type: ['time'],
-				area: ['town'],
-				list: [
-					{
-						user: {
-							name: '中国首穷',
-							area: 1,
-							headimgurl: '',
-							sex: 2
-						},
-						wish: '我要上王者'
-					},
-					{
-						user: {
-							name: 'legilis',
-							area: 2,
-							headimgurl: '',
-							sex: 2
-						},
-						wish: '我要上王者我，我沃尔夫见多识广覅ulUI我耳机不好 就回来维护费'
-					},
-					{
-						user: {
-							name: 'legilis',
-							area: 0,
-							headimgurl: '',
-							sex: 2
-						},
-						wish: '我要上王者wekiuajsliofaksvgjxjlasieujlfksdzjushoduiflhajkdfnuaps;dlkjfkahdlfiasjdkfdnlfiwqe'
-					},
-					{
-						user: {
-							name: 'legilis',
-							area: 1,
-							headimgurl: '',
-							sex: 2
-						},
-						wish: '这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。这是一段很长的文字。'
-					}
-				]
+				user: {},
+				type: [],
+				area: [],
+				list: []
 			}
 		},
 		created(){
-			console.log('on load')
+			console.log('on load');
+			this.initAll();
 		},
 		methods: {
 			back(){},
 			search() {
 				console.log(this.text);
-			}
+				console.log(this.type, this.area);
+				http.post('/api/wish/search', {
+					q: this.text,
+					wishtype: this.type,
+					area: this.area
+				}).then(res => {
+					if(res.code === 2000) {
+						this.list = res.data;
+						this.searching = true;
+					}
+				})
+			},
+			initAll: async function(){
+				let res = await http.get('/api/user/me');
+				this.user = res.data;
+			},
 		}
 	}
 </script>
@@ -110,7 +92,6 @@ html, body {
 	width: 100%;
 	border: none;
 	font-size: 15px;
-	caret-color: #ff7272;
 	letter-spacing: 1px;
 	background-color: #fff;
 	box-sizing: border-box;
