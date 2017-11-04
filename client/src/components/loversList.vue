@@ -49,26 +49,26 @@ export default {
 		}
 	},
 	created(){
-		// this.input.keyword
-		let loading = ui.showLoading(); 
+		this.input.keyword
+		let loading = ui.showLoading();
 
 		http.get('/api/user', {
 		    q: this.input.keyword
 		}, loading).then(res => {
 			if (res.code === 2000){
-				this.list = res.data; 
+				this.list = res.data;
 			} else {
 				this.$popup.toast({
-					msg: `出错了, 请重试, 错误码: ${res.code}`, 
+					msg: `出错了, 请重试, 错误码: ${res.code}`,
 					position: 'top'
-				}); 
+				});
 			}
 		})
 	},
 	methods: {
 		chooseUser(person){
-			console.log('inner loverlist', person); 
-			this.$emit('finishChoose', person); 
+			console.log('inner loverlist', person);
+			this.$emit('finishChoose', person);
 		}
 	}
 }
