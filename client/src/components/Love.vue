@@ -5,7 +5,7 @@
 			<img src="../assets/love/title.png">
 		</div>
 		<div class="middle-container"  v-if="state == 1">
-			<img v-if="me.sex == 2" class="waiting-img" src="../assets/love/boys-waiting.png">
+			<img v-if="me.sex == 1" class="waiting-img" src="../assets/love/boys-waiting.png">
 			<img v-else class="waiting-img" src="../assets/love/girls-waiting.png">
 			<img class="just-wait" src="../assets/love/wait.png">
 			<img class="practicing" src="../assets/love/practice.png">
@@ -23,15 +23,15 @@
 			<div class="avatar-container">
 				<div class="personal-avatar my-avatar">
 					<img class="avatar" :src="me.headimgurl">
-					<p class="name my-name">{{me.nickname}}</p>
+					<p class="name my-name">{{ me.nickname }}</p>
 				</div>
-				<div class="personal-avatar ta-avatar" v-on:click="pichLover">
+				<div class="personal-avatar ta-avatar" v-on:click="pickLover">
 					<img class="avatar" :src="ta.headimgurl">
 					<p class="name ta-name">{{ ta.nickname }}</p>
 				</div>
 			</div>
 			<img class="phone" src="../assets/love/call.png">
-			<button class="confirm" v-bind:class="{ 'confirming': confirming }">确认匹配</button>
+			<button class="confirm" v-bind:class="{ 'confirming': confirming }" v-on:click="confirm">确认匹配</button>
 		</div>
 		<div class="bg-cover"></div>
 	</div>
@@ -45,7 +45,7 @@ import wait from '@/utils/wait';
 import http from '@/utils/http.client';
 
 // Load Img In Base64 With Webpack
-import question_img from '../assets/love/question.png'; 
+import question_img from '../assets/love/question.png';
 
 export default {
 	name: 'love',
@@ -54,7 +54,7 @@ export default {
 		return {
 			me: {
 				sex: 2,
-				nickname: '加载中', 
+				nickname: '加载中',
 				headimgurl: question_img
 			},
 			ta: {
@@ -67,31 +67,61 @@ export default {
 				nickname: '233'
 			},
 			state: 0,
-			confirming: true
+			confirming: false
 		}
 	},
 	created(){
 		http.get('/api/user/me', ui.showLoading()).then(res => {
 			if (res.code === 2000){
-				this.me = res.data; 
+				this.me = res.data;
+				this.getTa().then(() => {
+					if(this.ta._id) {
+						this.checkout();
+					}
+				})
 			} else {
 				this.$popup.toast({
 					msg: `出错啦, 请重试, 错误码 ${res.code}`,
 					position: 'bottom'
-				}); 
+				});
 			}
-		}); 
+		});
 	},
 	methods: {
-		pichLover: function(value) {
+		pickLover: function(value) {
 			console.log('click');
-			console.log(this.lover.nickname);
+			console.log(this.lover.nickname + 'love');
 			let lover = this.lover.nickname;
 			ui.chooseLover().then(person => {
-				console.log('on love.vue after choosePerson', person); 
-				// 设置 ta 
-				this.ta = person; 
+				console.log('on love.vue after choosePerson', person);
+				// 设置 ta
+				this.ta = person;
+				this.confirming = true;
 			});
+		},
+		confirm: function() {
+			http.post('/api/ta', {
+				to: this.ta._id
+			}).then(() => {
+					this.checkout();
+				}
+			)
+		},
+		checkout: function() {
+			http.get('/api/ta/pingpong').then(res => {
+				if(res.data) {
+					this.state = 2;
+				} else {
+					this.state = 1;
+				}
+			});
+		},
+		getTa: function() {
+			return http.get('/api/ta').then(res => {
+				if(res.data) {
+					this.ta = res.data.to;
+				}
+			})
 		}
 	}
 }

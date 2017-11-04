@@ -242,10 +242,10 @@ ui.chooseLover = function() {
 			handle: {
 				confirm(){
 					ui.loversList(input.lover).then(person => {
-						console.log('in ui person', person); 
-						res(person); 
+						console.log('in ui person', person);
+						res(person);
 						this.close();
-					}); 
+					});
 				},
 				cancel(){
 					rej();
@@ -273,18 +273,19 @@ ui.loversList = function(keyword) {
 			component: lovers,
 			binding: {
 				input: input
-			}, 
+			},
 			event: {
 				finishChoose(person){
 					console.log('ui loverlist finishChoose', person);
-					res(person); 
+					res(person);
 					tabLover.close();
 				}
 			},
 			handle: {
 				confirm(confirm){
-					res();
-					this.close();
+					// res();
+					// this.close();
+					console.log("这里没有TA");
 				},
 				cancel(){
 					// rej();
@@ -299,17 +300,17 @@ ui.loversList = function(keyword) {
 ui.showLoading = function(d = 8000){
 	let loading = GwPopup.getPopup().push({
 		type: 'loading'
-	}); 
+	});
 
-	loading.launch(); 
+	loading.launch();
 
 	function cancel(){
-		loading.close(); 
+		loading.close();
 	}
 
-	setTimeout(cancel, d); 
+	setTimeout(cancel, d);
 
-	return cancel; 
+	return cancel;
 }
 
 export default ui;

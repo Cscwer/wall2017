@@ -1,8 +1,9 @@
 <template>
 	<div>
 		<div class="header-wrap">
-			<div class="msg-icon-wrap">
+			<div class="msg-icon-wrap" @click="openMsg(),hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
+				<span class="red-dot" v-if="hasMsg"></span>
 			</div>
 			<div class="userinfo-wrap">
 				<img :src="user.headimgurl" class="avatar" />
@@ -45,6 +46,9 @@ import http from '@/utils/http.client';
 import vwx from '@/utils/vwx';
 import Wish from './SingleWish';
 import ui from '@/utils/ui';
+import { appCtrl } from '@/utils/app.status'; 
+import Msg from './Msg';
+
 
 export default {
 	name: 'me', 
@@ -58,6 +62,7 @@ export default {
 			user: {},
 			sex: 'female',
 			activeidx: 1,
+			hasMsg: false,
 			swiperOption: {
 				// autoplay: 1000,
 				initialSlide: 0,
@@ -91,7 +96,7 @@ export default {
 	}, 
 	computed: {
 		isFemale: function() {
-			return this.user.sex-1 === 0
+			return this.user.sex-1 === 1
 		},
 		swiper() {
 			return this.$refs.mySwiper.swiper                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
@@ -103,6 +108,7 @@ export default {
 	created(){
 		this.init();
 		console.log("page created");
+		this.hasMsg = appCtrl.toObject().hasMsg;
 	},
 	methods: {
 		init: async function(){
@@ -133,6 +139,15 @@ export default {
 				this.user.weid = info.weid;
 				this.user.phone = info.phone;
 			});
+		},
+		openMsg: function() {
+			appCtrl.off("hasMsg");
+			var msg = this.$popup.push({
+				component: Msg,
+				type: "modal"
+			})
+
+			msg.launch();
 		}
 	}
 }
@@ -191,15 +206,15 @@ export default {
 	}
 
 	.msg-icon-wrap {
+		position: relative;
 		padding-top: 15px;
-		padding-right: 20px;
+		margin-right: 20px;
 		text-align: right;
 	}
 
 	.msg-icon {
 		display: inline-block;
-		width: 26px;
-		height: 26px;
+		width: 23px;
 	}
 
 	.userinfo-wrap {
@@ -214,24 +229,26 @@ export default {
 	}
 
 	.sex-img {
-		display: inline-block;
-		height: 18px;
+		height: 15px;
 	}
 
 	.edit-img {
-		display: inline-block;
-		width: 15px;
+		width: 14px;
+		height: 14px;
 	}
 
 	.user-nickname {
 		display: inline-block;
-		padding-left: 3px;
-		padding-right: 5px;
+		padding-left: 9px;
+		padding-right: 9px;
 		font-size: 0.5rem;
 		color: rgb(255, 255, 255);
 	}
 
 	.name-wrap {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		padding-top: 6px;
 	}
 
@@ -247,6 +264,18 @@ export default {
 
 	.tab1-content, .tab2-content {
 		width: 100%!important;
+	}
+
+	.red-dot {
+		display: block;
+		position: absolute;
+		width: 4.5px;
+		height: 4.5px;
+		border-radius: 50% 50%;
+		background-color: #ff0000;
+		right: -1.5px;
+		top: 13.5px;
+		
 	}
 
 	

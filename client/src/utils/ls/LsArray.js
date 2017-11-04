@@ -56,4 +56,11 @@ LsArray.prototype.toArray = function(){
 	return LsHandle.get(this.key); 
 }
 
+LsArray.prototype.findAndMap = function(idx, fn) {
+	let arr = LsHandle.get(this.key);
+
+	arr[idx] = fn(arr[idx]);
+
+	this.replace(arr);
+}
 export default LsArray; 

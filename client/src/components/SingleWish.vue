@@ -4,17 +4,15 @@
 	<div class="wish-container" v-if="me.sex == 2">
 		<div class="user-info">
 			<img :src="user.headimgurl" class="avatar" />
-			<!-- <div class="avatar" ：style="{ backgroundImage: user.avatar }"></div> -->
-			<!-- <div class="avatar" v-bind:style="{ backgroundImage: user.headimgurl }"></div> -->
 			<span class="user-name">{{user.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
 			<img v-if="me._id === user._id" src="../assets/home/delete.png" class="delete" @click="present('alert')">
 		</div>
 		<div class="wish">
 			{{wishText}}
-			<input type="radio" class="img-radio" name="preview-toggle" :id="wishId">
-			<label v-if="user.headimgurl" class="wish-img-con" :for="wishId" v-bind:style="{ backgroundImage: 'url(' + user.headimgurl + ')' }">
-				<img :src="user.headimgurl" class="img-detail">
+			<input type="radio" class="img-radio" name="preview-toggle" :id="wish._id">
+			<label v-if="wish.img" class="wish-img-con" :for="wish._id" v-bind:style="{ backgroundImage: 'url(' + wish.img + ')' }">
+				<img :src="wish.img" class="img-detail">
 
 				<input type="radio" class="preview-cancel" name="preview-toggle"></input>
 			</label>
@@ -22,21 +20,23 @@
 	</div>
 	<div class="wish-container" v-else="me.sex == 1">
 		<div class="user-info">
-			<!-- <img :src="user.headimgurl" class="avatar" /> -->
-			<div class="avatar" v-bind:style="{ backgroundImage: user.headimgurl }"></div>
-			<!-- <div class="avatar"></div> -->
+			<div class="avatar" v-bind:style="{ backgroundImage: 'url(' + user.headimgurl + ')'}"></div>
 			<span class="user-name">{{user.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
 		</div>
 		<div class="wish">
 			{{wishText}}
-			<input type="radio" class="img-radio" name="preview-toggle" :id="wishId">
-			<label v-if="user.headimgurl" class="wish-img-con" :for="wishId" v-bind:style="{ backgroundImage: 'url(' + user.headimgurl + ')' }">
-				<img :src="user.headimgurl" class="img-detail">
+			<div class="label-con" v-if="wish.img">
+				<input type="radio" class="img-radio" name="preview-toggle" :id="wish._id">
+				<label class="wish-img-con" :for="wish._id" v-bind:style="{ backgroundImage: 'url(' + wish.img + ')' }">
+					<img :src="wish.img" class="img-detail">
 
-				<input type="radio" class="preview-cancel" name="preview-toggle"></input>
-			</label>
-			<button class="pickWish" @click="present('confirm')">领取愿望</button>
+					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
+				</label>
+				<div class="placeholder"></div>
+				<button class=" pickImg" @click="present('confirm')">领取愿望</button>
+			</div>
+			<button v-if="!wish.img" class="pickWish" @click="present('confirm')">领取愿望</button>
 		</div>
 	</div>
 </template>
@@ -59,7 +59,7 @@ export default {
 		}
 	},
 	created(){
-		// console.log(this.user);
+		console.log(this.wish);
 	},
 	methods: {
 		present(type){
@@ -170,23 +170,44 @@ export default {
 		vertical-align: middle;
 	}
 
+	.label-con {
+		width: 100%;
+	}
+
 	.wish-img-con {
-		display: block;
+		position: relative;
+		display: inline-block;
 	   	width: 100px;
 		min-height: 100px;
 		background-size: 100% auto;
 		background-position: center;
-		position: relative;
-		/*background-repeat: no-repeat;*/
+		background-repeat: no-repeat;
+		vertical-align: bottom;
+	}
+
+	.pickImg {
+		/*float: right;*/
+		position: absolute;
+		right: 0;
+		bottom: 0px;
+		height: 22px;
+		font-size: 14px;
+		padding: 0 10px;
+		color: #fff;
+		border: none;
+		outline: none;
+		border-radius: 11px;
+		background-color: #f9d52c;
+		vertical-align: bottom;
 	}
 
 	.img-radio {
 		position: absolute;
 		left: 0;
 		bottom: 0;
-		/*width: 0;
-		height: 0;*/
-		/*opacity: 0;*/
+		width: 0;
+		height: 0;
+		opacity: 0;
 	}
 
 	.img-detail {
@@ -218,5 +239,20 @@ export default {
 
 	.img-radio:checked + label .preview-cancel {
 		display: block;
+	}
+
+	.placeholder {
+		display: none;
+		visibility: hidden;
+		font-size: 0px;
+		height: 0;
+		content: ".";
+		clear: both;
+	}
+
+	.img-radio:checked ~ .placeholder {
+		display: block;
+		height: 30px;
+		background-color: #000;
 	}
 </style>

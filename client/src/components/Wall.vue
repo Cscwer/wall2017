@@ -101,7 +101,6 @@ export default {
 				type: type,
 				confirmText: '确定',
 				cancelText: '否定',
-				placeholderText: '输入给她的留言',
 				needBlur: true,
 				handle: {
 					confirm(e){
