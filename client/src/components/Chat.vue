@@ -6,7 +6,12 @@
         <div class="msg-outter"　:style="{height: screenHeight + 'px'}">  
             <div class="msg-wrap">
                 <div v-for="(msg, idx) in list" :key="idx">
-                    <p class="create_at">{{transfromTime(msg.create_at)}}</p>
+                    <p class="create_at" v-if="shouldShow(
+                        msg.create_at,
+                        idx === list.length-1 ? null : list[idx+1].create_at
+                    )">
+                        {{transfromTime(msg.create_at)}}
+                    </p>
                     <div  class="msg-container" 
                     :style="{justifyContent: msg.myself ? 'flex-end': 'flex-start'}">
                         <img :src="from.headimgurl" class="avatar" v-if="!msg.myself">
@@ -95,6 +100,11 @@ export default {
             var date = new Date(ts);
             return date.toLocaleTimeString();
         },
+        shouldShow(now, pre) {
+            if (!pre) return true; 
+            let cha = Math.abs(now - pre);
+            return cha > 180000;
+        }
     }
 
 
