@@ -55,6 +55,11 @@ export default {
         this.list = chats.toArray();
         chats_global = chats; 
         console.log(chats.toArray());
+        chat_utils.bus.$on('onMsg',function(newMsg) {
+            if(newMsg.from._id === id) {
+                this.list.unshift(newMsg);
+            }
+        })
         
     },
     methods: {
@@ -63,7 +68,8 @@ export default {
                 content: this.message,
                 her_id: this.from._id
             }
-            ws.socket.emit('revMsg',msg);
+            console.log(this.from);
+            ws.socket.emit('sendMsg',msg);
             msg.create_at = Date.now();
             msg.myself = true;
             this.list.unshift(msg);

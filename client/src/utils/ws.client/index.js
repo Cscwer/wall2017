@@ -1,6 +1,7 @@
 // ws.client.js
 import cookie from '../cookie';
 import chat from '../chat';
+import Vue from 'Vue';
 
 let wsurl = location.origin;
 
@@ -13,7 +14,8 @@ const USER_TOKEN = cookie.get('user-token')
     , socket = io(wsurl + '/?user_token=' + USER_TOKEN)
     , ws = {
 		socket: socket,
-		user: null
+		user: null,
+		bus: new Vue()
 	}
 
 ws.ready = new Promise((res, rej) => {
@@ -35,6 +37,8 @@ ws.ready = new Promise((res, rej) => {
 socket.on('revMsg', function(msg){
 	console.log('revMsg');
 	console.log(msg);
+
+	ws.bus.$emit('onMsg', msg);
 });
 
 
