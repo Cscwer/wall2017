@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="header-wrap">
-			<div class="msg-icon-wrap" @click="openMsg()">
+			<div class="msg-icon-wrap" @click="openMsg(),hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
 				<span class="red-dot" v-if="hasMsg"></span>
 			</div>
@@ -108,7 +108,6 @@ export default {
 	created(){
 		this.init();
 		console.log("page created");
-		this.openMsg();
 		this.hasMsg = appCtrl.toObject().hasMsg;
 	},
 	methods: {

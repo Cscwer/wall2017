@@ -3,17 +3,22 @@
         <div class="head">
             {{from.nickname}}
         </div>
-        <div class="msg-outter"　:style="{height: screenHeight + 'px'}"> 
+        <div class="msg-outter"　:style="{height: screenHeight + 'px'}">  
             <div class="msg-wrap">
-                <div v-for="(msg, idx) in list" :key="idx" class="msg-container" 
+                <div v-for="(msg, idx) in list" :key="idx">
+                    <p class="create_at">{{transfromTime(msg.create_at)}}</p>
+                    <div  class="msg-container" 
                     :style="{justifyContent: msg.myself ? 'flex-end': 'flex-start'}">
-                    <img :src="from.headimgurl" class="avatar" v-if="!msg.myself">
-                    <p :class="{ 
-                        'left-content': !msg.myself,
-                        'right-content': msg.myself
-                    }">{{msg.content}}</p>
+                        <img :src="from.headimgurl" class="avatar" v-if="!msg.myself">
+                        <p :class="{ 
+                            'left-content': !msg.myself,
+                            'right-content': msg.myself
+                        }">{{msg.content}}</p>
+                    </div>
                 </div>
+                
             </div>
+            <div class="bottom-hash" ref="bottomHash"></div>
         </div>
 
         <div class="footer-wrap">
@@ -27,6 +32,7 @@
 <script>
 import LsArray from '@/utils/ls/LsArray';
 import ws from '@/utils/ws.client';
+import chat_utils from '@/utils/chat';
 
 let chats_global = null; 
 
@@ -41,19 +47,15 @@ export default {
         }
     },
     created() {
-        console.log(window.innerHeight);
-        // console.log("chat created");
-        // console.log(this.chatSelected);
-        // this.$emit("sayHello", "222");
-        console.log(this.chatSelected);
         let id = this.chatSelected.from._id;
         let ns = "chat-msgs-";
         let chats = new LsArray(ns+id);
 
+        this.toEnd();
         this.list = chats.toArray();
         chats_global = chats; 
-
         console.log(chats.toArray());
+        
     },
     methods: {
         send() {
@@ -62,11 +64,30 @@ export default {
                 her_id: this.from._id
             }
             ws.socket.emit('revMsg',msg);
-
-            msg.myself = true; 
-            chats_global.push(msg);
+            msg.create_at = Date.now();
+            msg.myself = true;
             this.list.unshift(msg);
-        }
+            chat_utils.onMsg({
+                type: 'chat',
+                content: this.message,
+                from: this.from,
+                myself: true,
+                create_at: Date.now(),
+                unread: false,
+            })
+            this.message = "";
+            this.toEnd();
+        },
+        toEnd() {    
+            setTimeout(()=>{
+                console.log(this.$refs.bottomHash);
+                this.$refs.bottomHash.scrollIntoView();
+            })
+        },
+        transfromTime(ts) {
+            var date = new Date(ts);
+            return date.toLocaleTimeString();
+        },
     }
 
 
@@ -96,6 +117,11 @@ export default {
         box-sizing: border-box;
     }
 
+    .create_at {
+        color: #cfcfcf;
+        text-align: center;
+    }
+
     .msg-container {
         display: flex;
         justify-content: flex-start;
@@ -123,6 +149,11 @@ export default {
         padding: 12px;
         border-radius: 24px 24px 24px 3px;
         box-shadow: 4px 4px 7px 0px rgb(255,200,200)
+    }
+    
+    .bottom-hash {
+        height: 1px;
+        width: 1px;
     }
 
     .right-content {

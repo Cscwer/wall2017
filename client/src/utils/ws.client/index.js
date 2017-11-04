@@ -6,7 +6,7 @@ let wsurl = location.origin;
 
 if (wsurl.indexOf('https') === -1){
 	// http
-	wsurl = 'http://gw.chenpt.cc/socket.io';
+	wsurl = 'http://192.168.199.242:6677';
 }
 
 const USER_TOKEN = cookie.get('user-token')

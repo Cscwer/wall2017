@@ -11,7 +11,7 @@ let appStatus = new LsObject('app-status');
 
 // This Is APIs; 
 chat.list      = chatList; 
-chat.appStatus = appStatus; 
+chat.appStatus = appStatus;
 
 function storeMsg(msg){
 	var type = msg.type;
@@ -49,8 +49,14 @@ function firstUp(msg){
 
 chat.onMsg = function(msg){
 	let type = msg.type; 
-	msg.unread = true; 
-	appStatus.set('hasMsg', true);
+
+	if ('unread' in msg){
+		msg.unread = false; 
+	} else {
+		msg.unread = true; 
+	}
+	
+	appStatus.set('hasMsg', msg.unread);
 	// msg._id = uuid(); 
 
 	// Error 
