@@ -58,6 +58,7 @@ export default {
         ws.bus.$on('onMsg',(newMsg) => {
             if(newMsg.from._id === id) {
                 this.list.unshift(newMsg);
+                this.toEnd();
             }
         })
         
