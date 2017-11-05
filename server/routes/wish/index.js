@@ -169,7 +169,7 @@ router.post('/delete', function(req, res){
 
 	one.find(_id).then(wish => {
 		if (!wish) return rps.send4000(res, '此 id 不存在'); 
-		if (wish.she._id !== user._id) return rps.send4000(res, '不是你的愿望'); 
+		if (wish.she._id.toString() !== user._id) return rps.send4000(res, '不是你的愿望'); 
 
 		return one.remove(_id).then(ok => {
 			rps.send2000(res, ok); 
