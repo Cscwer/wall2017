@@ -161,7 +161,8 @@ export default {
 }
 
 .modal-enter, .modal-leave-to {
-	top: 100%; 
+	/*top: 100%; */
+	transform: translate3d(0, 100%, 0);
 	/*opacity: 0; */
 }
 
