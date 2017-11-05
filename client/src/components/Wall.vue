@@ -12,7 +12,7 @@
 		<swiper class="gw-swiper" :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
 		<!-- slides -->
 			<swiper-slide class="slider-img" v-for="banner in banners">
-				<img :src="banner">
+				<img :src="banner.img" @click.stop="clickBanner(banner)">
 			</swiper-slide>
 		</swiper>
 
@@ -29,7 +29,26 @@ import http from '@/utils/http.client';
 import ui from '@/utils/ui';
 import Wish from './SingleWish';
 import WishSearch from './WishSearch';
-import banner from '../assets/home/slider.jpg';
+// import banner from '../assets/home/slider.jpg';
+
+let banners = [
+	{
+		img: 'https://io.chenpt.cc/banner/music.png', 
+		path: '/music'
+	},
+	{
+		img: 'https://io.chenpt.cc/banner/HAPPY-GIRLS-DAY.png',
+		path: null
+	},
+	{
+		img: 'https://io.chenpt.cc/banner/love.png',
+		path: '/love'
+	},
+	{
+		img: 'https://io.chenpt.cc/banner/reverse.png',
+		path: null
+	}
+]; 
 
 export default {
 	name: 'hello',
@@ -41,7 +60,7 @@ export default {
 		return {
 			toastText: '',
 			toastType: 'top',
-			banners: [ banner, banner, banner ],
+			banners: banners,
 			swiperOption: {
 				autoplay: 3000,
 				initialSlide: 1,
@@ -68,6 +87,16 @@ export default {
 		// this.loadMore();
 	},
 	methods: {
+		clickBanner(b){
+			console.log('!')
+			var path = b.path; 
+
+			if (path){
+				this.$router.push({
+					path: path
+				})
+			}
+		},
 		sendModal(){
 			let myModal = this.$popup.push({
 				type: 'modal',
