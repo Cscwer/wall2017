@@ -9,6 +9,8 @@
 			<span class="ps-text">搜索</span>
 		</div>
 
+		<div class="bottom-of-search-container" ref="bottomOfSearchContainer"></div>
+
 		<swiper class="gw-swiper" :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
 		<!-- slides -->
 			<swiper-slide class="slider-img" v-for="banner in banners">
@@ -33,19 +35,19 @@ import WishSearch from './WishSearch';
 
 let banners = [
 	{
-		img: 'https://io.chenpt.cc/banner/music.png', 
+		img: 'https://io.chenpt.cc/banner/music-2.png', 
 		path: '/music'
 	},
 	{
-		img: 'https://io.chenpt.cc/banner/HAPPY-GIRLS-DAY.png',
+		img: 'https://io.chenpt.cc/banner/HAPPY-GIRLS-DAY-2.png',
 		path: null
 	},
 	{
-		img: 'https://io.chenpt.cc/banner/love.png',
+		img: 'https://io.chenpt.cc/banner/love-2.png',
 		path: '/love'
 	},
 	{
-		img: 'https://io.chenpt.cc/banner/reverse.png',
+		img: 'https://io.chenpt.cc/banner/reverse-2.png',
 		path: null
 	}
 ]; 
@@ -87,6 +89,11 @@ export default {
 		// this.loadMore();
 	},
 	methods: {
+		initSearchPos(){
+			setTimeout(() => {
+				this.$refs.bottomOfSearchContainer.scrollIntoView(); 
+			}, 300)
+		}, 
 		clickBanner(b){
 			console.log('!')
 			var path = b.path; 
@@ -144,8 +151,10 @@ export default {
 			}).launch()
 		},
 		initAll: async function(){
-			let res = await http.get('/api/user/me');
+			let res = await http.get('/api/user/me', ui.showLoading());
 			this.user = res.data;
+
+			this.initSearchPos(); 
 		},
 		getUser: function(){
 			return http.get('/api/user/me');
