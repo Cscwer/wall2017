@@ -14,7 +14,7 @@ const express = require('express')
 	, auth = require('../utils/auth')
 	, R = require('../utils/redis')
 	, qnx = require('../utils/qnx')
-	, uuid = require('uuid/V1')
+	, uuid = require('uuid/v1')
 
 
 let redirectTo = 

@@ -707,7 +707,8 @@ export default {
 }
 
 .on-danmaku-input-enter {
-	top: 100%; 
+	/*top: 100%; */
+	transform: translate3d(0, 100%, 0);
 }
 
 .on-danmaku-input-leave-to {

@@ -94,9 +94,9 @@ R.initQueue = (key, list) => {
 	key = JS_QUEUE_NS + key; 
 
 	return R.del(key).then(done => {
-		let temp = list.map(JSON.stringify); 
+		let temp = list.map(JSON.stringify);
 		
-		return R.lpush(key, temp); 
+		return R.rpush(key, temp); 
 	})
 }
 
@@ -135,8 +135,8 @@ R.page = (key, p, N) => {
 
 	return R.lrange(
 		key,
-		-((p + 1) * N),
-		-(1 + p * N)
+		p * N,
+		(p + 1) * N - 1
 	).then(arr => arr.map(JSON.parse)); 
 }
 

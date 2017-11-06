@@ -33,6 +33,42 @@ router.get('/', function(req, res){
 	});
 }); 
 
+router.post('/search', function(req, res){
+	let { wishtype, q, area } = req.body; 
+	q = q || ''; 
+	// wishtype = wishtype.map(e => e.parseInt) || []; 
+	// area = area || 0; 
+
+	console.log(req.body); 
+
+	let EXP = new RegExp(
+		decodeURIComponent(q)
+	); 
+
+
+	let Q = wishModel.find({ text: EXP }); 
+
+
+	if (wishtype.length !== 0) Q = Q.where('wishtype').in(wishtype); 
+	
+	if (area.length !== 0) Q = Q.where('area').in(area); 
+
+	Q.populate('she').then(docs => {
+		console.log(docs); 
+		rps.send2000(res, docs); 
+	})
+
+
+	// wishModel.find({
+	// 	$or: [{
+	// 		text: EXP,
+	// 		wishtype: wishtype,
+	// 		area: area,
+	// 		status: 0
+	// 	}]
+	// }).populate('she').limit(N).then()
+})
+
 /***
  * 对应用户的愿望
  * @param p
@@ -100,7 +136,8 @@ router.post('/', function(req, res){
 	let user = req.user; 
 
 	// 取得 _id
-	req.body.she = user._id; 
+	req.body.she  = user._id; 
+	req.body.area = user.area; 
 
 	if (user.sex !== GIRL_FLAG){
 		// 不是女性。。。 

@@ -9,6 +9,7 @@ const express = require('express')
     , music = require('./music')
     , system = require('./system')
     , wx = require('./wx')
+    , obj = require('./obj')
     // , login = require('./login')
 
 // System Info
@@ -27,6 +28,7 @@ router.use('/user', user);
 router.use('/ta', ta); 
 router.use('/wish', wish); 
 router.use('/music', music);
+router.use('/obj', obj); 
 
 router.use('*', function(req, res, next){
 	console.log('\n\n'); 

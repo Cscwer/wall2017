@@ -9,15 +9,17 @@
 			<span class="ps-text">搜索</span>
 		</div>
 
+		<div class="bottom-of-search-container" ref="bottomOfSearchContainer"></div>
+
 		<swiper class="gw-swiper" :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
 		<!-- slides -->
 			<swiper-slide class="slider-img" v-for="banner in banners">
-				<img :src="banner">
+				<img :src="banner.img" @click.stop="clickBanner(banner)">
 			</swiper-slide>
 		</swiper>
 
 		<div class="wish-container">
-			<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
+			<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
 		</div>
 		<div class="bg-cover"></div>
 	</div>
@@ -29,7 +31,26 @@ import http from '@/utils/http.client';
 import ui from '@/utils/ui';
 import Wish from './SingleWish';
 import WishSearch from './WishSearch';
-import banner from '../assets/home/slider.jpg';
+// import banner from '../assets/home/slider.jpg';
+
+let banners = [
+	{
+		img: 'https://io.chenpt.cc/banner/music-2.png',
+		path: '/music'
+	},
+	{
+		img: 'https://io.chenpt.cc/banner/HAPPY-GIRLS-DAY-2.png',
+		path: null
+	},
+	{
+		img: 'https://io.chenpt.cc/banner/love-2.png',
+		path: '/love'
+	},
+	{
+		img: 'https://io.chenpt.cc/banner/reverse-2.png',
+		path: null
+	}
+];
 
 export default {
 	name: 'hello',
@@ -41,7 +62,7 @@ export default {
 		return {
 			toastText: '',
 			toastType: 'top',
-			banners: [ banner, banner, banner ],
+			banners: banners,
 			swiperOption: {
 				autoplay: 3000,
 				initialSlide: 1,
@@ -65,9 +86,27 @@ export default {
 	created(){
 		// Call Async Function
 		this.initAll();
+
+
+		window.$$$ = this;
 		// this.loadMore();
 	},
 	methods: {
+		initSearchPos(){
+			setTimeout(() => {
+				this.$refs.bottomOfSearchContainer.scrollIntoView();
+			}, 300)
+		},
+		clickBanner(b){
+			console.log('!')
+			var path = b.path;
+
+			if (path){
+				this.$router.push({
+					path: path
+				})
+			}
+		},
 		sendModal(){
 			let myModal = this.$popup.push({
 				type: 'modal',
@@ -96,6 +135,14 @@ export default {
 				position: this.toastType,
 			})
 		},
+		deleteWish(msg){
+			console.log(msg + 'delete');
+			let idx = null;
+			this.list.forEach((e, innerIdx) => {
+				if (e._id === msg) idx = innerIdx;
+			});
+			this.list.splice(idx, 1);
+		},
 		present(type){
 			this.$popup.push({
 				type: type,
@@ -115,8 +162,10 @@ export default {
 			}).launch()
 		},
 		initAll: async function(){
-			let res = await http.get('/api/user/me');
+			let res = await http.get('/api/user/me', ui.showLoading());
 			this.user = res.data;
+
+			this.initSearchPos();
 		},
 		getUser: function(){
 			return http.get('/api/user/me');

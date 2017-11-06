@@ -19,6 +19,10 @@ let wishSchema = mongoose.Schema({
 	img: {
 		type: String
 	},
+	area: {
+		type: Number, 
+		default: 0
+	},
 	// Status: 
 	// 0 =>  待领取 
 	// 1 =>  待实现 
