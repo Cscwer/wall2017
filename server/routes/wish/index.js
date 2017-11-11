@@ -203,14 +203,15 @@ router.post('/pull', function(req, res){
 					rps.send2000(res, ok); 
 
 					// User 
-					wish.he = user; 
+					let temp = JSON.parse(JSON.stringify(wish));
+					temp.he = user; 
 
 					// Server Push 
 					IO.serverPush(wish.she, {
 						type: 'wish-pull', 
-						data: wish,
+						data: temp,
 						msg: `你的愿望被 ${ user.nickname } 领走了 ~ ` ,
-						created_at: Date.now()
+						create_at: Date.now()
 					}); 
 
 					return one.set(_id, wish);
