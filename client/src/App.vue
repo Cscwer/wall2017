@@ -162,7 +162,7 @@ export default {
 	
 	padding: .8em 0; 
 	align-items: center;
-
+	z-index: 100; 
 	justify-content: space-between;
 }
 
