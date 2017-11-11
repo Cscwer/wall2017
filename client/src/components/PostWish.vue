@@ -5,11 +5,14 @@
 
 		<div class="post-wish-picarea post-wish-line">
 			<transition name="pic-load">
-				<div v-if="wish.img" class="post-wish-img" :style="{
+				<!-- <div v-if="wish.img" class="post-wish-img cus-loading" :style="{
 					'background-image': 'url(' + wish.img + ')'
-				}"></div>
-
-				<!-- <img  :src="wish.img" class="post-wish-img" /> -->
+				}"></div> -->
+				<div v-if="wish.img" class="post-wish-img cus-loading">
+					<div class="post-wish-img" :style="{
+						'background-image': 'url(' + wish.img + ')'
+					}"></div>
+				</div>
 			</transition>
 
 			<transition name="pic-load">
@@ -59,6 +62,7 @@ export default {
 	},
 	methods: {
 		chooseImg(){
+			// this.wish.img = `https://io.chenpt.cc/girl-wall-image/a4cb40c6-e62d-448b-9dd3-6d6dfd4918ed`; 
 			vwx.getAnImg().then(res => {
 				// console.log(img); 
 				// as test 
@@ -102,7 +106,7 @@ export default {
 	border-radius: 10px;
 	position: absolute;
 	left: 0; 
-	
+	background-color: rgba(230, 230, 230, .1);
 	background-size: cover;
 	background-position: center;
 }
@@ -164,5 +168,33 @@ export default {
 .pic-load-enter, .pic-load-leave-to {
 	transform: scale(1.5);
 	opacity: 0; 
+}
+
+@keyframes cus-loading {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.cus-loading::before {
+	content: ""; 
+	position: absolute;
+	height: 50%;
+	width: 50%;
+	left: 25%; 
+	top: 25%; 
+	box-sizing: border-box;
+	border-radius: 50%;
+	border: 6px solid rgba(0, 0, 0, 0.1);
+	border-top: 6px solid #555;
+	animation: cus-loading 1.2s infinite cubic-bezier(0.785, 0.135, 0.15, 0.86);
+}
+
+.post-img-choosen {
+	position: absolute;
+	left: 0; 
+	top: 0; 
+	width: 100%;
+	height: 100%; 
 }
 </style>
