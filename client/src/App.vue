@@ -6,10 +6,11 @@
 				}"
 				class="tab-page">
 			</router-view>
+				
 
-			<footer class="footer-tabs">
-				<div
-					:class="{
+			<transition name="fooload">
+			<footer class="footer-tabs" v-if="showFooter">
+				<div :class="{
 						'tab': true,
 						'tab-middle': tab.path === '/wish',
 						'tab-active': tab.active,
@@ -22,6 +23,7 @@
 					<img class="tab-icon" :src="tab.active ? tab.icon.fill : tab.icon.outline">
 				</div>
 			</footer>
+			</transition>
 		</div>
 	</div>
 </template>
@@ -46,7 +48,8 @@ export default {
 				isBlur: false	
 			},
 			pageWidth: window.innerWidth,
-			status: null
+			status: null,
+			showFooter: false
 		}
 	},
 	created(){
@@ -54,6 +57,10 @@ export default {
 
 		// Object Init 
 		this.status = chat.appStatus.toObject(); 
+
+		setTimeout(() => {
+			this.showFooter = true
+		}, 700); 
 	},
 	watch:{
 		// onChnaging Route Path 
@@ -164,8 +171,19 @@ export default {
 	align-items: center;
 	z-index: 100; 
 	justify-content: space-between;
+
+	transition: all .5s; 
 }
 
+
+.fooload-enter-active, .fooload-leave-active {
+	/*transition-timing-function: cubic-bezier(0.74, 0, 0.36, 1.55);*/
+	transition-timing-function: ease;
+}
+
+.fooload-enter, .fooload-leave-to {
+	transform: translateY(200%);
+}
 
 
 .tab-page {
