@@ -1,31 +1,33 @@
 <!-- SingleWish.vue -->
 
 <template>
-	<div class="wish-container" v-if="me.sex == 2">
+	<div class="wish-container" v-if="myInfo.sex == 2">
 		<div class="user-info">
-			<img :src="user.headimgurl" class="avatar" />
-			<span class="user-name">{{user.nickname}}</span>
-			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
-			<img v-if="me._id === user._id" src="../assets/home/delete.png" class="delete" @click="present('alert')">
+			<img :src="wish.she.headimgurl" class="avatar" />
+			<span class="user-name">{{wish.she.nickname}}</span>
+			<div class="area" v-bind:style="{ backgroundColor: bgcolor[wish.she.area] }">{{area[wish.she.area]}}</div>
+			<img v-if="myInfo._id === wish.she._id" src="../assets/home/delete.png" class="delete" @click="deleteWish('确定')">
 		</div>
 		<div class="wish">
-			{{wishText}}
-			<input type="radio" class="img-radio" name="preview-toggle" :id="wish._id">
-			<label v-if="wish.img" class="wish-img-con" :for="wish._id" v-bind:style="{ backgroundImage: 'url(' + wish.img + ')' }">
-				<img :src="wish.img" class="img-detail">
+			{{ wish.text }}
+			<div class="label-con" v-if="wish.img">
+				<input type="radio" class="img-radio" name="preview-toggle" :id="wish._id">
+				<label class="wish-img-con" :for="wish._id" v-bind:style="{ backgroundImage: 'url(' + wish.img + ')' }">
+					<img :src="wish.img" class="img-detail">
 
-				<input type="radio" class="preview-cancel" name="preview-toggle"></input>
-			</label>
+					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
+				</label>
+			</div>
 		</div>
 	</div>
-	<div class="wish-container" v-else="me.sex == 1">
+	<div class="wish-container" v-else="myInfo.sex == 1">
 		<div class="user-info">
-			<div class="avatar" v-bind:style="{ backgroundImage: 'url(' + user.headimgurl + ')'}"></div>
-			<span class="user-name">{{user.nickname}}</span>
-			<div class="area" v-bind:style="{ backgroundColor: bgcolor[user.area] }">{{area[user.area]}}</div>
+			<div class="avatar" v-bind:style="{ backgroundImage: 'url(' + wish.she.headimgurl + ')'}"></div>
+			<span class="user-name">{{wish.she.nickname}}</span>
+			<div class="area" v-bind:style="{ backgroundColor: bgcolor[wish.she.area] }">{{area[wish.she.area]}}</div>
 		</div>
 		<div class="wish">
-			{{wishText}}
+			{{ wish.text }}
 			<div class="label-con" v-if="wish.img">
 				<input type="radio" class="img-radio" name="preview-toggle" :id="wish._id">
 				<label class="wish-img-con" :for="wish._id" v-bind:style="{ backgroundImage: 'url(' + wish.img + ')' }">
@@ -34,9 +36,9 @@
 					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
 				</label>
 				<div class="placeholder"></div>
-				<button class=" pickImg" @click="present('confirm')">领取愿望</button>
+				<button class=" pickImg" @click="pickWish('确定领取该愿望')">领取愿望</button>
 			</div>
-			<button v-if="!wish.img" class="pickWish" @click="present('confirm')">领取愿望</button>
+			<button v-if="!wish.img" class="pickWish" @click="pickWish('确定领取该愿望')">领取愿望</button>
 		</div>
 	</div>
 </template>
@@ -50,37 +52,55 @@ export default {
 	props: ['wish', 'myInfo'],
 	data() {
 		return {
-			me: this.myInfo,
-			user: this.wish.she,
-			wishText: this.wish.text,
 			img: this.wish.img,
 			area: ['大学城', '东风路', '龙洞'],
 			bgcolor: ['#b5d1ff', '#ffb9b5', '#ffe88d']
 		}
 	},
 	created(){
-		console.log(this.wish);
 	},
 	methods: {
-		present(type){
-			this.$popup.push({
-				type: type,
-				confirmText: '确定',
-				cancelText: '否定',
-				placeholderText: '输入给她的留言',
-				needBlur: true,
-				handle: {
-					confirm(e){
-						console.log('yes', this);
-						console.log('参数', e);
-					},
-					cancel(){
-						console.log('no')
-						this.close();
+		present(type, world) {
+			return new Promise((res, rej) => {
+				this.$popup.push({
+					type: type,
+					confirmText: world,
+					cancelText: '否定',
+					needBlur: true,
+					handle: {
+						confirm(){
+							res();
+							this.close();
+						},
+						cancel(){
+							this.close();
+						}
 					}
-				}
-			}).launch()
+				}).launch()
+			})
 		},
+		deleteWish(world) {
+			this.present('alert', world).then(() => {
+				http.post('/api/wish/delete', {
+					_id: this.wish._id
+				}).then(res => {
+					if(res.code === 2000) {
+						this.$emit('deleteOnWall', this.wish._id);
+					}
+				})
+			})
+		},
+		pickWish(world) {
+			this.present('confirm', world).then(() => {
+				http.post('/api/wish/pull', {
+					_id: this.wish._id
+				}).then(res => {
+					if(res.code === 2000) {
+						this.$emit('deleteOnWall', this.wish._id);
+					}
+				})
+			})
+		}
 	}
 
 }

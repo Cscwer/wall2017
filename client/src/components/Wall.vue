@@ -19,7 +19,7 @@
 		</swiper>
 
 		<div class="wish-container">
-			<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
+			<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
 		</div>
 		<div class="bg-cover"></div>
 	</div>
@@ -35,7 +35,7 @@ import WishSearch from './WishSearch';
 
 let banners = [
 	{
-		img: 'https://io.chenpt.cc/banner/music-2.png', 
+		img: 'https://io.chenpt.cc/banner/music-2.png',
 		path: '/music'
 	},
 	{
@@ -50,7 +50,7 @@ let banners = [
 		img: 'https://io.chenpt.cc/banner/reverse-2.png',
 		path: null
 	}
-]; 
+];
 
 export default {
 	name: 'hello',
@@ -86,17 +86,20 @@ export default {
 	created(){
 		// Call Async Function
 		this.initAll();
+
+
+		window.$$$ = this;
 		// this.loadMore();
 	},
 	methods: {
 		initSearchPos(){
 			setTimeout(() => {
-				this.$refs.bottomOfSearchContainer.scrollIntoView(); 
+				this.$refs.bottomOfSearchContainer.scrollIntoView();
 			}, 300)
-		}, 
+		},
 		clickBanner(b){
 			console.log('!')
-			var path = b.path; 
+			var path = b.path;
 
 			if (path){
 				this.$router.push({
@@ -132,6 +135,14 @@ export default {
 				position: this.toastType,
 			})
 		},
+		deleteWish(msg){
+			console.log(msg + 'delete');
+			let idx = null;
+			this.list.forEach((e, innerIdx) => {
+				if (e._id === msg) idx = innerIdx;
+			});
+			this.list.splice(idx, 1);
+		},
 		present(type){
 			this.$popup.push({
 				type: type,
@@ -154,7 +165,7 @@ export default {
 			let res = await http.get('/api/user/me', ui.showLoading());
 			this.user = res.data;
 
-			this.initSearchPos(); 
+			this.initSearchPos();
 		},
 		getUser: function(){
 			return http.get('/api/user/me');
