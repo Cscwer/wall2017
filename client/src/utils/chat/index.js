@@ -20,7 +20,7 @@ function storeMsg(msg){
 		let chatArr = new LsArray('chat-msgs-' + msg.from._id); 
 		chatArr.push(msg); 
 
-	} else if (type.startsWith === 'wish') {
+	} else if (type.startsWith('wish')) {
 		// type is 愿望动态类
 		let wishMsg = new LsArray('wish-msgs'); 
 		wishMsg.push(msg); 
