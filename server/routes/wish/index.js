@@ -148,7 +148,12 @@ router.post('/', function(req, res){
 
 		let data = new wishModel(req.body);
 
+		let temp = data.toObject();
+		temp.she = user; 
+		page.addOne(temp); 
+
 		data.save().then(wish => {
+			wish.she = req.user; 
 			rps.send2000(res, wish);
 		}).catch(err => {
 			if (err.name === 'ValidationError') {
@@ -173,6 +178,8 @@ router.post('/delete', function(req, res){
 
 		return one.remove(_id).then(ok => {
 			rps.send2000(res, ok); 
+			// 刷新缓存 
+			page.cacheFlush();
 		}) 
 	}).catch(err => {
 		rps.send5000(res, err); 

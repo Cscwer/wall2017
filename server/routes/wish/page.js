@@ -3,7 +3,7 @@ const N = 10
     , { wishModel } = require('../../utils/db')
     , R = require('../../utils/redis')
     , WISH_LIST_NS = 'WISH-LIST'
-    , EXP_TIME = 10
+    , EXP_TIME = 60
 
 
 var flushTime = 0;
@@ -19,6 +19,10 @@ function cacheFlush(){
 			console.log(`[ Wall Cache Update ] 第 ${flushTime} 次刷新, Count: ${ok}`); 
 		}); 
 	})	
+}
+
+function addOne(obj){
+	return R.enQueue(WISH_LIST_NS, obj);
 }
 
 // Start 
@@ -55,5 +59,7 @@ function find(p){
 
 module.exports = {
 	find: find,
-	timer: timer
+	timer: timer,
+	addOne: addOne,
+	cacheFlush: cacheFlush
 }
