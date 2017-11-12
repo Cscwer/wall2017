@@ -1,5 +1,7 @@
 <template>
-	<div>
+	<div v-infinite-scroll="loadMore"
+		infinite-scroll-disabled="loading && !finish"
+		infinite-scroll-distance="20">
 		<div class="header-wrap">
 			<div class="msg-icon-wrap" @click="openMsg(),hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
@@ -16,28 +18,41 @@
 				<p class="user-from">{{area}}校区</p>
 			</div>
 			<ul class="metab-wrap">
-				<li class="me-tab" :class="{active: activeidx === 0}"  v-show="isFemale" @click="changeTo(0)">待领取</li>
-				<li class="me-tab" :class="{active: activeidx === 1}"  @click="changeTo(1)">实现中</li>
-				<li class="me-tab" :class="{active: activeidx === 2}"  @click="changeTo(2)">已实现</a></li>
+				<li class="me-tab" :class="{active: activeidx === 0}" 
+					:style="{width:(isFemale ? 33 : 50) +'%'}" 
+					v-show="isFemale" 
+					@click="changeTo(0)">待领取</li>
+				<li class="me-tab" :class="{active: activeidx === 1}" 
+					:style="{width:(isFemale ? 33 : 50) +'%'}" 
+					@click="changeTo(1)">实现中</li>
+				<li class="me-tab" :class="{active: activeidx === 2}" 
+					:style="{width:(isFemale ? 33 : 50) +'%'}" 
+					@click="changeTo(2)">已实现</li>
+				<span class="me-tab-avtive" :style="{
+					left: ( isFemale ? (33 * activeidx) : (50 * (activeidx - 1)) + 10 ) + '%',
+					width: (isFemale ? 33 : 30) +'%'
+				}"></span>
 			</ul>
 		</div>
-		<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" >
+		<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
 			<swiper-slide class="swiper-item">
 				<div class="wish-container">
-					<wish class="wish-on-wall" v-for="wish in list1" :wish="wish" :myInfo="user"></wish>
+					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="wish in list0" :wish="wish" :myInfo="user"></wish>
 				</div>
+				<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : '1')}}</div>
+			</swiper-slide>
+			<swiper-slide class="swiper-item">
+				<div class="wish-container">
+					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="wish in list1" :wish="wish" :myInfo="user"></wish>
+				</div>
+				<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
 			</swiper-slide>
    		 	<swiper-slide class="swiper-item">
 				<div class="wish-container">
 					<wish class="wish-on-wall" v-for="wish in list2" :wish="wish" :myInfo="user"></wish>
 				</div>
+				<div v-show="this.list2.length === 0" class="text">{{isFemale ? text.female.realized : text.male.realized}}</div>
 			</swiper-slide>
-			<swiper-slide class="swiper-item">
-				<div class="wish-container">
-					<wish class="wish-on-wall" v-for="wish in list0" :wish="wish" :myInfo="user"></wish>
-				</div>
-			</swiper-slide>
-
 		</swiper>
 
 
@@ -65,20 +80,45 @@ export default {
 			localIds: [], 
 			show: '',
 			user: {},
-			sex: 'female',
 			activeidx: 1,
 			hasMsg: false,
+			notNextTick: true,
+			resistanceRatio : 0.4,
 			swiperOption: {
 				// autoplay: 1000,
-				initialSlide: 0,
-				paginationClickable: true,
+				initialSlide: 1,
 				freeMode: false,
-				loop: true,
-				pagination: '.swiper-pagination',
+				loop: false,
+				onTransitionStart: (swiper) => {
+					console.log(this.isFemale);
+					swiper.unlockSwipeToPrev();
+
+					if(!this.isFemale && swiper.activeIndex === 1) {
+						swiper.lockSwipeToPrev();
+					}
+					console.log(swiper.activeIndex);
+					this.activeidx = swiper.activeIndex;
+				},
+				onTransitionEnd: (swiper) => {
+					if(swiper.activeIndex === 0 && !this.isFemale) {
+						swiper.slideTo(1);
+					}
+				}
 			},
 			list0: [],
 			list1: [],
-			list2: []
+			list2: [],
+			text: {
+				'male': {
+					realizing: '你还没有领取愿望哦,去领一个愿望吧！',
+					realized: '你还没有实现女生愿望哦！'
+				},
+				'female': {
+					unclaimed: '你还没有许愿哦，快去许个愿望吧！',
+					realizing: '你的愿望还没有被领取哦！',
+					realized: '你的愿望还没有实现哦！'
+				}
+			}
 		}
 	}, 
 	computed: {
@@ -96,7 +136,13 @@ export default {
 		this.init();
 		console.log("page created");
 		this.hasMsg = appCtrl.toObject().hasMsg;
+		this.getWish(0);
 		this.getWish(1);
+		this.getWish(2);
+		setTimeout(() => {
+			// window.swiper = this.$refs.mySwiper;
+			if (this.isFemale) this.swiper.unlockSwipeToPrev()
+		})
 	},
 	methods: {
 		init: async function(){
@@ -108,10 +154,9 @@ export default {
 			return http.get('./api/user/me')
 		},
 		changeTo: function(idx) {
-			this.activeidx = idx;
-			this.swiper.slideTo(idx, 500, false);
-			this.throttle(this.getWish(idx),50000);
-			
+			console.log(idx);
+			this.swiper.slideTo(idx, 500, true);
+			this.activeidx = idx;		
 		},
 		editInfo: function() {
 			var toEdit = {
@@ -158,7 +203,37 @@ export default {
 			console.log(res);
 			console.log(this.list0);
 		},
+		deleteWish(msg){
+			console.log(msg + 'delete');;
+				this['list' + this.activeidx].forEach((e, innerIdx) => {
+					if (e._id === msg) idx = innerIdx;
+				});
+				this['list' + this.activeidx].splice(idx, 1);
+			let idx = null;
+			
+		},
+		loadMore: function(){
+			let p = this.p;
+			this.loading = true;
 
+			let rps = http.get('/api/wish/user', {
+				p: p,
+				status: this.activeidx
+			});
+
+			this.p = p + 1;
+			this['list' + this.activeidx]
+			this.list = this.list.concat(rps.data);
+
+			if (rps.code === 2001){
+				this.finish = true;
+				console.log(p + ' : end!!');
+			} else {
+				console.log(p + ' : not end');
+			}
+			this.loading = false;
+			console.log("hello world");
+		}
 	}
 }
 </script>
@@ -212,7 +287,16 @@ export default {
 	}
 
 	.active {
-		border-bottom: 4px solid #fff;
+		/* border-bottom: 4px solid #fff; */
+	}
+
+	.me-tab-avtive {
+		position: absolute;
+		bottom: 0;
+		width: 33%;
+		height: 4px;
+		background-color: #fff;
+		transition: left 0.3s;
 	}
 
 	.msg-icon-wrap {
@@ -286,6 +370,14 @@ export default {
 		right: -1.5px;
 		top: 13.5px;
 		
+	}
+
+	.text {
+		margin-top: 25vh;
+		text-align: center;
+		width: 100%;
+		color: rgba(248, 153, 138, 1);
+    	font-size: 0.46rem;
 	}
 
 	
