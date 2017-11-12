@@ -89,7 +89,7 @@ export default {
 
 		openWish(){
 			ui.postWish().then(wish => {
-				http.post('/api/wish', wish).then(res => {
+				http.post('/api/wish', wish, ui.topLoading()).then(res => {
 					if (res.code === 2000){
 						this.$popup.toast({
 							msg: '许愿成功 ~ 请到主页查看',
