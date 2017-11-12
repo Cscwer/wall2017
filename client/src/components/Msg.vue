@@ -96,7 +96,8 @@ export default {
 
             var wishTop = this.$popup.push({
                 type: 'modal',
-                component: WishMsgList
+                component: WishMsgList,
+                bg: 'rgb(255, 241, 241)'
             });
 
             wishTop.launch();
