@@ -1,6 +1,7 @@
 // ui.js
 import GwPopup from '@/GwPopup';
 import MyInfo from '@/components/MyInfo';
+import vwx from './vwx';
 
 let ui = {};
 
@@ -284,8 +285,10 @@ ui.loversList = function(keyword) {
 			handle: {
 				confirm(confirm){
 					// res();
-					// this.close();
-					console.log("这里没有TA");
+					console.log("这里没有TA ui");
+					ui.share().then(() => {
+						this.close();
+					});
 				},
 				cancel(){
 					// rej();
@@ -295,6 +298,36 @@ ui.loversList = function(keyword) {
 		});
 		tabLover.launch();
 	})
+}
+
+ui.share = function() {
+	let noticeTa = GwPopup.getPopup().push({
+		type: 'prompt',
+		confirmText: '去告诉TA',
+		needBlur: true,
+		component: {
+			template: `<div style="text-align: center; margin: 1rem auto;">
+							<p style="font-size: 18px; color: #bbb; text-align: center;">TA还没来过许愿墙哦，</p>
+							<p style="font-size: 18px; color: #bbb; text-align: center;">快去告诉TA吧~</p>
+						</div>`,
+			methods: {
+				close(){
+					this.$emit('close');
+				}
+			}
+		},
+		handle: {
+			confirm(){
+				console.log("去告诉她");
+				vwx.share();
+				this.close();
+			},
+			cancel(){
+				this.close();
+			}
+		}
+	});
+	noticeTa.launch();
 }
 
 ui.showLoading = function(d = 8000){
@@ -317,9 +350,9 @@ ui.topLoading = function(d = 8000){
 	let loading = GwPopup.getPopup().push({
 		type: 'top-loading',
 		transitionName: 'gw-top-loading'
-	}); 
+	});
 
-	loading.launch(); 
+	loading.launch();
 
 	function cancel(){
 		loading.close();
