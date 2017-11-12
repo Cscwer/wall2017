@@ -4,31 +4,39 @@ import logger from './logger';
 
 let http = {}; 
 
+function merge(a, b){
+	var key; 
+	
+	for (key in a){
+		b[key] = a[key];
+	}
+
+	return b;
+}
+
+function parseToSend(method, query = {}, data = {}){
+	var toSend = data; 
+
+	if (method === 'get'){
+		toSend.params = query; 
+		return toSend;
+	} else {
+		return merge(query, toSend); 
+	}
+}
+
 http.send = method => function(path, query = {}, data = {}, cb){
 	if (typeof query === 'function'){
 		cb = query; 
 		query = {}; 
-	}
+	} 
 
 	if (typeof data === 'function'){
 		cb = data;
-		data = {}; 
+		data = query; 
 	}
 
-	let toSend = {}; 
-
-	if (arguments.length === 2){
-		if (method === 'get'){
-			toSend.params = query; 
-		} else {
-			// 此时 query 将作为 body 
-			toSend = query; 
-		}
-	} else if (arguments.length === 3){
-		// 参数给全的情况
-		toSend = data; 
-		toSend.params = query; 
-	}
+	let toSend = parseToSend(method, query, data); 
 
 	logger.req(method, path, toSend);
 
