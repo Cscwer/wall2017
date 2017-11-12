@@ -136,7 +136,7 @@ export default {
 			})
 		},
 		deleteWish(msg){
-			console.log(msg + 'delete');
+			console.log(msg + '   delete');
 			let idx = null;
 			this.list.forEach((e, innerIdx) => {
 				if (e._id === msg) idx = innerIdx;
