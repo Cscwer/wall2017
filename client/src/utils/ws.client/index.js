@@ -35,9 +35,8 @@ ws.ready = new Promise((res, rej) => {
 
 
 socket.on('revMsg', function(msg){
-	console.log('revMsg');
-	console.log(msg);
-
+	// console.log('revMsg');
+	// console.log(msg);
 	ws.bus.$emit('onMsg', msg);
 });
 

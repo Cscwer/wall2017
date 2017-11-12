@@ -18,7 +18,7 @@
 				</div>
 			</transition>			
 
-			<transition v-else name="fade">
+			<transition v-else :name="popupItem.transitionName ? popupItem.transitionName : 'fade'">
 				<div class="gw-outter"
 					v-if="popupItem.isShow"
 					:style="{
@@ -239,5 +239,16 @@ export default {
 
 .toast-text-align {
 	text-align: center;
+}
+
+
+.gw-top-loading-active, .gw-top-loading-active {
+	transition: all .5s; 
+	transition-timing-function: linear;
+}
+
+.gw-top-loading-enter, .gw-top-loading-leave-to {
+	transform: translateY(-100%);
+	/*opacity: 0; */
 }
 </style>

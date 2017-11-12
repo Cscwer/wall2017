@@ -22,17 +22,22 @@
 			</ul>
 		</div>
 		<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" >
-    		<swiper-slide class="swiper-item tab1-content">
+			<swiper-slide class="swiper-item">
 				<div class="wish-container">
-					<wish class="wish-on-wall" v-for="(wish, idx) in list" :userData="wish.she" :key="idx" :userWish="wish.text"></wish>
+					<wish class="wish-on-wall" v-for="wish in list1" :wish="wish" :myInfo="user"></wish>
 				</div>
 			</swiper-slide>
-   		 	<swiper-slide class="swiper-item tab2-content">
-				已实现
+   		 	<swiper-slide class="swiper-item">
+				<div class="wish-container">
+					<wish class="wish-on-wall" v-for="wish in list2" :wish="wish" :myInfo="user"></wish>
+				</div>
 			</swiper-slide>
 			<swiper-slide class="swiper-item">
-				待领取
+				<div class="wish-container">
+					<wish class="wish-on-wall" v-for="wish in list0" :wish="wish" :myInfo="user"></wish>
+				</div>
 			</swiper-slide>
+
 		</swiper>
 
 
@@ -71,27 +76,9 @@ export default {
 				loop: true,
 				pagination: '.swiper-pagination',
 			},
-			list: [
-				{
-					"_id": "59da17d88d91aa39709248da",
-					"she": {
-						"_id": "59ce826c4fece5203cd318c7",
-						"openid": "opdbdwdWXWMg9UY72Z4i_DTcblR0",
-						"nickname": "fuck",
-						"sex": 2,
-						"headimgurl": "http://wx.qlogo.cn/mmopen/vi_32/sBlxQJd2SyVeyroibMblibJyoINHpLnfPwGDib8mNzfMibAsrdxeSOyYqOtYjrglx04mJ2TeM3Pr4juMKjpHJJFcZA/0",
-						"__v": 0,
-						"created_at": "2017-09-29T17:27:08.773Z",
-						"phone": "未设置",
-						"area": 0
-					},
-					"__v": 0,
-					"created_at": "2017-10-08T12:19:36.653Z",
-					"wishtype": 0,
-					"status": 0,
-					"text": "我的愿望是世界和平"
-				},
-			]
+			list0: [],
+			list1: [],
+			list2: []
 		}
 	}, 
 	computed: {
@@ -109,6 +96,7 @@ export default {
 		this.init();
 		console.log("page created");
 		this.hasMsg = appCtrl.toObject().hasMsg;
+		this.getWish(1);
 	},
 	methods: {
 		init: async function(){
@@ -122,8 +110,8 @@ export default {
 		changeTo: function(idx) {
 			this.activeidx = idx;
 			this.swiper.slideTo(idx, 500, false);
-			console.log(this.activeidx);
-
+			this.throttle(this.getWish(idx),50000);
+			
 		},
 		editInfo: function() {
 			var toEdit = {
@@ -148,7 +136,29 @@ export default {
 			})
 
 			msg.launch();
-		}
+		},
+		async getWish(status) {
+			let res = await http.get('/api/wish/user', {
+				status: status
+			})
+			if(res.code === 2001) {
+				if(status === 0) {
+					this.list0 = res.data;
+				}
+
+				if(status === 1) {
+					this.list1 = res.data;
+				}
+
+				if(status === 2) {
+					this.list2 = res.data;
+				}
+			}
+
+			console.log(res);
+			console.log(this.list0);
+		},
+
 	}
 }
 </script>

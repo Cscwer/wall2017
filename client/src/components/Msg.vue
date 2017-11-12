@@ -4,25 +4,43 @@
             {{title}}
         </div>
         <ul class="list-wrap">
-            <li v-for="(chat, idx) in list" :key="idx" class="chat" @click="toChat(idx,chat)">
-                <img :src="chat.from.headimgurl" class="avatar">
-                <div class="text-wrap">
-                    <p class="nickname">{{chat.from.nickname}}</p>
-                    <p class="content">{{chat.content}}</p >
-                    
-                </div>
-                
-                <p class="time">
-                    {{transfromTime(chat.create_at)}}
-                    <span class="red-dot" v-if="chat.unread"></span>
-                </p>
-            </li>
+
+            <div v-for="(chat, idx) in list" :key="idx">
+                <li class="chat" @click="toChat(idx,chat)" v-if="chat.type === 'chat'">
+                    <img :src="chat.from.headimgurl" class="avatar">
+                    <div class="text-wrap">
+                        <p class="nickname">{{chat.from.nickname}}</p>
+                        <p class="content">{{chat.content}}</p >
+                    </div>
+
+                    <p class="time">
+                        {{ transfromTime(chat.create_at) }}
+                        <span class="red-dot" v-if="chat.unread"></span>
+                    </p>
+                </li> 
+
+                <li class="chat wish" v-if="chat.type[0] === 'w'" @click="toWish(chat, idx)">
+                    <img :src="chat.data.he.headimgurl" class="avatar">
+
+                    <div class="text-wrap">
+                        <p class="nickname">愿望动态</p>
+                        <p class="content">{{chat.msg}}</p >
+                    </div>
+
+                    <p class="time">
+                        {{ transfromTime(chat.create_at) }}
+                        <span class="red-dot" v-if="chat.unread"></span>
+                    </p>
+                </li>
+            </div>
+            
         </ul>
     </div>
 </template>
 <script>
 import chat from '@/utils/chat';
 import Chat_Component from './Chat';
+import WishMsgList from './WishMsgList'; 
 
 
 export default {
@@ -47,11 +65,14 @@ export default {
             var minutes = date.getMinutes();
             return hours + ":" + minutes;
         },
-        toChat(idx,chat_selected) {
-            chat.list.findAndMap(idx, selected => {
+        setRead(idx){
+            return chat.list.findAndMap(idx, selected => {
                 selected.unread = false;
                 return selected;
             }); 
+        },
+        toChat(idx,chat_selected) {
+            this.setRead(idx); 
 
             this.loadList();
             var chatCop = this.$popup.push({
@@ -68,6 +89,17 @@ export default {
             })
 
             chatCop.launch();
+        },
+        toWish(chat, idx){
+            this.setRead(idx); 
+            this.loadList();
+
+            var wishTop = this.$popup.push({
+                type: 'modal',
+                component: WishMsgList
+            });
+
+            wishTop.launch();
         }
     }
 }
@@ -99,6 +131,7 @@ export default {
         width: 50px;
         height: 50px;
         border-radius: 50% 50%;
+        background-color: rgb(220, 220, 220);
     }
 
     .nickname {

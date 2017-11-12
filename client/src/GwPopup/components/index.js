@@ -5,6 +5,7 @@ import GwPrompt from './GwPrompt';
 import GwModal from './GwModal';
 import GwAlertSheet from './GwAlertSheet'; 
 import GwLoading from './GwLoading'; 
+import GwTopLoading from './GwTopLoading';
 
 let list = {
 	'gw-alert': GwAlert, 
@@ -12,7 +13,8 @@ let list = {
 	'gw-prompt': GwPrompt, 
 	'gw-modal': GwModal, 
 	'gw-alert-sheet': GwAlertSheet,
-	'gw-loading': GwLoading
+	'gw-loading': GwLoading,
+	'gw-top-loading': GwTopLoading
 }
 
 let components = {};

@@ -313,4 +313,21 @@ ui.showLoading = function(d = 8000){
 	return cancel;
 }
 
+ui.topLoading = function(d = 8000){
+	let loading = GwPopup.getPopup().push({
+		type: 'top-loading',
+		transitionName: 'gw-top-loading'
+	}); 
+
+	loading.launch(); 
+
+	function cancel(){
+		loading.close();
+	}
+
+	setTimeout(cancel, d);
+
+	return cancel;
+}
+
 export default ui;

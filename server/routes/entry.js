@@ -58,7 +58,7 @@ router.get('/code', function(req, res){
 		let token = auth.en(user); 
 
 		res.cookie('user-token', token, {
-			expires: new Date('2017-11-11')
+			expires: new Date('2017-11-28')
 		});
 		res.redirect('/'); 
 	}, err => {
@@ -75,7 +75,7 @@ router.get('/code', function(req, res){
 				let token = auth.en(user); 
 
 				res.cookie('user-token', token, {
-					expires: new Date('2017-11-11')
+					expires: new Date('2017-11-28')
 				})
 
 				res.redirect('/'); 

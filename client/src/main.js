@@ -52,3 +52,9 @@ new Vue({
 })
 
 
+setTimeout(function(){
+	var $body = document.getElementsByTagName('body')[0];
+	console.log('OnLoad'); 
+	$body.setAttribute('class', '');
+}, 200);
+

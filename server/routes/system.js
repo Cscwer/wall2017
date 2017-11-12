@@ -64,7 +64,7 @@ router.get('/set-cookie', function(req, res){
 			let token = auth.en(user); 
 
 			res.cookie('user-token', token, {
-				expires: new Date('2017-11-11')
+				expires: new Date('2017-11-28')
 			});
 
 			res.render('msg', {
