@@ -86,7 +86,8 @@ var musicQueue = [];
 // var zero = 0;
 var zero = todayZero(Date.now()); 
 // var MAX_TIME = 86400;
-var MAX_TIME = zero + 1200; 
+// var MAX_TIME = zero + 1200; 
+var MAX_TIME = 86400; 
 
 var enQueue = (hash, content, who) => {
 	console.log('MAX_TIME', MAX_TIME); 
