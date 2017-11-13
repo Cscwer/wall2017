@@ -1,7 +1,7 @@
 // ws.client.js
 import cookie from '../cookie';
 import chat from '../chat';
-import Vue from 'Vue';
+import Vue from 'vue';
 
 let wsurl = location.origin;
 
