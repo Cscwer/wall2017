@@ -36,7 +36,7 @@ router.get('/', function(req, res){
 }); 
 
 router.post('/search', function(req, res){
-	let { wishtype, q, area } = req.body; 
+	let { wishtype, q, area, p } = req.body; 
 	q = q || ''; 
 	// wishtype = wishtype.map(e => e.parseInt) || []; 
 	// area = area || 0; 
@@ -55,9 +55,12 @@ router.post('/search', function(req, res){
 	
 	if (area.length !== 0) Q = Q.where('area').in(area); 
 
-	Q.populate('she').then(docs => {
-		console.log(docs); 
-		rps.send2000(res, docs); 
+	Q.populate('she').skip(p * N).limit(p).then(docs => {
+		if (docs.length !== N){
+			rps.send2001(res, docs); 
+		} else {
+			rps.send2000(res, docs); 
+		}
 	})
 
 
