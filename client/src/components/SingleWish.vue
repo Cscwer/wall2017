@@ -40,7 +40,7 @@
 				<button class=" pickImg" @click="searchMore" v-else>查看详情</button>
 			</div>
 			<button v-if="!wish.img && status === 0" class="pickWish" @click="pickWish('确定领取该愿望')">领取愿望</button>
-			<button v-if="!wish.img && status !== 0" class="pickWish" @click="searchMore">领取愿望</button>
+			<button v-if="!wish.img && status !== 0" class="pickWish" @click="searchMore">查看详情</button>
 		</div>
 	</div>
 </template>
