@@ -19,7 +19,13 @@
 		</swiper>
 
 		<div class="wish-container">
-			<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
+			<transition-group name="wish-load" tag="div" >
+				<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list"
+					:myInfo="user" :wish="wish" :key="idx" :style="{
+						'transition-delay': ((idx % 10) / 10 + .2) + 's'
+					}">
+				</wish>
+			</transition-group>
 		</div>
 		<div class="bg-cover"></div>
 	</div>
@@ -266,4 +272,14 @@ export default {
 	height: 100%;
 	background-color: rgb(255, 241, 241);
 }
+
+.wish-load-enter-active, .wish-load-leave-active {
+	transition: all .3s; 
+	/*transition-delay: .6s; */
+}
+.wish-load-enter, .wish-load-leave-to {
+	transform: translateY(100%);
+	opacity: 0; 
+}
+
 </style>
