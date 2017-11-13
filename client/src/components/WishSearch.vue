@@ -1,6 +1,8 @@
 <template>
-	<div class="wish-search-container">
-		<!-- <h1 @click="back">hello, world</h1> -->
+	<div class="wish-search-container"
+		v-infinite-scroll="loadMore"
+		infinite-scroll-disabled="searchMore && !finish"
+		infinite-scroll-distance="20">
 		<input type="text" @keyup="search()" name="searchWish" class="searchWish" placeholder="搜索愿望..." v-model="text">
 		<div v-if="!searching">
 			<div class="select-container">
@@ -25,7 +27,7 @@
 			</div>
 		</div>
 		<div v-else>
-			<div v-if="loading">拼命寻找中 ...</div>
+			<div v-if="loading" class="no-wish">拼命寻找中 ...</div>
 			<div v-else>
 				<div class="no-wish" v-if="list.length === 0 && !loading && text !== ''">没有相关的愿望哦（≧∇≦）</div>
 				<div v-else>
@@ -53,7 +55,10 @@
 				searching: false,
 				loading: false,
 				text: '',
+				searchMore: true,
+				finish: false,
 				user: {},
+				p: 0,
 				type: [],
 				area: [],
 				list: []
@@ -64,35 +69,57 @@
 			this.initAll();
 		},
 		methods: {
-			back(){},
+			initStatus() {
+				this.type = [];
+				this.area = [];
+				this.list = [];
+				this.p = 0;
+				this.searching = false;
+			},
 			search() {
 				if(!this.text.trim()) {
-					this.type = [];
-					this.area = [];
-					this.list = [];
-					this.searching = false;
+					this.initStatus();
 				} else {
 					this.searching = true;
 					this.loading = true;
 					clearTimeout(timer);
 					timer = setTimeout(() => {
-						http.post('/api/wish/search', {
-							q: this.text,
-							wishtype: this.type,
-							area: this.area
-						}).then(res => {
-							if(res.code === 2000) {
-								this.list = res.data;
-								this.loading = false;
-							}
-						}, 1000);
-					})
+						this.loadMore();
+					}, 1000);
 				}
+			},
+			toSearch: function() {
+				return http.post('/api/wish/search', {
+					q: this.text,
+					p: this.p,
+					wishtype: this.type,
+					area: this.area
+				})
 			},
 			initAll: async function(){
 				let res = await http.get('/api/user/me');
 				this.user = res.data;
 			},
+			loadMore: async function(){
+				let p = this.p;
+				this.loading = false;
+				this.searchMore = true;
+
+				let rps = await this.toSearch();
+
+				console.log(rps);
+
+				this.p = p + 1;
+				this.list = this.list.concat(rps.data);
+
+				if (rps.code === 2001){
+					this.finish = true;
+					console.log(p + ' : end!!');
+				} else {
+					console.log(p + ' : not end');
+				}
+				this.searchMore = false;
+			}
 		}
 	}
 </script>
