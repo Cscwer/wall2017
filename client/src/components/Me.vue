@@ -1,9 +1,7 @@
 <template>
-	<div v-infinite-scroll="loadMore"
-		infinite-scroll-disabled="loading && !finish"
-		infinite-scroll-distance="20">
+	<div v-if="!isLoading">
 		<div class="header-wrap">
-			<div class="msg-icon-wrap" @click="openMsg(),hasMsg=false">
+			<div class="msg-icon-wrap" @click="isMyself ? openMsg() : leaveMsg(), hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
 				<span class="red-dot" v-if="hasMsg"></span>
 			</div>
@@ -13,11 +11,11 @@
 					<img src="../assets/me/female.png" alt="" class="sex-img" v-if="isFemale">
 					<img src="../assets/me/male.png" alt="" class="sex-img" v-else>
 					<p class="user-nickname">{{user.nickname}}</p>
-					<img src="../assets/me/edit.png" alt="" class="edit-img" @click="editInfo">
+					<img src="../assets/me/edit.png" alt="" class="edit-img" @click="editInfo" v-if="isMyself">
 				</div>
 				<p class="user-from">{{area}}校区</p>
 			</div>
-			<ul class="metab-wrap">
+			<ul class="metab-wrap" v-if="isMyself">
 				<li class="me-tab" :class="{active: activeidx === 0}"
 					:style="{width:(isFemale ? 33 : 50) +'%'}"
 					v-show="isFemale"
@@ -37,19 +35,19 @@
 		<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
 			<swiper-slide class="swiper-item">
 				<div class="wish-container">
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="wish in list0" :wish="wish" :myInfo="user" :status="0"></wish>
+					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="user" :status="0" :key="idx"></wish>
 				</div>
 				<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : '1')}}</div>
 			</swiper-slide>
 			<swiper-slide class="swiper-item">
 				<div class="wish-container">
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="wish in list1" :wish="wish" :myInfo="user" :status="1"></wish>
+					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="user" :status="1" :key="idx"></wish>
 				</div>
 				<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
 			</swiper-slide>
    		 	<swiper-slide class="swiper-item">
 				<div class="wish-container">
-					<wish class="wish-on-wall" v-for="wish in list2" :wish="wish" :myInfo="user" :status="2"></wish>
+					<wish class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="user" :status="2" :key="idx"></wish>
 				</div>
 				<div v-show="this.list2.length === 0" class="text">{{isFemale ? text.female.realized : text.male.realized}}</div>
 			</swiper-slide>
@@ -64,7 +62,6 @@
 import wait from '@/utils/wait';
 import http from '@/utils/http.client';
 import vwx from '@/utils/vwx';
-import Wish from './SingleWish';
 import ui from '@/utils/ui';
 import { appCtrl } from '@/utils/app.status';
 import Msg from './Msg';
@@ -72,14 +69,14 @@ import Msg from './Msg';
 
 export default {
 	name: 'me',
-	components: {
-		'wish': Wish
-	},
+	props: ['others'],
 	data(){
 		return {
+			isLoading: true,
 			localIds: [],
 			show: '',
 			user: {},
+			me: {},
 			activeidx: 1,
 			hasMsg: false,
 			notNextTick: true,
@@ -123,36 +120,64 @@ export default {
 	},
 	computed: {
 		isFemale: function() {
-			return this.user.sex-1 === 1
+			return this.user && this.user.sex-1 === 1
 		},
 		swiper() {
 			return this.$refs.mySwiper.swiper
 		},
 		area() {
 			return ['大学城','东风路','龙洞','番禺'][this.user.area || 0];
+		},
+		isMyself() {
+			return this.user._id === this.me._id;
 		}
 	},
 	created(){
-		this.init();
-		console.log("page created");
-		this.hasMsg = appCtrl.toObject().hasMsg;
-		this.getWish(0);
-		this.getWish(1);
-		this.getWish(2);
-		setTimeout(() => {
-			// window.swiper = this.$refs.mySwiper;
-			if (this.isFemale) this.swiper.unlockSwipeToPrev()
+		http.get('./api/user/me', ui.showLoading()).then(res => {
+			this.me = res.data;
+		}).then(() => {
+			if(this.others) {
+				this.user = this.others;
+			}
+			else {
+				this.user = this.me;
+			}
+		}).then(() => {
+			this.listload();
+			this.isLoading = false;
 		})
+
+
 	},
 	methods: {
-		init: async function(){
-			let res = await http.get('./api/user/me');
-			this.user = res.data;
-			console.log("init ok");
+		listload() {
+			console.log(this.user);
+			console.log("page created");
+			this.hasMsg = appCtrl.toObject().hasMsg;
+			this.getWish(0);
+			this.getWish(1);
+			this.getWish(2);
+			
+			setTimeout(() => {
+				// window.swiper = this.$refs.mySwiper;
+				if (this.isFemale) this.swiper.unlockSwipeToPrev()
+			})
 		},
-		getUserInfo: function(){
-			return http.get('./api/user/me')
-		},
+		// init: function(){
+		// 	return http.get('./api/user/me').then(res => {
+		// 		this.user = res.data;
+		// 	})
+		// },
+		// getUserInfo: function(){
+		// 	if(!this.others) {
+		// 		return this.init();
+		// 	}
+		// 	else {
+		// 		this.user = this.others;
+		// 		return Promise.resolve(true)
+		// 	}
+
+		// },
 		changeTo: function(idx) {
 			console.log(idx);
 			this.swiper.slideTo(idx, 500, true);
@@ -182,9 +207,31 @@ export default {
 
 			msg.launch();
 		},
+		leaveMsg() {
+			let getInput =  this.$popup.push({
+				type: 'prompt',
+				confirmText: '确认',
+				placeholderText: '输入给ta的留言',
+				handle: {
+					confirm: (input) => {
+						http.post('/api/msg',{
+							from: this.me._id,
+							to: this.user._id,
+							content: input
+						}, ui.showLoading()).then(() => {
+							console.log('ok');
+							getInput.close();
+						}) 
+					}
+				}
+			})
+			getInput.launch();
+		},
 		async getWish(status) {
 			let res = await http.get('/api/wish/user', {
-				status: status
+				status: status,
+				_id: this.user._id,
+				sex: this.user.sex
 			})
 			if(res.code === 2001) {
 				if(status === 0) {
@@ -212,28 +259,28 @@ export default {
 			let idx = null;
 
 		},
-		loadMore: function(){
-			let p = this.p;
-			this.loading = true;
+		// loadMore: function(){
+		// 	let p = this.p;
+		// 	this.loading = true;
 
-			let rps = http.get('/api/wish/user', {
-				p: p,
-				status: this.activeidx
-			});
+		// 	let rps = http.get('/api/wish/user', {
+		// 		p: p,
+		// 		status: this.activeidx
+		// 	});
 
-			this.p = p + 1;
-			this['list' + this.activeidx]
-			this.list = this.list.concat(rps.data);
+		// 	this.p = p + 1;
+			
+		// 	this['list' + this.activeidx] = this['list' + this.activeidx].concat(rps.data);
 
-			if (rps.code === 2001){
-				this.finish = true;
-				console.log(p + ' : end!!');
-			} else {
-				console.log(p + ' : not end');
-			}
-			this.loading = false;
-			console.log("hello world");
-		}
+		// 	if (rps.code === 2001){
+		// 		this.finish = true;
+		// 		console.log(p + ' : end!!');
+		// 	} else {
+		// 		console.log(p + ' : not end');
+		// 	}
+		// 	this.loading = false;
+		// 	console.log("hello world");
+		// }
 	}
 }
 </script>
