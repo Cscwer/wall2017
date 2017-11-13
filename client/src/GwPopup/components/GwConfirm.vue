@@ -47,7 +47,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .gw-confirm {
 	position: absolute;
 	width: 80%; 

@@ -46,7 +46,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 
 .gw-prompt {
 	position: absolute;
