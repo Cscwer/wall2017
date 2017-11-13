@@ -114,6 +114,8 @@ export default {
 		border-radius: 0 10px 10px 10px;
 		box-shadow: 4px 4px 4px #ffc5c5;
 		box-sizing: border-box;
+
+		min-height: 120px;
 	}
 
 	.user-info {
