@@ -2,7 +2,8 @@
 import GwPopupLayout from './GwPopupLayout'; 
 import GwPopupController from './GwPopupController'; 
 import dom_util from './dom_util';
-import components from './components'; 
+import components from './components';
+import _ from './tools';
 
 // For Init 
 function popupInit(Vue, option){
@@ -88,6 +89,7 @@ GwPopup.install = function(Vue, option){
 
 	let timer = null; 
 	function backer(to, from, next){
+		clearTimeout(timer);
 		let lastOne = popup_vm.getLastActive(); 
 
 		if (lastOne){
@@ -100,10 +102,17 @@ GwPopup.install = function(Vue, option){
 		}
 	}
 
+	window._backer = _backer;
+	var _backer = _.throttle(backer, 500); 
+	var itCan = true;
+
 	window.addEventListener('popstate', function(e){
+		if (!itCan) return; 
+
+		console.log('POPSTATE'); 
 		clearTimeout(timer);
 		timer = setTimeout(function(){
-			backer(e); 
+			_backer(e); 
 		})
 	});
 
@@ -111,9 +120,10 @@ GwPopup.install = function(Vue, option){
 		// 解决白屏 
 		// 不可以过早监听事件 这样会干扰 redirect 的正常处理 
 		router.beforeEach((to, from, next) => {
+			itCan = false; 
 			clearTimeout(timer);
 			timer = setTimeout(function(){
-				backer(to, from, next); 
+				_backer(to, from, next); 
 			});
 		}); 
 	}, 88); 

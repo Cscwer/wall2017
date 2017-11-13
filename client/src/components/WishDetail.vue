@@ -34,7 +34,7 @@
 
 			<div class="btns">
 				<div class="btn" @click.stop="startChat">发消息</div>
-				<div class="btn active" v-if="wish.status === 1" @click.stop="itWorks">愿望已实现</div>
+				<div class="btn active" v-if="wish.status === 1 && enable" @click.stop="ifItWorks">愿望已实现</div>
 			</div>
 		</div>
 		
@@ -56,7 +56,8 @@ export default {
 	data(){
 		return {
 			user: null,
-			finish: false
+			finish: false,
+			enable: true
 		}
 	},
 	created(){
@@ -68,6 +69,21 @@ export default {
 		})
 	},
 	methods: {
+		ifItWorks(){
+			var d = this.$popup.push({
+				type: 'confirm', 
+				confirmText: '确定已实现该愿望',
+				needBlur: true, 
+				handle: {
+					confirm: () => {
+						this.itWorks(); 
+						d.close(); 
+					}
+				}
+			}); 
+
+			d.launch(); 
+		},
 		itWorks(){
 			// 愿望已实现		
 			http.post('/api/wish/end', {
@@ -79,7 +95,8 @@ export default {
 						position: 'bottom', 
 						align: true
 					});
-					
+
+					this.enable = false; 
 					this.$emit('wishEnd'); 
 				} else {
 					this.$popup.toast({
