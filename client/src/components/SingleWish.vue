@@ -112,7 +112,8 @@ export default {
 				type: "modal",
 				binding: {
 					others: this.wish.she
-				}
+				},
+				bg: 'rgb(255, 241, 241)'
 				
 			})
 

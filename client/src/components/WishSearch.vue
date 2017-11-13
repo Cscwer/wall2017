@@ -1,7 +1,7 @@
 <template>
 	<div class="wish-search-container">
 		<!-- <h1 @click="back">hello, world</h1> -->
-		<input type="text" @keyup.enter="search()" name="searchWish" class="searchWish" placeholder="搜索愿望..." v-model="text">
+		<input type="text" @keyup="search()" name="searchWish" class="searchWish" placeholder="搜索愿望..." v-model="text">
 		<div v-if="!searching">
 			<div class="select-container">
 				<div class="select-type-container">
@@ -25,7 +25,13 @@
 			</div>
 		</div>
 		<div v-else>
-			<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
+			<div v-if="loading">拼命寻找中 ...</div>
+			<div v-else>
+				<div class="no-wish" v-if="list.length === 0 && !loading && text !== ''">没有相关的愿望哦（≧∇≦）</div>
+				<div v-else>
+					<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -34,6 +40,9 @@
 	import wait from '@/utils/wait';
 	import http from '@/utils/http.client';
 	import Wish from './SingleWish';
+
+	let timer = null;
+
 	export default {
 		name: 'wish-search',
 		components: {
@@ -42,6 +51,7 @@
 		data(){
 			return {
 				searching: false,
+				loading: false,
 				text: '',
 				user: {},
 				type: [],
@@ -56,18 +66,28 @@
 		methods: {
 			back(){},
 			search() {
-				console.log(this.text);
-				console.log(this.type, this.area);
-				http.post('/api/wish/search', {
-					q: this.text,
-					wishtype: this.type,
-					area: this.area
-				}).then(res => {
-					if(res.code === 2000) {
-						this.list = res.data;
-						this.searching = true;
-					}
-				})
+				if(!this.text.trim()) {
+					this.type = [];
+					this.area = [];
+					this.list = [];
+					this.searching = false;
+				} else {
+					this.searching = true;
+					this.loading = true;
+					clearTimeout(timer);
+					timer = setTimeout(() => {
+						http.post('/api/wish/search', {
+							q: this.text,
+							wishtype: this.type,
+							area: this.area
+						}).then(res => {
+							if(res.code === 2000) {
+								this.list = res.data;
+								this.loading = false;
+							}
+						}, 1000);
+					})
+				}
 			},
 			initAll: async function(){
 				let res = await http.get('/api/user/me');
@@ -144,6 +164,16 @@ html, body {
 
 .selected {
 	background-color: #ff7272;
+}
+
+.no-wish {
+	width: 100%;
+	margin-top: 35vh;
+	text-align: center;
+	width: 100%;
+	color: rgba(248, 153, 138, 1);
+	font-size: 0.46rem;
+	/*text-align: center;*/
 }
 
 .wish-on-wall {
