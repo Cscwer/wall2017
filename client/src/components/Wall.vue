@@ -88,7 +88,7 @@ export default {
 		this.initAll();
 
 
-		window.$$$ = this;
+		// window.$$$ = this;
 		// this.loadMore();
 	},
 	methods: {
@@ -165,7 +165,7 @@ export default {
 			let res = await http.get('/api/user/me', ui.showLoading());
 			this.user = res.data;
 
-			this.initSearchPos();
+			// this.initSearchPos();
 		},
 		getUser: function(){
 			return http.get('/api/user/me');
