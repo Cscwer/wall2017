@@ -3,7 +3,7 @@
 <template>
 	<div class="wish-container" v-if="myInfo.sex == 2">
 		<div class="user-info">
-			<img :src="wish.she.headimgurl" class="avatar" />
+			<img :src="wish.she.headimgurl" class="avatar" @click="toMe"/>
 			<span class="user-name">{{wish.she.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[wish.she.area] }">{{area[wish.she.area]}}</div>
 			<img v-if="myInfo._id === wish.she._id" src="../assets/home/delete.png" class="delete" @click="deleteWish('确定')">
@@ -22,7 +22,7 @@
 	</div>
 	<div class="wish-container" v-else="myInfo.sex == 1">
 		<div class="user-info">
-			<div class="avatar" v-bind:style="{ backgroundImage: 'url(' + wish.she.headimgurl + ')'}"></div>
+			<div class="avatar" v-bind:style="{ backgroundImage: 'url(' + wish.she.headimgurl + ')'}" @click="toMe"></div>
 			<span class="user-name">{{wish.she.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[wish.she.area] }">{{area[wish.she.area]}}</div>
 		</div>
@@ -36,9 +36,11 @@
 					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
 				</label>
 				<div class="placeholder"></div>
-				<button class=" pickImg" @click="pickWish('确定领取该愿望')">领取愿望</button>
+				<button class=" pickImg" @click="pickWish('确定领取该愿望')" v-if="status === 0">领取愿望</button>
+				<button class=" pickImg" @click="searchMore" v-else>查看详情</button>
 			</div>
-			<button v-if="!wish.img" class="pickWish" @click="pickWish('确定领取该愿望')">领取愿望</button>
+			<button v-if="!wish.img && status === 0" class="pickWish" @click="pickWish('确定领取该愿望')">领取愿望</button>
+			<button v-if="!wish.img && status !== 0" class="pickWish" @click="searchMore">领取愿望</button>
 		</div>
 	</div>
 </template>
@@ -49,10 +51,9 @@ import http from '@/utils/http.client';
 
 export default {
 	name: 'SingleWish',
-	props: ['wish', 'myInfo'],
+	props: ['wish', 'myInfo', 'status'],
 	data() {
 		return {
-			img: this.wish.img,
 			area: ['大学城', '东风路', '龙洞'],
 			bgcolor: ['#b5d1ff', '#ffb9b5', '#ffe88d']
 		}
@@ -100,6 +101,12 @@ export default {
 					}
 				})
 			})
+		},
+		searchMore() {
+			console.log('detail');
+		},
+		toMe(){
+			console.log('to me');
 		}
 	}
 

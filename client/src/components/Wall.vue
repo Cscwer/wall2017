@@ -21,7 +21,7 @@
 		<div class="wish-container">
 			<transition-group name="wish-load" tag="div" >
 				<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list"
-					:myInfo="user" :wish="wish" :key="idx" :style="{
+					:myInfo="user" :wish="wish" :status="0" :key="idx" :style="{
 						'transition-delay': ((idx % 10) / 10 + .2) + 's'
 					}">
 				</wish>
@@ -274,12 +274,12 @@ export default {
 }
 
 .wish-load-enter-active, .wish-load-leave-active {
-	transition: all .3s; 
+	transition: all .3s;
 	/*transition-delay: .6s; */
 }
 .wish-load-enter, .wish-load-leave-to {
 	transform: translateY(100%);
-	opacity: 0; 
+	opacity: 0;
 }
 
 </style>
