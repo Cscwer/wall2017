@@ -4,6 +4,7 @@ const express = require('express')
     , rps = require('../utils/rps')
     , { msgModel } = require('../utils/db')
     , auth = require('../utils/auth')
+    , IO = require('../io'); 
 
 // 查看留言
 router.get('/', function(req, res){
@@ -26,6 +27,19 @@ router.post('/', function(req, res){
 
 	data.save().then(ok => {
 		rps.send2000(res, ok); 
+		let temp = ok.toObject();
+		temp.from = req.user; 
+		temp.to = req.body.to; 
+		IO.serverPush(req.body.to, {
+			type: 'person-in-msg', 
+			data: {
+				_id: ok._id.toString(),
+				from: req.user,
+				content: req.body.content
+			},
+			msg: req.body.content,
+			create_at: Date.now()
+		}); 
 	}).catch(err => {
 		rps.send5000(res, err); 
 	})
