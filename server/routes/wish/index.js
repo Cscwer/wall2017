@@ -1,5 +1,6 @@
 // wish.js
 const express = require('express')
+    , mongoose = require('mongoose')
     , router = express.Router()
     , { wishModel } = require('../../utils/db')
     , rps = require('../../utils/rps')
@@ -13,6 +14,7 @@ const express = require('express')
     , BOY_FLAG = 1
     , NOT_FLAG = 0
     , IO = require('../../io')
+
 
 /***
  * 首页 
@@ -83,10 +85,10 @@ router.get('/user', function(req, res){
 		status: parseInt(req.query.status) || 0
 	}
 
-	if (userSex === BOY_FLAG){
-		mongoQuery.he  = _id; 
+	if (parseInt(userSex) === BOY_FLAG){
+		mongoQuery.he  = mongoose.Types.ObjectId(_id); 
 	} else {
-		mongoQuery.she = _id; 
+		mongoQuery.she = mongoose.Types.ObjectId(_id); 
 	}
 
 	console.log(mongoQuery)

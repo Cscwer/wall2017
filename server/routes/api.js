@@ -10,6 +10,7 @@ const express = require('express')
     , system = require('./system')
     , wx = require('./wx')
     , obj = require('./obj')
+    , msg = require('./msg')
     // , login = require('./login')
 
 // System Info
@@ -26,6 +27,7 @@ router.use('/ping', ping);
 router.use('/wx', wx); 
 router.use('/user', user); 
 router.use('/ta', ta); 
+router.use('msg', msg); 
 router.use('/wish', wish); 
 router.use('/music', music);
 router.use('/obj', obj); 
