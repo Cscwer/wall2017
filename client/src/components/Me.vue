@@ -213,8 +213,15 @@ export default {
 				confirmText: '确认',
 				placeholderText: '输入给ta的留言',
 				handle: {
-					confirm: function(input) {
-						console.log(input); 
+					confirm: (input) => {
+						http.post('/api/msg',{
+							from: this.me._id,
+							to: this.user._id,
+							content: input
+						}, ui.showLoading()).then(() => {
+							console.log('ok');
+							getInput.close();
+						}) 
 					}
 				}
 			})
