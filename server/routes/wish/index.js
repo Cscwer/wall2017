@@ -76,13 +76,22 @@ router.post('/search', function(req, res){
  */
 router.get('/user', function(req, res){
 	let p = parseInt(req.query.p) || 0; 
-	let status = parseInt(req.query.status) || 0; 
-	let she = req.query.she || req.user._id; 
+	let userSex = req.query.sex || req.user.sex || BOY_FLAG; 
+	let _id = req.query._id || req.user._id; 
 
-	wishModel.find({
-		she: she,
-		status: status
-	}).populate('she')
+	let mongoQuery = {
+		status: parseInt(req.query.status) || 0
+	}
+
+	if (userSex === BOY_FLAG){
+		mongoQuery.he  = _id; 
+	} else {
+		mongoQuery.she = _id; 
+	}
+
+	console.log(mongoQuery)
+
+	wishModel.find(mongoQuery).populate('she')
 	.sort({
 		created_at: -1
 	})
@@ -262,8 +271,8 @@ router.post('/end', function(req, res){
 						IO.serverPush(wish.he, {
 							type: 'wish-end', 
 							data: wish,
-							msg: '你成功实现了她的愿望 ~ ',
-							created_at: Date.now()
+							msg: `你成功实现了${wish.she.nickname}的愿望 ~ `,
+							create_at: Date.now()
 						}); 
 
 						return one.set(_id, wish);
