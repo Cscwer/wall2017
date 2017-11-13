@@ -11,6 +11,7 @@ import router from './router';
 import VueAwesomeSwiper from 'vue-awesome-swiper';
 import { swiper, swiperSlide } from 'vue-awesome-swiper';
 import GwPopup from '@/GwPopup';
+import SingleWish from './components/SingleWish';
 
 
 
@@ -34,7 +35,10 @@ Vue.use(GwPopup, {
 	router
 });
 
-
+Vue.component(
+	'wish',
+	SingleWish
+)
 
 history.pushState({
 	name: '外层'

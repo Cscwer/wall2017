@@ -48,6 +48,7 @@
 <script>
 import wait from '@/utils/wait';
 import http from '@/utils/http.client';
+import me from './Me';
 
 export default {
 	name: 'SingleWish',
@@ -106,7 +107,16 @@ export default {
 			console.log('detail');
 		},
 		toMe(){
-			console.log('to me');
+			var msg = this.$popup.push({
+				component: me,
+				type: "modal",
+				binding: {
+					others: this.wish.she
+				}
+				
+			})
+
+			msg.launch();
 		}
 	}
 
