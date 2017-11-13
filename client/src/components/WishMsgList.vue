@@ -5,13 +5,11 @@
 		<ul class="wish-list">
 			<li v-for="(wish, idx) in list" class="wish" @click="gotoWishDetail(wish, idx)">
 				<!-- <span class="new-msg" v-if="wish.unread"></span> -->
-				<img :src="wish.data.he.headimgurl" class="avatar" />
+				<img :src="wish.type === 'wish-pull' ? wish.data.he.headimgurl : wish.data.she.headimgurl" class="avatar" />
 				<div class="inner">
 					<div class="new-msg" v-if="wish.unread">NEW</div>
-
-
 					<div class="name">
-						{{ wish.data.he.nickname }}
+						{{ wish.type === 'wish-pull' ? wish.data.he.nickname : wish.data.she.nickname }}
 
 						<span class="time">
 							{{ timeParse(wish.create_at) }}
@@ -47,6 +45,8 @@ export default {
 			this.list = list.toArray(); 
 		},
 		timeParse(ts){
+			if (!ts) return ''; 
+
 			var d = new Date(ts);
 			var h = d.getHours(); 
 			var m = d.getMinutes();
