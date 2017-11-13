@@ -1,7 +1,5 @@
 <template>
-	<div v-infinite-scroll="loadMore"
-		infinite-scroll-disabled="loading && !finish"
-		infinite-scroll-distance="20">
+	<div>
 		<div class="header-wrap">
 			<div class="msg-icon-wrap" @click="openMsg(),hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
@@ -18,15 +16,15 @@
 				<p class="user-from">{{area}}校区</p>
 			</div>
 			<ul class="metab-wrap">
-				<li class="me-tab" :class="{active: activeidx === 0}" 
-					:style="{width:(isFemale ? 33 : 50) +'%'}" 
-					v-show="isFemale" 
+				<li class="me-tab" :class="{active: activeidx === 0}"
+					:style="{width:(isFemale ? 33 : 50) +'%'}"
+					v-show="isFemale"
 					@click="changeTo(0)">待领取</li>
-				<li class="me-tab" :class="{active: activeidx === 1}" 
-					:style="{width:(isFemale ? 33 : 50) +'%'}" 
+				<li class="me-tab" :class="{active: activeidx === 1}"
+					:style="{width:(isFemale ? 33 : 50) +'%'}"
 					@click="changeTo(1)">实现中</li>
-				<li class="me-tab" :class="{active: activeidx === 2}" 
-					:style="{width:(isFemale ? 33 : 50) +'%'}" 
+				<li class="me-tab" :class="{active: activeidx === 2}"
+					:style="{width:(isFemale ? 33 : 50) +'%'}"
 					@click="changeTo(2)">已实现</li>
 				<span class="me-tab-avtive" :style="{
 					left: ( isFemale ? (33 * activeidx) : (50 * (activeidx - 1)) + 10 ) + '%',
@@ -37,19 +35,19 @@
 		<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
 			<swiper-slide class="swiper-item">
 				<div class="wish-container">
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="wish in list0" :wish="wish" :myInfo="user"></wish>
+					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="user" :status="0" :key="idx"></wish>
 				</div>
 				<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : '1')}}</div>
 			</swiper-slide>
 			<swiper-slide class="swiper-item">
 				<div class="wish-container">
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="wish in list1" :wish="wish" :myInfo="user"></wish>
+					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="user" :status="1" :key="idx"></wish>
 				</div>
 				<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
 			</swiper-slide>
    		 	<swiper-slide class="swiper-item">
 				<div class="wish-container">
-					<wish class="wish-on-wall" v-for="wish in list2" :wish="wish" :myInfo="user"></wish>
+					<wish class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="user" :status="2" :key="idx"></wish>
 				</div>
 				<div v-show="this.list2.length === 0" class="text">{{isFemale ? text.female.realized : text.male.realized}}</div>
 			</swiper-slide>
@@ -61,23 +59,20 @@
 </template>
 
 <script>
-import wait from '@/utils/wait'; 
-import http from '@/utils/http.client'; 
+import wait from '@/utils/wait';
+import http from '@/utils/http.client';
 import vwx from '@/utils/vwx';
-import Wish from './SingleWish';
 import ui from '@/utils/ui';
-import { appCtrl } from '@/utils/app.status'; 
+import { appCtrl } from '@/utils/app.status';
 import Msg from './Msg';
 
 
 export default {
-	name: 'me', 
-	components: {
-		'wish': Wish
-	},
+	name: 'me',
+	props: ['others'],
 	data(){
 		return {
-			localIds: [], 
+			localIds: [],
 			show: '',
 			user: {},
 			activeidx: 1,
@@ -120,43 +115,57 @@ export default {
 				}
 			}
 		}
-	}, 
+	},
 	computed: {
 		isFemale: function() {
-			return this.user.sex-1 === 1
+			return this.user && this.user.sex-1 === 1
 		},
 		swiper() {
-			return this.$refs.mySwiper.swiper                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+			return this.$refs.mySwiper.swiper
 		},
 		area() {
 			return ['大学城','东风路','龙洞','番禺'][this.user.area || 0];
 		}
 	},
 	created(){
-		this.init();
-		console.log("page created");
-		this.hasMsg = appCtrl.toObject().hasMsg;
-		this.getWish(0);
-		this.getWish(1);
-		this.getWish(2);
-		setTimeout(() => {
-			// window.swiper = this.$refs.mySwiper;
-			if (this.isFemale) this.swiper.unlockSwipeToPrev()
+		this.getUserInfo().then(()=>{
+			this.listload();
+			console.log("listLoad!!!!!!!!!!!!!");
 		})
 	},
 	methods: {
-		init: async function(){
-			let res = await http.get('./api/user/me');
-			this.user = res.data;
-			console.log("init ok");
+		listload() {
+			console.log(this.user);
+			console.log("page created");
+			this.hasMsg = appCtrl.toObject().hasMsg;
+			this.getWish(0);
+			this.getWish(1);
+			this.getWish(2);
+			
+			setTimeout(() => {
+				// window.swiper = this.$refs.mySwiper;
+				if (this.isFemale) this.swiper.unlockSwipeToPrev()
+			})
+		},
+		init: function(){
+			return http.get('./api/user/me').then(res => {
+				this.user = res.data;
+			})
 		},
 		getUserInfo: function(){
-			return http.get('./api/user/me')
+			if(!this.others) {
+				return this.init();
+			}
+			else {
+				this.user = this.others;
+				return Promise.resolve(true)
+			}
+
 		},
 		changeTo: function(idx) {
 			console.log(idx);
 			this.swiper.slideTo(idx, 500, true);
-			this.activeidx = idx;		
+			this.activeidx = idx;
 		},
 		editInfo: function() {
 			var toEdit = {
@@ -184,7 +193,9 @@ export default {
 		},
 		async getWish(status) {
 			let res = await http.get('/api/wish/user', {
-				status: status
+				status: status,
+				_id: this.user._id,
+				sex: this.user.sex
 			})
 			if(res.code === 2001) {
 				if(status === 0) {
@@ -210,30 +221,30 @@ export default {
 				});
 				this['list' + this.activeidx].splice(idx, 1);
 			let idx = null;
-			
+
 		},
-		loadMore: function(){
-			let p = this.p;
-			this.loading = true;
+		// loadMore: function(){
+		// 	let p = this.p;
+		// 	this.loading = true;
 
-			let rps = http.get('/api/wish/user', {
-				p: p,
-				status: this.activeidx
-			});
+		// 	let rps = http.get('/api/wish/user', {
+		// 		p: p,
+		// 		status: this.activeidx
+		// 	});
 
-			this.p = p + 1;
-			this['list' + this.activeidx]
-			this.list = this.list.concat(rps.data);
+		// 	this.p = p + 1;
+			
+		// 	this['list' + this.activeidx] = this['list' + this.activeidx].concat(rps.data);
 
-			if (rps.code === 2001){
-				this.finish = true;
-				console.log(p + ' : end!!');
-			} else {
-				console.log(p + ' : not end');
-			}
-			this.loading = false;
-			console.log("hello world");
-		}
+		// 	if (rps.code === 2001){
+		// 		this.finish = true;
+		// 		console.log(p + ' : end!!');
+		// 	} else {
+		// 		console.log(p + ' : not end');
+		// 	}
+		// 	this.loading = false;
+		// 	console.log("hello world");
+		// }
 	}
 }
 </script>
@@ -242,8 +253,8 @@ export default {
 <style scoped>
 	.wrap {
 		height: 100%;
-		
-		
+
+
 	}
 	.bg {
 		width: 100%;
@@ -251,7 +262,7 @@ export default {
 		left: 0;
 		top: 0;
 		position: fixed;
-		z-index: -99; 
+		z-index: -99;
 		background-color: rgb(255, 241, 241);
 	}
 
@@ -369,7 +380,7 @@ export default {
 		background-color: #ff0000;
 		right: -1.5px;
 		top: 13.5px;
-		
+
 	}
 
 	.text {
@@ -380,5 +391,5 @@ export default {
     	font-size: 0.46rem;
 	}
 
-	
+
 </style>
