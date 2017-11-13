@@ -245,8 +245,8 @@ ui.chooseLover = function() {
 					ui.loversList(input.lover).then(person => {
 						console.log('in ui person', person);
 						res(person);
+						this.close();
 					});
-					this.close();
 				},
 				cancel(){
 					// rej();

@@ -6,7 +6,15 @@ const express = require('express')
     , auth = require('../utils/auth')
 
 router.get('/me', function(req, res, next){
-	rps.send2000(res, req.user); 
+	if (req.query._id){
+		userModel.findOne({
+			_id: req.query._id
+		}).then(doc => {
+			rps.send2000(res, doc); 
+		})
+	} else {
+		rps.send2000(res, req.user); 
+	}
 });
 
 router.get('/', function(req, res){
