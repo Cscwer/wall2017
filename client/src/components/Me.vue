@@ -1,7 +1,7 @@
 <template>
-	<div>
+	<div v-if="!isLoading">
 		<div class="header-wrap">
-			<div class="msg-icon-wrap" @click="openMsg(),hasMsg=false">
+			<div class="msg-icon-wrap" @click="isMyself ? openMsg() : leaveMsg(), hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
 				<span class="red-dot" v-if="hasMsg"></span>
 			</div>
@@ -11,11 +11,11 @@
 					<img src="../assets/me/female.png" alt="" class="sex-img" v-if="isFemale">
 					<img src="../assets/me/male.png" alt="" class="sex-img" v-else>
 					<p class="user-nickname">{{user.nickname}}</p>
-					<img src="../assets/me/edit.png" alt="" class="edit-img" @click="editInfo">
+					<img src="../assets/me/edit.png" alt="" class="edit-img" @click="editInfo" v-if="isMyself">
 				</div>
 				<p class="user-from">{{area}}校区</p>
 			</div>
-			<ul class="metab-wrap">
+			<ul class="metab-wrap" v-if="isMyself">
 				<li class="me-tab" :class="{active: activeidx === 0}"
 					:style="{width:(isFemale ? 33 : 50) +'%'}"
 					v-show="isFemale"
@@ -72,9 +72,11 @@ export default {
 	props: ['others'],
 	data(){
 		return {
+			isLoading: true,
 			localIds: [],
 			show: '',
 			user: {},
+			me: {},
 			activeidx: 1,
 			hasMsg: false,
 			notNextTick: true,
@@ -125,13 +127,27 @@ export default {
 		},
 		area() {
 			return ['大学城','东风路','龙洞','番禺'][this.user.area || 0];
+		},
+		isMyself() {
+			return this.user._id === this.me._id;
 		}
 	},
 	created(){
-		this.getUserInfo().then(()=>{
+		http.get('./api/user/me', ui.showLoading()).then(res => {
+			this.me = res.data;
+		}).then(() => {
+			if(this.others) {
+				this.user = this.others;
+			}
+			else {
+				this.user = this.me;
+			}
+		}).then(() => {
 			this.listload();
-			console.log("listLoad!!!!!!!!!!!!!");
+			this.isLoading = false;
 		})
+
+
 	},
 	methods: {
 		listload() {
@@ -147,21 +163,21 @@ export default {
 				if (this.isFemale) this.swiper.unlockSwipeToPrev()
 			})
 		},
-		init: function(){
-			return http.get('./api/user/me').then(res => {
-				this.user = res.data;
-			})
-		},
-		getUserInfo: function(){
-			if(!this.others) {
-				return this.init();
-			}
-			else {
-				this.user = this.others;
-				return Promise.resolve(true)
-			}
+		// init: function(){
+		// 	return http.get('./api/user/me').then(res => {
+		// 		this.user = res.data;
+		// 	})
+		// },
+		// getUserInfo: function(){
+		// 	if(!this.others) {
+		// 		return this.init();
+		// 	}
+		// 	else {
+		// 		this.user = this.others;
+		// 		return Promise.resolve(true)
+		// 	}
 
-		},
+		// },
 		changeTo: function(idx) {
 			console.log(idx);
 			this.swiper.slideTo(idx, 500, true);
@@ -190,6 +206,19 @@ export default {
 			})
 
 			msg.launch();
+		},
+		leaveMsg() {
+			let getInput =  this.$popup.push({
+				type: 'prompt',
+				confirmText: '确认',
+				placeholderText: '输入给ta的留言',
+				handle: {
+					confirm: function(input) {
+						console.log(input); 
+					}
+				}
+			})
+			getInput.launch();
 		},
 		async getWish(status) {
 			let res = await http.get('/api/wish/user', {
