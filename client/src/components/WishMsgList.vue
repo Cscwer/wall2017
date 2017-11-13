@@ -64,6 +64,7 @@ export default {
 			}); 
 			this.listLoad(); 
 
+			let self = this; 
 			let ins = this.$popup.push({
 				type: 'modal',
 				component: WishDetail,
@@ -80,7 +81,7 @@ export default {
 							return inner;
 						}); 
 
-						this.listLoad(); 
+						self.listLoad(); 
 					}
 				},
 				bg: 'rgb(255, 241, 241)'
