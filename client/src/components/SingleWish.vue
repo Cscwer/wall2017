@@ -231,6 +231,7 @@ export default {
 		min-height: 100px;
 		background-size: 100% auto;
 		background-position: center;
+		border-radius: 10px;
 		background-repeat: no-repeat;
 		vertical-align: bottom;
 	}
