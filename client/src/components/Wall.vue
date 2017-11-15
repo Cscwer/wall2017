@@ -1,32 +1,42 @@
 <template id="home">
-	<div v-infinite-scroll="loadMore"
-		infinite-scroll-disabled="loading && !finish"
-		infinite-scroll-distance="20"
-		class="hello">
-	<!-- <div class="hello"> -->
-		<div @click.stop="toSearch" class="search-container" :style="{ display: scrollDown ? block : none }">
-			<img class="search" src="../assets/home/search.png">
-			<span class="ps-text">搜索</span>
-		</div>
+	<div class="hello">
+		<vue-data-loading
+			:loading="loading"
+			:completed="finish"
+			:listens="['pull-down', 'infinite-scroll']"
+			:init-scroll="true"
+			@infinite-scroll="loadMore"
+			@pull-down="reload">
 
-		<div class="bottom-of-search-container" ref="bottomOfSearchContainer"></div>
+			<div slot="pull-down-ready">松开下拉</div>
+			<div slot="pull-down-before">下拉以刷新</div>
+			<div slot="infinite-scroll-loading" class="some-style-you-like">刷新中</div>
 
-		<swiper class="gw-swiper" :options="swiperOption" :not-next-tick="notNextTick" ref="mySwiper">
-		<!-- slides -->
-			<swiper-slide class="slider-img" v-for="banner in banners">
-				<img :src="banner.img" @click.stop="clickBanner(banner)">
-			</swiper-slide>
-		</swiper>
+			<div @click.stop="toSearch" class="search-container">
+				<img class="search" src="../assets/home/search.png">
+				<span class="ps-text">搜索</span>
+			</div>
 
-		<div class="wish-container">
-			<transition-group name="wish-load" tag="div" >
-				<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list"
-					:myInfo="user" :wish="wish" :status="0" :key="idx" :style="{
-						'transition-delay': ((idx % 10) / 10 + .2) + 's'
-					}">
-				</wish>
-			</transition-group>
-		</div>
+			<div class="bottom-of-search-container" ref="bottomOfSearchContainer"></div>
+
+			<swiper class="gw-swiper" :options="swiperOption" ref="mySwiper">
+			<!-- slides -->
+				<swiper-slide class="slider-img" v-for="banner in banners">
+					<img :src="banner.img" @click.stop="clickBanner(banner)">
+				</swiper-slide>
+			</swiper>
+
+			<div class="wish-container">
+				<transition-group name="wish-load" tag="div" >
+					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list"
+						:myInfo="user" :wish="wish" :status="0" :key="idx" :style="{
+							'transition-delay': ((idx % 10) / 10 + .2) + 's'
+						}">
+					</wish>
+				</transition-group>
+			</div>
+		</vue-data-loading>
+
 		<div class="bg-cover"></div>
 	</div>
 </template>
@@ -37,6 +47,7 @@ import http from '@/utils/http.client';
 import ui from '@/utils/ui';
 import Wish from './SingleWish';
 import WishSearch from './WishSearch';
+import VueDataLoading from 'vue-data-loading'
 // import banner from '../assets/home/slider.jpg';
 
 let banners = [
@@ -61,9 +72,9 @@ let banners = [
 export default {
 	name: 'hello',
 	components: {
-		'wish': Wish
+		'wish': Wish,
+		VueDataLoading
 	},
-
 	data() {
 		return {
 			toastText: '',
@@ -84,7 +95,7 @@ export default {
 			user: {},
 			list: [],
 			p: 0,
-			loading: true,
+			loading: false,
 			finish: false,
 			alert: null
 		}
@@ -195,6 +206,24 @@ export default {
 				console.log(p + ' : not end');
 			}
 			this.loading = false;
+		},
+		reload(){
+			this.p = 0;
+			this.loading = true;
+			this.finish = false;
+
+			http.get('/api/wish', {
+				p: 0
+			}).then(res => {
+				if (res.code === 2001){
+					this.finish = true;
+				} else {
+					this.list = res.data;
+				}
+
+				this.loading = false;
+			})
+
 		}
 	}
 }

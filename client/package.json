@@ -14,8 +14,9 @@
     "axios": "^0.16.2",
     "vue": "^2.4.2",
     "vue-awesome-swiper": "^2.6.7",
-    "vue-infinite-scroll": "^2.0.1",
-    "vue-router": "^2.7.0"
+    "vue-data-loading": "^0.2.3",
+    "vue-router": "^2.7.0",
+    "vue-scroller": "^2.2.4"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
