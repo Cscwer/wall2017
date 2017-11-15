@@ -1,6 +1,7 @@
 <template>
 	<div v-if="!isLoading">
-		<div class="header-wrap">
+		<div class="header-wrap" :style="{backgroundImage: (!isMyself ? 'url('+user.headimgurl+')': null), backgroundPosition: 'center'}">
+			<div class="top-wrap">她的愿望</div>
 			<div class="msg-icon-wrap" @click="isMyself ? openMsg() : leaveMsg(), hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
 				<span class="red-dot" v-if="hasMsg"></span>
@@ -32,6 +33,7 @@
 				}"></span>
 			</ul>
 		</div>
+		<div class="hello-world" v-if="!isMyself"></div>
 		<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
 			<swiper-slide class="swiper-item">
 				<div class="wish-container">
@@ -216,7 +218,7 @@ export default {
 					confirm: (input) => {
 						http.post('/api/msg',{
 							from: this.me._id,
-							to: this.user._id,
+							to: this.others._id,
 							content: input
 						}, ui.showLoading()).then(() => {
 							console.log('ok');
@@ -310,7 +312,7 @@ export default {
 	.header-wrap {
 		position: relative;
 		min-height: 250px;
-		background-image: url("../assets/me/bg-img.png");
+		background-image: url('../assets/me/bg-img.png');
 		background-color: rgba(240,240,240,.5);
 		box-shadow: 0px 10px 10px 0px rgba(254, 162, 140, .6);
 	}
@@ -347,18 +349,23 @@ export default {
 	}
 
 	.msg-icon-wrap {
-		position: relative;
-		padding-top: 15px;
-		margin-right: 20px;
+		position: absolute;
+		padding-top: 12px;
+		right: 20px;
 		text-align: right;
 	}
 
 	.msg-icon {
-		display: inline-block;
+		position: relative;
+		z-index: 1;
 		width: 23px;
 	}
 
 	.userinfo-wrap {
+		position: absolute;
+		margin-top: 50px;
+		width: 100%;
+		z-index: 1;
 		text-align: center;
 	}
 
@@ -390,7 +397,7 @@ export default {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding-top: 6px;
+		padding-top: 7px;
 	}
 
 	.user-from {
@@ -425,6 +432,29 @@ export default {
 		width: 100%;
 		color: rgba(248, 153, 138, 1);
     	font-size: 0.46rem;
+	}
+
+	.hello-world {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		min-height: 251px;
+		opacity: 0.7;
+		background: linear-gradient(60deg, #f74e4e,rgba(255, 138, 107, .8));
+		
+	}
+
+	.top-wrap {
+		z-index: 1;
+		position: absolute;
+		width: 100%;
+		height: 40px;
+		text-align: center;
+		font-size: 15px;
+		color: #fff;
+		line-height: 40px;
+		top: 0;
+		background-color: rgba(255, 255, 255, .35);
 	}
 
 
