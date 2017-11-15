@@ -6,7 +6,7 @@
 			<img :src="wish.she.headimgurl" class="avatar" @click="toMe"/>
 			<span class="user-name">{{wish.she.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[wish.she.area] }">{{area[wish.she.area]}}</div>
-			<img v-if="myInfo._id === wish.she._id" src="../assets/home/delete.png" class="delete" @click="deleteWish('确定')">
+			<img v-if="myInfo._id === wish.she._id && status === 0" src="../assets/home/delete.png" class="delete" @click="deleteWish('确定')">
 		</div>
 		<div class="wish">
 			{{ wish.text }}
@@ -49,6 +49,7 @@
 import wait from '@/utils/wait';
 import http from '@/utils/http.client';
 import me from './Me';
+import detail from './WishDetail';
 
 export default {
 	name: 'SingleWish',
@@ -105,6 +106,15 @@ export default {
 		},
 		searchMore() {
 			console.log('detail');
+			var msg = this.$popup.push({
+				component: detail,
+				type: "modal",
+				binding: {
+					wish: this.wish
+				}
+			})
+
+			msg.launch();
 		},
 		toMe(){
 			var msg = this.$popup.push({
@@ -114,7 +124,7 @@ export default {
 					others: this.wish.she
 				},
 				bg: 'rgb(255, 241, 241)'
-				
+
 			})
 
 			msg.launch();
@@ -221,6 +231,7 @@ export default {
 		min-height: 100px;
 		background-size: 100% auto;
 		background-position: center;
+		border-radius: 10px;
 		background-repeat: no-repeat;
 		vertical-align: bottom;
 	}
