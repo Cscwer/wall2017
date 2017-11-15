@@ -4,7 +4,7 @@ require('swiper/dist/css/swiper.css');
 
 import Vue from 'vue'
 import App from './App'
-import infiniteScroll from 'vue-infinite-scroll'
+// import infiniteScroll from 'vue-infinite-scroll'
 
 import ws from '@/utils/ws.client';
 import router from './router';
@@ -16,7 +16,7 @@ import SingleWish from './components/SingleWish';
 
 
 Vue.config.productionTip = false
-Vue.use(infiniteScroll);
+// Vue.use(infiniteScroll);
 Vue.use(VueAwesomeSwiper);
 
 
@@ -58,7 +58,7 @@ new Vue({
 
 // setTimeout(function(){
 // 	var $body = document.getElementsByTagName('body')[0];
-// 	console.log('OnLoad'); 
+// 	console.log('OnLoad');
 // 	$body.setAttribute('class', '');
 // }, 200);
 
