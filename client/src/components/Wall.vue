@@ -5,6 +5,7 @@
 			:completed="finish"
 			:listens="['pull-down', 'infinite-scroll']"
 			:init-scroll="true"
+			:offset="20"
 			@infinite-scroll="loadMore"
 			@pull-down="reload">
 
