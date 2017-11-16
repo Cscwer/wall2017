@@ -34,7 +34,10 @@
 
 			<div class="btns">
 				<div class="btn" @click.stop="startChat">发消息</div>
-				<div class="btn active" v-if="wish.status === 1 && enable" @click.stop="ifItWorks">愿望已实现</div>
+				<div class="btn active"
+					v-if="wish.status === 1 && enable" @click.stop="ifItWorks">
+					愿望已实现
+				</div>
 			</div>
 		</div>
 		
@@ -58,6 +61,9 @@ export default {
 		toShow: {
 			type: String, 
 			default: 'he'
+		},
+		enable: {
+			default: true
 		}
 	},
 	// components: {
@@ -67,7 +73,7 @@ export default {
 		return {
 			user: null,
 			finish: false,
-			enable: true,
+			// enable: true,
 			areaTable: ['大学城', '东风路', '龙洞'],
 			toShowTable: {
 				'he': '领取人', 
