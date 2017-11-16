@@ -65,9 +65,6 @@ export default {
 		}
 	},
 	created(){
-		console.log(this.myInfo);
-		console.log(this.wish);
-		console.log(this.status)
 	},
 	methods: {
 		present(type, world) {
