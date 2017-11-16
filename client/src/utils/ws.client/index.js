@@ -2,6 +2,7 @@
 import cookie from '../cookie';
 import chat from '../chat';
 import Vue from 'vue';
+import LsHandle from '../ls/LsHandle'; 
 
 let wsurl = location.origin;
 
@@ -18,13 +19,35 @@ const USER_TOKEN = cookie.get('user-token')
 		bus: new Vue()
 	}
 
+function dataInit(kefu){
+	var inited = window.localStorage.getItem('inited');
+
+	if (inited){
+		// 初始化过了 
+		return ;
+	} else {
+		// 未初始化的 
+		window.localStorage.setItem('inited', '✔'); 
+
+		LsHandle.set('chat-list', [{
+			"type": "chat",
+			"from": kefu,
+			"content": "客服小哥为您带来真诚问候",
+			"create_at": new Date(),
+			"unread": true
+		}]);
+	}
+}
+
 ws.ready = new Promise((res, rej) => {
 	socket.on('login-success', function(info){
-		let { user, unreads } = info;
-		console.log(info);
+		let { user, unreads, kefu } = info;
+		console.log('[ login-success ]', info);
 		ws.user = user;
 
-		res(info);
+		// Init Data; 
+		dataInit(kefu); 
+
 		// On Msg;
 		unreads.forEach(chat.onMsg);
 
