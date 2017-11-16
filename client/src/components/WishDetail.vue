@@ -217,7 +217,7 @@ export default {
 	color: #FFF; 
 	text-align: center;
 	top: 48px;
-	left: 0.5em;
+	left: 1em;
 }
 
 .avatar-area .name-bottom {
@@ -226,7 +226,7 @@ export default {
 }
 
 .name-bottom {
-	max-width: 5.5em;
+	max-width: 5em;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
