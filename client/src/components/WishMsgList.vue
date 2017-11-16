@@ -3,21 +3,30 @@
 		<div class="head">愿望动态</div>
 
 		<ul class="wish-list">
-			<li v-for="(wish, idx) in list" class="wish" @click="gotoWishDetail(wish, idx)">
-				<!-- <span class="new-msg" v-if="wish.unread"></span> -->
-				<img :src="wish.type === 'wish-pull' ? wish.data.he.headimgurl : wish.data.she.headimgurl" class="avatar" />
-				<div class="inner">
-					<div class="new-msg" v-if="wish.unread">NEW</div>
-					<div class="name">
-						{{ wish.type === 'wish-pull' ? wish.data.he.nickname : wish.data.she.nickname }}
+			<transition-group name="wish-load" tag="div" >
+				<li v-for="(wish, idx) in list" class="wish" @click="gotoWishDetail(wish, idx)"
+					:key="idx" :style="{
+						'transition-delay': ((idx % 10) / 10 + .2) + 's'}
+					">
+					<!-- <span class="new-msg" v-if="wish.unread"></span> -->
+					<img :src="wish.type === 'wish-pull' ? wish.data.he.headimgurl : wish.data.she.headimgurl" class="avatar" />
+					<div class="inner">
+						<div class="new-msg" v-if="wish.unread">NEW</div>
+						<div class="name">
+							{{ wish.type === 'wish-pull' ? wish.data.he.nickname : wish.data.she.nickname }}
 
-						<span class="time">
-							{{ timeParse(wish.create_at) }}
-						</span>
+							<span class="time">
+								{{ timeParse(wish.create_at) }}
+							</span>
+						</div>
+						<p class="msg">{{ wish.msg }}</p>
 					</div>
-					<p class="msg">{{ wish.msg }}</p>
-				</div>
-			</li>
+				</li>
+			</transition-group>
+
+			<div class="no-data-here" v-if="list.length === 0">
+				暂无愿望动态
+			</div>
 		</ul>
 	</div>
 </template>
@@ -42,7 +51,9 @@ export default {
 	methods: {
 		listLoad(){
 			let list = new LsArray('wish-msgs');
-			this.list = list.toArray(); 
+			setTimeout(() => {
+				this.list = list.toArray(); 
+			}, 200); 
 		},
 		timeParse(ts){
 			if (!ts) return ''; 
@@ -69,7 +80,8 @@ export default {
 				type: 'modal',
 				component: WishDetail,
 				binding: {
-					wish: wishMsg.data
+					wish: wishMsg.data,
+					'to-show': wishMsg.type === 'wish-pull' ? 'he' : 'she'
 				},
 				event: {
 					wishEnd(){
@@ -171,6 +183,21 @@ export default {
 	font-size: 15px; 
 }
 
+.no-data-here {
+	margin-top: 25vh;
+    text-align: center;
+    width: 100%;
+    color: rgb(248, 153, 138);
+    font-size: 0.46rem;
+}
 
+.wish-load-enter-active, .wish-load-leave-active {
+	transition: all .3s;
+	/*transition-delay: .6s; */
+}
+.wish-load-enter, .wish-load-leave-to {
+	transform: translateY(100%);
+	opacity: 0;
+}
 
 </style>

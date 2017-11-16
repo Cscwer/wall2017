@@ -28,13 +28,11 @@
 			</swiper>
 
 			<div class="wish-container">
-				<transition-group name="wish-load" tag="div" >
+				<!-- <transition-group name="wish-load" tag="div" > -->
 					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list"
-						:myInfo="user" :wish="wish" :status="0" :key="idx" :style="{
-							'transition-delay': ((idx % 10) / 10 + .2) + 's'
-						}">
+						:myInfo="user" :wish="wish" :status="0" :key="idx">
 					</wish>
-				</transition-group>
+				<!-- </transition-group> -->
 			</div>
 		</vue-data-loading>
 
@@ -188,25 +186,27 @@ export default {
 		getUser: function(){
 			return http.get('/api/user/me');
 		},
-		loadMore: async function(){
+		loadMore: function(){
+			if (this.loading) return; 
+
 			let p = this.p;
 			this.loading = true;
 
-			let rps = await http.get('/api/wish', {
+			return http.get('/api/wish', {
 				p: p
-			});
+			}).then(rps => {
+				this.p = p + 1;
 
-			this.p = p + 1;
+				if (rps.code === 2001){
+					console.log(p + ' : end!!');
+					this.finish = true;
+				} else {
+					console.log(p + ' : not end');
+					this.list = this.list.concat(rps.data);
+				}
 
-			this.list = this.list.concat(rps.data);
-
-			if (rps.code === 2001){
-				this.finish = true;
-				console.log(p + ' : end!!');
-			} else {
-				console.log(p + ' : not end');
-			}
-			this.loading = false;
+				this.loading = false;
+			})
 		},
 		reload(){
 			this.p = 0;
@@ -216,6 +216,8 @@ export default {
 			http.get('/api/wish', {
 				p: 0
 			}).then(res => {
+				this.p = this.p + 1; 
+				
 				if (res.code === 2001){
 					this.finish = true;
 				} else {

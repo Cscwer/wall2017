@@ -4,6 +4,31 @@
             {{title}}
         </div>
         <ul class="list-wrap">
+            <!-- 离线http留言板 -->
+            <li class="chat" @click="openBoard">
+                <img src="../assets/msg/message.png" class="avatar">
+                <div class="text-wrap">
+                    <p class="nickname">留言信息</p>
+                    <p class="content">留言板</p>
+                </div>
+
+                <p class="time">
+                    {{ transfromTime(Date.now()) }}
+                </p>
+            </li>
+
+            <li class="chat wish" v-if="!hasWishMsg"  @click="openWish">
+                <img src="../assets/msg/wish.png" class="avatar">
+
+                <div class="text-wrap">
+                    <p class="nickname">愿望动态</p>
+                    <p class="content">点击查看愿望动态</p >
+                </div>
+
+                <p class="time">
+                    {{ transfromTime(Date.now()) }}
+                </p>
+            </li>
 
             <div v-for="(chat, idx) in list" :key="idx">
                 <li class="chat" @click="toChat(idx,chat)" v-if="chat.type === 'chat'">
@@ -20,7 +45,7 @@
                 </li> 
 
                 <li class="chat wish" v-if="chat.type[0] === 'w'" @click="toWish(chat, idx)">
-                    <img :src="chat.data.he.headimgurl" class="avatar">
+                    <img src="../assets/msg/wish.png" class="avatar">
 
                     <div class="text-wrap">
                         <p class="nickname">愿望动态</p>
@@ -33,7 +58,6 @@
                     </p>
                 </li>
             </div>
-            
         </ul>
     </div>
 </template>
@@ -53,11 +77,26 @@ export default {
     },
     created() {
         this.loadList(); 
-        console.log(this.list);
+
+
+        console.log('[ Msg.vue Init ]', this.list);
+    },
+    computed: {
+        hasWishMsg(){
+            return this.list.some(e => {
+                return e.type[0] === 'w'; 
+            });
+        }
     },
     methods: {
         loadList(){
-            this.list = chat.list.toArray(); 
+            var list = chat.list.toArray(); 
+
+            // var hasGwSysIoChat = list.some(e => {
+            //     return (e.type === 'chat' && e.from._id === 'The_Gw_Sys_Io');
+            // })
+
+            this.list = list; 
         },
         transfromTime(ts) {
             var date = new Date(ts);
@@ -101,6 +140,16 @@ export default {
             });
 
             wishTop.launch();
+        },
+        openWish(){
+            this.$popup.push({
+                type: 'modal',
+                component: WishMsgList,
+                bg: 'rgb(255, 241, 241)'
+            }).launch();
+        },
+        openBoard(){
+            console.log('openBoard'); 
         }
     }
 }

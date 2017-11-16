@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-hans">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+	<title>敬请期待</title>
+</head>
+<style>
+	* {
+		margin: 0;
+		padding: 0; 
+	}
+
+	body {
+		color: #555; 
+		text-align: center;
+	}
+
+	header, footer {
+		position: absolute;
+		height: 50%; 
+		width: 100%; 
+		left: 0; 
+
+		transition: all .5s; 
+	}
+
+	header {
+		top: 50%;  
+		background-color: #555; 
+		color: #EEE; 
+	}
+
+	footer {
+		top: 50%; 
+	}
+
+	.bg-true {
+		top: 0%; 
+	}
+
+	.align-text {
+		transition: all .7s; 
+	}
+
+	.hidden {
+		transform: scale(2);
+		opacity: 0; 
+	}
+</style>
+<body>
+	<header class="bg-true">
+		<h1 class="align-text hidden">建设中</h1>
+	</header>
+
+	<footer>
+		<h1 class="align-text hidden">周六见</h1>
+	</footer>
+	
+	<script>
+		var height = window.innerHeight / 2; 
+		$(function(){
+			var doms = $('.align-text'); 
+			
+			doms.css('line-height', height + 'px');
+
+			setTimeout(function(){
+				doms.removeClass('hidden')
+			});
+		}); 
+
+		function bgTransition($dom){
+			return $dom.hasClass('bg-true') ? 
+				$dom.removeClass('bg-true') :
+				$dom.addClass('bg-true');
+		}
+
+		var $header = $('header'); 
+		var $footer = $('footer'); 
+		setTimeout(function(){
+			bgTransition($header); 
+			bgTransition($footer); 
+		}, 1500);
+	</script>
+</body>
+</html>

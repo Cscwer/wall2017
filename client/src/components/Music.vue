@@ -23,7 +23,7 @@
 			}" @click="previewImg(bigSizeCover)"></div>
 
 
-			<audio id="audio-player" @ended="musicEnded">
+			<audio id="audio-player" @ended="musicEnded" @playing="musicStartPlay">
 				<source :src="music.mp3">
 			</audio>
 
@@ -100,6 +100,16 @@ import mtag_png from '@/assets/music/mtag.png';
 import vwx from '@/utils/vwx'; 
 import danmaku from '@/utils/danmaku';
 
+var cancel;
+function startLoading(){
+	cancel = ui.showLoading();
+}
+
+function endLoading(){
+	cancel && cancel(); 
+	cancel = null; 
+}
+
 let timer = null; 
 
 let colors = [
@@ -159,6 +169,8 @@ export default {
 	}, 
 	created(){
 		// window.t = this; 
+		startLoading(); 
+
 		this.danmakuCtrl = danmaku.init(this); 
 		this.initPlay(); 
 	}, 
@@ -292,13 +304,15 @@ export default {
 				timer = setInterval(() => {
 					this.current = $music.currentTime;
 				}, 500); 
+
 			}, err => {
 				// Error When Config 
 				console.log('[ Error When Config ]', err);
 			});
-
-
-
+		},
+		musicStartPlay(){
+			console.log('[ Music onPlaying ]')
+			endLoading(); 
 		},
 		newMusic(){
 			this.onSearching = true; 

@@ -3,38 +3,41 @@
 		<div class="head">领取详情</div>
 		
 		<div v-if="finish" class="inner-wrap">
-			<single-wish class="wish" :wish="wish" :myInfo="user" />
+			<wish class="wish" :wish="wish" :myInfo="user" />
 			<div class="getter">
-				<span class="he">领取人</span>
+				<span class="he">{{ toShowTable[toShow] }}</span>
 				
 				<div class="avatar-area">
-					<img :src="wish.he.headimgurl" class="avatar" />
-					<p class="name-bottom">{{ wish.he.nickname }}</p>
+					<img :src="wish[toShow].headimgurl" class="avatar" />
+					<p class="name-bottom">{{ wish[toShow].nickname }}</p>
 				</div>
 				
 				<div class="info">
 					<div class="item">
 						<div class="before">姓名：</div>
-						<div class="content">{{ wish.he.nickname }}</div>
+						<div class="content">{{ wish[toShow].nickname }}</div>
 					</div>
 					<div class="item">
 						<div class="before">校区：</div>
-						<div class="content">{{ wish.he.area }}</div>
+						<div class="content">{{ areaTable[wish.he.area] }}</div>
 					</div>
 					<div class="item">
 						<div class="before">微信：</div>
-						<div class="content">{{ wish.he.weid || '未设置' }}</div>
+						<div class="content">{{ wish[toShow].weid || '　' }}</div>
 					</div>
 					<div class="item">
 						<div class="before">电话：</div>
-						<div class="content">{{ wish.he.phone }}</div>
+						<div class="content">{{ wish[toShow].phone　|| '　' }}</div>
 					</div>
 				</div>
 			</div>
 
 			<div class="btns">
 				<div class="btn" @click.stop="startChat">发消息</div>
-				<div class="btn active" v-if="wish.status === 1 && enable" @click.stop="ifItWorks">愿望已实现</div>
+				<div class="btn active"
+					v-if="wish.status === 1 && enable" @click.stop="ifItWorks">
+					愿望已实现
+				</div>
 			</div>
 		</div>
 		
@@ -45,19 +48,37 @@
 import ui from '@/utils/ui'; 
 import http from '@/utils/http.client';
 import Chat_Component from './Chat';
-import SingleWish from './SingleWish'; 
+
+// import SingleWish from './SingleWish'; 
 
 export default {
 	name: 'wish-detail', 
-	props: ['wish'],
-	components: {
-		'single-wish': SingleWish
+	props: {
+		wish: {
+			type: Object,
+			required: true
+		}, 
+		toShow: {
+			type: String, 
+			default: 'he'
+		},
+		enable: {
+			default: true
+		}
 	},
+	// components: {
+	// 	'single-wish': SingleWish
+	// },
 	data(){
 		return {
 			user: null,
 			finish: false,
-			enable: true
+			// enable: true,
+			areaTable: ['大学城', '东风路', '龙洞'],
+			toShowTable: {
+				'he': '领取人', 
+				'she': '许愿者'
+			}
 		}
 	},
 	created(){
@@ -113,7 +134,7 @@ export default {
 			var chat_selected = {
 				type: "chat",
 				content: "",
-				from: this.wish.he,
+				from: this.wish[this.toShow],
 				myself: true,
 				create_at: Date.now(),
 				unread: false

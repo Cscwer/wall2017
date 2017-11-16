@@ -5,6 +5,16 @@ const auth = require('./utils/auth')
     , msg = require('./io-events/msg')
     , IO = {}
     , socketTable = {}
+    , kefu = {
+        "_id" : "59ce826c4fece5203cd318c7",
+        "openid" : "4444",
+        "nickname" : "客服小哥",
+        "sex" : 2,
+        "headimgurl" : "https://io.chenpt.cc/kefu/nw.png",
+        "created_at" : "2017-09-29T17:27:08.773Z",
+        "phone" : "未设置",
+        "__v" : 0
+	}
 
 module.exports = IO; 
 
@@ -92,7 +102,8 @@ IO.init = function(io){
 		R.fullQueue('UNREAD-MSG-' + user._id).then(unreads => {
 			socket.emit('login-success', {
 				user,
-				unreads
+				unreads,
+				kefu
 			}); 
 
 			// 还要删掉

@@ -2,13 +2,15 @@
 const express = require('express')
     , router = express.Router()
     , qs = require('querystring')
-    , redirect_param = {
-		appid: 'wxca79087c2e5cf375', 
-		redirect_uri: 'http://gw.chenpt.cc/api/entry/code', 
-		response_type: 'code', 
-		scope: 'snsapi_userinfo',
-		state: '0' 
-	}
+    , config = require('../config')
+    , redirect_param = config.redirect_param
+ //    , redirect_param = {
+	// 	appid: 'wxca79087c2e5cf375', 
+	// 	redirect_uri: 'http://gw.chenpt.cc/api/entry/code', 
+	// 	response_type: 'code', 
+	// 	scope: 'snsapi_userinfo',
+	// 	state: '0' 
+	// }
 	, vwx = require('../utils/vwx')
 	, { userModel } = require('../utils/db')
 	, auth = require('../utils/auth')

@@ -11,6 +11,7 @@ const express = require('express')
     , wx = require('./wx')
     , obj = require('./obj')
     , msg = require('./msg')
+    , proxy = require('./proxy')
     // , login = require('./login')
 
 // System Info
@@ -18,6 +19,9 @@ router.use('/system', system);
 
 // Set Token 
 router.use('/entry', entry);
+
+// Proxy
+router.use('/proxy', proxy); 
 
 // Get Data Of Token 
 router.use('*', all);
@@ -31,6 +35,7 @@ router.use('/msg', msg);
 router.use('/wish', wish); 
 router.use('/music', music);
 router.use('/obj', obj); 
+
 
 router.use('*', function(req, res, next){
 	console.log('\n\n'); 

@@ -96,7 +96,7 @@ router.get('/user', function(req, res){
 
 	console.log(mongoQuery)
 
-	wishModel.find(mongoQuery).populate('she')
+	wishModel.find(mongoQuery).populate('she').populate('he')
 	.sort({
 		created_at: -1
 	})
