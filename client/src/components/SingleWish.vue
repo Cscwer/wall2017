@@ -110,7 +110,9 @@ export default {
 				component: detail,
 				type: "modal",
 				binding: {
-					wish: this.wish
+					wish: this.wish,
+					toShow: 'she',
+					enable: false
 				}
 			})
 
