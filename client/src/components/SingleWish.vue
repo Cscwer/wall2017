@@ -123,7 +123,8 @@ export default {
 				component: me,
 				type: "modal",
 				binding: {
-					others: this.wish.she
+					others: this.wish.she,
+					initialSlide: 0
 				},
 				bg: 'rgb(255, 241, 241)'
 
