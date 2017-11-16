@@ -1,7 +1,7 @@
 <template>
 	<div v-if="!isLoading">
 		<div class="header-wrap" :style="{backgroundImage: (!isMyself ? 'url('+user.headimgurl+')': null), backgroundPosition: 'center'}">
-			<div class="top-wrap">她的愿望</div>
+			<div class="top-wrap" v-if="!isMyself">她的愿望</div>
 			<div class="msg-icon-wrap" @click="isMyself ? openMsg() : leaveMsg(), hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
 				<span class="red-dot" v-if="hasMsg"></span>
@@ -34,28 +34,40 @@
 			</ul>
 		</div>
 		<div class="hello-world" v-if="!isMyself"></div>
-		<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
-			<swiper-slide class="swiper-item">
-				<div class="wish-container">
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="user" :status="0" :key="idx"></wish>
-				</div>
-				<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : '1')}}</div>
-			</swiper-slide>
-			<swiper-slide class="swiper-item">
-				<div class="wish-container">
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="user" :status="1" :key="idx"></wish>
-				</div>
-				<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
-			</swiper-slide>
-   		 	<swiper-slide class="swiper-item">
-				<div class="wish-container">
-					<wish class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="user" :status="2" :key="idx"></wish>
-				</div>
-				<div v-show="this.list2.length === 0" class="text">{{isFemale ? text.female.realized : text.male.realized}}</div>
-			</swiper-slide>
-		</swiper>
-
-
+		<vue-data-loading
+				:loading="loading"
+				:completed="shouldGo"
+				:listens="['pull-down', 'infinite-scroll']"
+				@infinite-scroll="loadMore"
+				@pull-down="reload">
+				<div slot="pull-down-ready">松开下拉</div>
+				<div slot="pull-down-before">下拉以刷新</div>
+				<div slot="infinite-scroll-loading" class="some-style-you-like">刷新中</div>
+			<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
+				<swiper-slide class="swiper-item">
+					<div class="wish-container">
+						<transition-group name="wish-load" tag="div">
+						<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="me" :status="0" :key="idx"></wish>
+						</transition-group>
+					</div>
+					<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : null)}}</div>
+				</swiper-slide>
+				<swiper-slide class="swiper-item">
+					<div class="wish-container">
+						<transition-group name="wish-load" tag="div">
+						<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="me" :status="1" :key="idx"></wish>
+						</transition-group>
+					</div>
+					<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
+				</swiper-slide>
+				<swiper-slide class="swiper-item">
+					<div class="wish-container">
+						<wish class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="me" :status="2" :key="idx"></wish>
+					</div>
+					<div v-show="this.list2.length === 0" class="text">{{isFemale ? text.female.realized : text.male.realized}}</div>
+				</swiper-slide>
+			</swiper>
+		</vue-data-loading>
 		<div class="bg"></div>
 	</div>
 </template>
@@ -69,14 +81,28 @@ import { appCtrl } from '@/utils/app.status';
 import Msg from './Msg';
 
 
+
+
 export default {
 	name: 'me',
-	props: ['others'],
+	props: {
+		'others': {
+			type: Object,
+			default: null
+		}, 
+		initialSlide: {
+			type: Number, 
+			default: 1
+		}
+	},
 	data(){
 		return {
+			loading: false,
+			finish0: false,
+			finish1: false,
+			finish2: false,
+			arrayP: [0, 0, 0],
 			isLoading: true,
-			localIds: [],
-			show: '',
 			user: {},
 			me: {},
 			activeidx: 1,
@@ -84,18 +110,15 @@ export default {
 			notNextTick: true,
 			resistanceRatio : 0.4,
 			swiperOption: {
-				// autoplay: 1000,
-				initialSlide: 1,
+				initialSlide: this.initialSlide,
 				freeMode: false,
 				loop: false,
 				onTransitionStart: (swiper) => {
-					console.log(this.isFemale);
 					swiper.unlockSwipeToPrev();
 
 					if(!this.isFemale && swiper.activeIndex === 1) {
 						swiper.lockSwipeToPrev();
 					}
-					console.log(swiper.activeIndex);
 					this.activeidx = swiper.activeIndex;
 				},
 				onTransitionEnd: (swiper) => {
@@ -132,6 +155,9 @@ export default {
 		},
 		isMyself() {
 			return this.user._id === this.me._id;
+		},
+		shouldGo() {
+			return this['finish' + this.activeidx]; 
 		}
 	},
 	created(){
@@ -146,10 +172,15 @@ export default {
 			}
 		}).then(() => {
 			this.listload();
+			console.log("!!!!!!!!!!!!!!!",this.user);
 			this.isLoading = false;
 		})
-
-
+		if(!this.others) {
+			console.log("myself");
+		}
+		if(this.others) {
+			console.log("others");
+		}
 	},
 	methods: {
 		listload() {
@@ -162,26 +193,12 @@ export default {
 			
 			setTimeout(() => {
 				// window.swiper = this.$refs.mySwiper;
-				if (this.isFemale) this.swiper.unlockSwipeToPrev()
+				if (this.isFemale) this.swiper.unlockSwipeToPrev();
+				if(this.isMyself) this.swiper.unlockSwipes();
+				if(!this.isMyself) this.swiper.lockSwipes();
 			})
 		},
-		// init: function(){
-		// 	return http.get('./api/user/me').then(res => {
-		// 		this.user = res.data;
-		// 	})
-		// },
-		// getUserInfo: function(){
-		// 	if(!this.others) {
-		// 		return this.init();
-		// 	}
-		// 	else {
-		// 		this.user = this.others;
-		// 		return Promise.resolve(true)
-		// 	}
-
-		// },
 		changeTo: function(idx) {
-			console.log(idx);
 			this.swiper.slideTo(idx, 500, true);
 			this.activeidx = idx;
 		},
@@ -233,21 +250,11 @@ export default {
 			let res = await http.get('/api/wish/user', {
 				status: status,
 				_id: this.user._id,
-				sex: this.user.sex
+				sex: this.user.sex,
+				p:0
 			})
-			if(res.code === 2001) {
-				if(status === 0) {
-					this.list0 = res.data;
-				}
 
-				if(status === 1) {
-					this.list1 = res.data;
-				}
-
-				if(status === 2) {
-					this.list2 = res.data;
-				}
-			}
+			this['list' + status] = res.data; 
 
 			console.log(res);
 			console.log(this.list0);
@@ -261,28 +268,53 @@ export default {
 			let idx = null;
 
 		},
-		// loadMore: function(){
-		// 	let p = this.p;
-		// 	this.loading = true;
+		loadMore: function(){
+			if (this.loading) return; 
+			this.loading = true;
 
-		// 	let rps = http.get('/api/wish/user', {
-		// 		p: p,
-		// 		status: this.activeidx
-		// 	});
+			return http.get('/api/wish/user', {
+				status: this.activeidx,
+				_id: this.user._id,
+				sex: this.user.sex,
+				p: this.arrayP[this.activeidx]+1
+			}).then(rps => {
+				this.arrayP[this.activeidx] = this.arrayP[this.activeidx] + 1; 
+				console.log(this.arrayP);
+				this['list' + this.activeidx] = this['list' + this.activeidx].concat(rps.data);
+				if (rps.code === 2001){
+					console.log(this.arrayP[this.activeidx] + ' : end!!');
+					this['finish' + this.activeidx] = true;
+				} else {
+					console.log(this.arrayP[this.activeidx] + ' : not end');
+					
+				}
 
-		// 	this.p = p + 1;
-			
-		// 	this['list' + this.activeidx] = this['list' + this.activeidx].concat(rps.data);
+				this.loading = false;
+			})
+		},
+		reload(){
+			this.arrayP = [0, 0, 0];
+			this.loading = true;
+			this['finish' + this.activeidx] = false;
 
-		// 	if (rps.code === 2001){
-		// 		this.finish = true;
-		// 		console.log(p + ' : end!!');
-		// 	} else {
-		// 		console.log(p + ' : not end');
-		// 	}
-		// 	this.loading = false;
-		// 	console.log("hello world");
-		// }
+			http.get('/api/wish/user', {
+				status: this.activeidx,
+				_id: this.user._id,
+				sex: this.user.sex,
+				p: 0
+			}).then(res => {
+
+				if (res.code === 2001){
+					this['finish' + this.activeidx] = true;
+				} else {
+					console.log(this['finish' + this.activeidx]);
+					this['list' + this.activeidx] = res.data;
+				}
+
+				this.loading = false;
+			})
+
+		}
 	}
 }
 </script>
@@ -421,8 +453,9 @@ export default {
 		height: 4.5px;
 		border-radius: 50% 50%;
 		background-color: #ff0000;
-		right: -1.5px;
-		top: 13.5px;
+		right: -1px;
+		top: 11.5px;
+		z-index: 2;
 
 	}
 
@@ -445,16 +478,23 @@ export default {
 	}
 
 	.top-wrap {
-		z-index: 1;
-		position: absolute;
-		width: 100%;
-		height: 40px;
-		text-align: center;
-		font-size: 15px;
-		color: #fff;
-		line-height: 40px;
+		position: absolute;		
 		top: 0;
+		width: 100%;
+		line-height: 40px;
+		text-align: center;
+		font-size: 16px;
+		z-index: 1;
+		color: #fff;
 		background-color: rgba(255, 255, 255, .35);
+	}
+	.wish-load-enter-active, .wish-load-leave-active {
+		transition: all .5s;
+		/*transition-delay: .6s; */
+	}
+	.wish-load-enter, .wish-load-leave-to {
+		transform: translateY(100%);
+		opacity: 0;
 	}
 
 

@@ -25,36 +25,18 @@ export default {
 	data() {
 		return {
 			lover: {},
-			list: [
-				// {
-				// 	avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
-				// 	nickname: 'hhh',
-				// 	_id: 'jhgajhfjadsfjk1'
-				// },
-				// {
-				// 	avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
-				// 	nickname: 'hhh',
-				// 	_id: 'jhgajhfjadsfjk2'
-				// },
-				// {
-				// 	avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
-				// 	nickname: 'hhh',
-				// 	_id: 'jhgajhfjadsfjk3'
-				// },{
-				// 	avatar: 'http://wx.qlogo.cn/mmopen/vi_32/En0lnickzloWeTDzDEgib29ZKUZvrWIy2SqiaDVOBQcCEDPnmDWibpOd37Tul1WPicXpicwAEY3S2icQBnGAjm05MvIRQ/0',
-				// 	nickname: 'hhh',
-				// 	_id: 'jhgajhfjadsfjk4'
-				// }
-			]
+			list: []
 		}
 	},
 	created(){
-		this.input.keyword
+		// this.input.keyword
 		let loading = ui.showLoading();
+		console.log(this.input.keyword + 'fff');
 
 		http.get('/api/user', {
 		    q: this.input.keyword
-		}, loading).then(res => {
+		}).then(res => {
+			loading();
 			if (res.code === 2000){
 				this.list = res.data;
 			} else {

@@ -242,6 +242,7 @@ ui.chooseLover = function() {
 			},
 			handle: {
 				confirm(){
+					console.log(input.lover);
 					ui.loversList(input.lover).then(person => {
 						console.log('in ui person', person);
 						res(person);

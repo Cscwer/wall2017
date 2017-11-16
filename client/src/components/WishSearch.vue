@@ -1,40 +1,52 @@
 <template>
-	<div class="wish-search-container"
-		v-infinite-scroll="loadMore"
-		infinite-scroll-disabled="searchMore && !finish"
-		infinite-scroll-distance="20">
-		<input type="text" @keyup="search()" name="searchWish" class="searchWish" placeholder="搜索愿望..." v-model="text">
-		<div v-if="!searching">
-			<div class="select-container">
-				<div class="select-type-container">
-					<div class="certain">
-						<input type="checkbox" name="type" :value="0" class="radio" id="time" v-model="type">
-						<label class="select-box" for="time">耗时类</label>
-						<input type="checkbox" name="type" :value="1" class="radio" id="staff" v-model="type">
-						<label class="select-box" for="staff">实物类</label>
+	<div class="main-con">
+		<div class="wish-search-container">
+				<input type="text" @keyup="search()" name="searchWish" class="searchWish" placeholder="搜索愿望..." v-model="text">
+				<div v-if="!searching">
+					<div class="select-container">
+						<div class="select-type-container">
+							<div class="certain">
+								<input type="checkbox" name="type" :value="0" class="radio" id="time" v-model="type">
+								<label class="select-box" for="time">耗时类</label>
+								<input type="checkbox" name="type" :value="1" class="radio" id="staff" v-model="type">
+								<label class="select-box" for="staff">实物类</label>
+							</div>
+						</div>
+						<div class="select-type-container">
+							<div class="certain">
+								<input type="checkbox" name="area" :value="0" class="radio" id="town" v-model="area">
+								<label class="select-box" for="town">大学城校区</label>
+								<input type="checkbox" name="area" :value="1" class="radio" id="road" v-model="area">
+								<label class="select-box" for="road">东风路校区</label>
+								<input type="checkbox" name="area" :value="2" class="radio" id="hole" v-model="area">
+								<label class="select-box" for="hole">龙洞校区</label>
+							</div>
+						</div>
 					</div>
 				</div>
-				<div class="select-type-container">
-					<div class="certain">
-						<input type="checkbox" name="area" :value="0" class="radio" id="town" v-model="area">
-						<label class="select-box" for="town">大学城校区</label>
-						<input type="checkbox" name="area" :value="1" class="radio" id="road" v-model="area">
-						<label class="select-box" for="road">东风路校区</label>
-						<input type="checkbox" name="area" :value="2" class="radio" id="hole" v-model="area">
-						<label class="select-box" for="hole">龙洞校区</label>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div v-else>
-			<div v-if="loading" class="no-wish">拼命寻找中 ...</div>
-			<div v-else>
-				<div class="no-wish" v-if="list.length === 0 && !loading && text !== ''">没有相关的愿望哦（≧∇≦）</div>
 				<div v-else>
-					<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
+					<vue-data-loading
+						:loading="searchMore"
+						:completed="finish"
+						:listens="['pull-down', 'infinite-scroll']"
+						:init-scroll="false"
+						:offset="20"
+						@infinite-scroll="search"
+						@pull-down="reload">
+
+						<div slot="pull-down-ready">松开下拉</div>
+						<div slot="pull-down-before">下拉以刷新</div>
+						<div v-if="loading" class="no-wish">拼命寻找中 ...</div>
+						<div v-else>
+							<div class="no-wish" v-if="list.length === 0 && !loading && text !== ''">没有相关的愿望哦（≧∇≦）</div>
+							<div v-else>
+								<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
+							</div>
+						</div>
+					</vue-data-loading>
 				</div>
-			</div>
 		</div>
+		<div class="bg-cover"></div>
 	</div>
 </template>
 
@@ -42,13 +54,15 @@
 	import wait from '@/utils/wait';
 	import http from '@/utils/http.client';
 	import Wish from './SingleWish';
+	import VueDataLoading from 'vue-data-loading'
 
 	let timer = null;
 
 	export default {
 		name: 'wish-search',
 		components: {
-			'wish': Wish
+			'wish': Wish,
+			VueDataLoading
 		},
 		data(){
 			return {
@@ -79,6 +93,7 @@
 			search() {
 				if(!this.text.trim()) {
 					this.initStatus();
+					console.log('none words');
 				} else {
 					this.searching = true;
 					this.loading = true;
@@ -105,33 +120,58 @@
 				this.loading = false;
 				this.searchMore = true;
 
-				let rps = await this.toSearch();
+				this.toSearch().then(res => {
+					this.p = this.p + 1;
+					this.list = res.data;
 
-				console.log(rps);
+					if (res.code === 2001){
+						this.finish = true;
+					} else {
+					}
 
-				this.p = p + 1;
-				this.list = this.list.concat(rps.data);
+					this.searchMore = false;
+				})
 
-				if (rps.code === 2001){
-					this.finish = true;
-					console.log(p + ' : end!!');
-				} else {
-					console.log(p + ' : not end');
-				}
-				this.searchMore = false;
+
+			},
+			reload: async function(){
+				this.p = 0;
+				this.loading = false;
+				this.searchMore = true;
+
+				this.toSearch().then(res => {
+					this.p = this.p + 1;
+					this.list = res.data;
+
+					if (res.code === 2001){
+						this.finish = true;
+					} else {
+					}
+					this.searchMore = false;
+				})
 			}
 		}
 	}
 </script>
 
 <style scoped>
-html, body {
+html, body, .main-con {
 	height: 100%;
 }
 
 .wish-search-container {
 	height: 100%;
 	background-color: rgb(255, 241, 241);
+}
+
+.bg-cover {
+	height: 100%;
+	width: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	background-color: rgb(255, 241, 241);
+	z-index: -100;
 }
 
 .searchWish {

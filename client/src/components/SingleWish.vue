@@ -17,6 +17,10 @@
 
 					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
 				</label>
+				<div class="placeholder"></div>
+				<button v-if="status !== 0 && (wish.he._id === myInfo._id || wish.she._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
+			</div>
+			<button v-if="!wish.img && status !== 0 && (wish.he._id === myInfo._id || wish.she._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
 			</div>
 		</div>
 	</div>
@@ -37,10 +41,10 @@
 				</label>
 				<div class="placeholder"></div>
 				<button class=" pickImg" @click="pickWish('确定领取该愿望')" v-if="status === 0">领取愿望</button>
-				<button class=" pickImg" @click="searchMore" v-else>查看详情</button>
+				<button v-if="status !== 0 && (wish.he._id === myInfo._id || wish.she._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
 			</div>
 			<button v-if="!wish.img && status === 0" class="pickWish" @click="pickWish('确定领取该愿望')">领取愿望</button>
-			<button v-if="!wish.img && status !== 0" class="pickWish" @click="searchMore">查看详情</button>
+			<button v-if="!wish.img && status !== 0 && (wish.he._id === myInfo._id || wish.she._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
 		</div>
 	</div>
 </template>
@@ -123,7 +127,8 @@ export default {
 				component: me,
 				type: "modal",
 				binding: {
-					others: this.wish.she
+					others: this.wish.she,
+					initialSlide: 0
 				},
 				bg: 'rgb(255, 241, 241)'
 

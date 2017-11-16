@@ -129,7 +129,7 @@ export default {
         position: fixed;
         width: 100%;
         overflow: scroll;
-        margin-top: 70px;
+        padding-top: 70px;
         padding-bottom: 55px;
         box-sizing: border-box;
     }
@@ -150,6 +150,7 @@ export default {
         display: flex;
         flex-direction: column-reverse;
         padding-left: 10px;
+        padding-right: 10px;
         margin-bottom: 50px;
     }
 
@@ -160,12 +161,15 @@ export default {
     }
 
     .left-content {
-        margin: 5px 15px 10px 10px;
+        max-width: 80%;
+        margin: 5px 10px 10px 10px;
+        padding: 12px;
         font-size: 16px;
         color: #555;
-        padding: 12px;
+        background-color: rgb(253,253,253);
         border-radius: 24px 24px 24px 3px;
-        box-shadow: 4px 4px 7px 0px rgb(255,200,200)
+        box-shadow: 4px 4px 7px 0px rgb(255,200,200);
+        word-wrap: break-word;
     }
     
     .bottom-hash {
@@ -174,12 +178,16 @@ export default {
     }
 
     .right-content {
-        margin: 5px 15px 10px 10px;
+        max-width: 80%;
+        margin: 5px 5px 10px 10px;
+        padding: 12px;
+        padding-left:15px;
         font-size: 16px;
         color: #555;
-        padding: 12px;
+        background-color: rgb(253,253,253);
         border-radius: 24px 24px 3px 24px;
-        box-shadow: 4px 4px 7px 0px rgb(255,200,200)
+        box-shadow: 4px 4px 7px 0px rgb(255,200,200);
+        word-wrap: break-word;
     }
 
     .input {

@@ -5,6 +5,7 @@
 			:completed="finish"
 			:listens="['pull-down', 'infinite-scroll']"
 			:init-scroll="true"
+			:offset="20"
 			@infinite-scroll="loadMore"
 			@pull-down="reload">
 
@@ -45,7 +46,7 @@ import http from '@/utils/http.client';
 import ui from '@/utils/ui';
 import Wish from './SingleWish';
 import WishSearch from './WishSearch';
-import VueDataLoading from 'vue-data-loading'
+// import VueDataLoading from 'vue-data-loading'
 // import banner from '../assets/home/slider.jpg';
 
 let banners = [
@@ -70,8 +71,7 @@ let banners = [
 export default {
 	name: 'hello',
 	components: {
-		'wish': Wish,
-		VueDataLoading
+		'wish': Wish
 	},
 	data() {
 		return {
