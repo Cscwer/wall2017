@@ -12,6 +12,7 @@ import VueAwesomeSwiper from 'vue-awesome-swiper';
 import { swiper, swiperSlide } from 'vue-awesome-swiper';
 import GwPopup from '@/GwPopup';
 import SingleWish from './components/SingleWish';
+import VueDataLoading from 'vue-data-loading';
 
 
 
@@ -25,7 +26,7 @@ Vue.use(VueAwesomeSwiper);
 
 import iOSCheckbox from '@/components/ios-view/checkbox';
 Vue.component('ios-checkbox', iOSCheckbox);
-
+Vue.component('vue-data-loading', VueDataLoading);
 
 
 Vue.use(GwPopup, {

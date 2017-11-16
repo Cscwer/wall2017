@@ -40,8 +40,8 @@
 
                     <p class="time">
                         {{ transfromTime(chat.create_at) }}
-                        <span class="red-dot" v-if="chat.unread"></span>
                     </p>
+                    <span class="red-dot" v-if="chat.unread"></span>
                 </li> 
 
                 <li class="chat wish" v-if="chat.type[0] === 'w'" @click="toWish(chat, idx)">
@@ -54,8 +54,8 @@
 
                     <p class="time">
                         {{ transfromTime(chat.create_at) }}
-                        <span class="red-dot" v-if="chat.unread"></span>
                     </p>
+                    <span class="red-dot" v-if="chat.unread"></span>
                 </li>
             </div>
         </ul>
@@ -65,7 +65,7 @@
 import chat from '@/utils/chat';
 import Chat_Component from './Chat';
 import WishMsgList from './WishMsgList'; 
-
+import Board from './Board'; 
 
 export default {
     name: 'msg-list',
@@ -77,8 +77,6 @@ export default {
     },
     created() {
         this.loadList(); 
-
-
         console.log('[ Msg.vue Init ]', this.list);
     },
     computed: {
@@ -149,7 +147,11 @@ export default {
             }).launch();
         },
         openBoard(){
-            console.log('openBoard'); 
+            this.$popup.push({
+                type: 'modal',
+                component: Board,
+                bg: 'rgb(255, 241, 241)'
+            }).launch(); 
         }
     }
 }
@@ -216,8 +218,8 @@ export default {
     .red-dot {
         display: block;
         position: absolute;
-        bottom: -7px;
-        right: 42%;
+        bottom: 20px;
+        right: 1px;
 		width: 6px;
 		height: 6px;
         border-radius: 50% 50%;

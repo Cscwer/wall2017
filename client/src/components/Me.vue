@@ -34,32 +34,36 @@
 			</ul>
 		</div>
 		<div class="hello-world" v-if="!isMyself"></div>
-		<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
-			<swiper-slide class="swiper-item">
-				<div class="wish-container">
-					<transition-group name="wish-load" tag="div">
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="me" :status="0" :key="idx"></wish>
-					</transition-group>
-				</div>
-				<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : null)}}</div>
-			</swiper-slide>
-			<swiper-slide class="swiper-item">
-				<div class="wish-container">
-					<transition-group name="wish-load" tag="div">
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="me" :status="1" :key="idx"></wish>
-					</transition-group>
-				</div>
-				<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
-			</swiper-slide>
-   		 	<swiper-slide class="swiper-item">
-				<div class="wish-container">
-					<wish class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="me" :status="2" :key="idx"></wish>
-				</div>
-				<div v-show="this.list2.length === 0" class="text">{{isFemale ? text.female.realized : text.male.realized}}</div>
-			</swiper-slide>
-		</swiper>
-
-
+		<vue-data-loading
+				:loading="loading"
+				:completed="shouldGo"
+				:listens="['pull-down', 'infinite-scroll']"
+				@infinite-scroll="loadMore"
+				@pull-down="reload">
+				<div slot="pull-down-ready">松开下拉</div>
+				<div slot="pull-down-before">下拉以刷新</div>
+				<div slot="infinite-scroll-loading" class="some-style-you-like">刷新中</div>
+			<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
+				<swiper-slide class="swiper-item">
+					<div class="wish-container">
+						<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="me" :status="0" :key="idx"></wish>
+					</div>
+					<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : null)}}</div>
+				</swiper-slide>
+				<swiper-slide class="swiper-item">
+					<div class="wish-container">
+						<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="me" :status="1" :key="idx"></wish>
+					</div>
+					<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
+				</swiper-slide>
+				<swiper-slide class="swiper-item">
+					<div class="wish-container">
+						<wish class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="me" :status="2" :key="idx"></wish>
+					</div>
+					<div v-show="this.list2.length === 0" class="text">{{isFemale ? text.female.realized : text.male.realized}}</div>
+				</swiper-slide>
+			</swiper>
+		</vue-data-loading>
 		<div class="bg"></div>
 	</div>
 </template>
@@ -71,6 +75,7 @@ import vwx from '@/utils/vwx';
 import ui from '@/utils/ui';
 import { appCtrl } from '@/utils/app.status';
 import Msg from './Msg';
+
 
 
 
@@ -88,9 +93,12 @@ export default {
 	},
 	data(){
 		return {
+			loading: false,
+			finish0: false,
+			finish1: false,
+			finish2: false,
+			arrayP: [0, 0, 0],
 			isLoading: true,
-			localIds: [],
-			show: '',
 			user: {},
 			me: {},
 			activeidx: 1,
@@ -144,6 +152,9 @@ export default {
 		isMyself() {
 			return this.user._id === this.me._id;
 		},
+		shouldGo() {
+			return this['finish' + this.activeidx]; 
+		}
 	},
 	created(){
 		http.get('./api/user/me', ui.showLoading()).then(res => {
@@ -235,7 +246,8 @@ export default {
 			let res = await http.get('/api/wish/user', {
 				status: status,
 				_id: this.user._id,
-				sex: this.user.sex
+				sex: this.user.sex,
+				p:0
 			})
 
 			this['list' + status] = res.data; 
@@ -252,6 +264,53 @@ export default {
 			let idx = null;
 
 		},
+		loadMore: function(){
+			if (this.loading) return; 
+			this.loading = true;
+
+			return http.get('/api/wish/user', {
+				status: this.activeidx,
+				_id: this.user._id,
+				sex: this.user.sex,
+				p: this.arrayP[this.activeidx]+1
+			}).then(rps => {
+				this.arrayP[this.activeidx] = this.arrayP[this.activeidx] + 1; 
+				console.log(this.arrayP);
+				this['list' + this.activeidx] = this['list' + this.activeidx].concat(rps.data);
+				if (rps.code === 2001){
+					console.log(this.arrayP[this.activeidx] + ' : end!!');
+					this['finish' + this.activeidx] = true;
+				} else {
+					console.log(this.arrayP[this.activeidx] + ' : not end');
+					
+				}
+
+				this.loading = false;
+			})
+		},
+		reload(){
+			this.arrayP = [0, 0, 0];
+			this.loading = true;
+			this['finish' + this.activeidx] = false;
+
+			http.get('/api/wish/user', {
+				status: this.activeidx,
+				_id: this.user._id,
+				sex: this.user.sex,
+				p: 0
+			}).then(res => {
+
+				if (res.code === 2001){
+					this['finish' + this.activeidx] = true;
+				} else {
+					console.log(this['finish' + this.activeidx]);
+					this['list' + this.activeidx] = res.data;
+				}
+
+				this.loading = false;
+			})
+
+		}
 	}
 }
 </script>
@@ -424,14 +483,6 @@ export default {
 		z-index: 1;
 		color: #fff;
 		background-color: rgba(255, 255, 255, .35);
-	}
-	.wish-load-enter-active, .wish-load-leave-active {
-		transition: all .5s;
-		/*transition-delay: .6s; */
-	}
-	.wish-load-enter, .wish-load-leave-to {
-		transform: translateY(100%);
-		opacity: 0;
 	}
 
 

@@ -1,4 +1,6 @@
 // GwPopupController.js
+import dom_util from './dom_util'; 
+
 let GwPopupController = {}
 let count = 0; 
 
@@ -29,9 +31,10 @@ function PopupItem(option){
 
 PopupItem.prototype.launch = function(){
 	setTimeout(() => {
-		this.isShow = true; 	
+		this.isShow = true;
+		if (this.needBlur) this.onBlur(); 
 
-		if (this.needBlur) this.onBlur()
+		if (this.type === 'modal') dom_util.banScroll(); 
 	});
 
 	return this;
@@ -42,7 +45,12 @@ PopupItem.prototype.close = function(){
 		this.isShow = false;
 
 		if (this.needBlur) this.offBlur()
+
+		console.log('CLOSE ACTIVE COUNT', this.popup_vm.activeCount); 
+		if (this.type === 'modal' && this.popup_vm.activeCount === 0) dom_util.enableScroll();
 	});
+
+
 
 	return this; 
 }

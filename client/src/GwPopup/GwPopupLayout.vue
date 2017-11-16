@@ -1,8 +1,6 @@
 <template>
-	<div class="gw-popup">
+	<div class="gw-popup" @touchmove="noScroll">
 		<div class="compo-list" v-for="(popupItem, idx) in list">
-
-
 			<transition v-if="popupItem.type === 'modal'" name="modal">
 				<div class="gw-outter"
 					v-if="popupItem.isShow"
@@ -79,18 +77,27 @@ export default {
 	created(){
  
 	},
+	watch: {
+		list(){
+			var active = this.list.reduce((acc, cur) => {
+				return acc + (cur.isShow ? 1 : 0); 
+			}, 0);
+			console.log('change', active); 
+		}
+	},
+	computed: {
+		activeCount(){
+			return this.list.reduce((acc, cur) => {
+				return acc + (cur.isShow ? 1 : 0); 
+			}, 0); 
+		}
+	},
 	methods: {
 		toastsPosi(posi){
 			let toasts = this.toasts; 
 			return toasts.filter(toast => toast.position === posi); 
 		},
 		toastClose(selectedToast, position, idx){
-			// let toasts = this.toasts; 
-
-			// selectedToast.canceled = true; 
-			// selectedToast.msg = 'afsaf'
-
-		
 			let delete_idx;
 
 			this.toasts.forEach((toast, innerIdx) => {
@@ -98,7 +105,6 @@ export default {
 			}); 
 
 			this.toasts.splice(delete_idx, 1); 
-		
 		},
 		closeModal(popupItem){
 			console.log('!')
@@ -112,6 +118,10 @@ export default {
 			}
 
 			return null; 
+		},
+
+		noScroll(e){
+			e.stopPropagation();
 		}
 	}
 }

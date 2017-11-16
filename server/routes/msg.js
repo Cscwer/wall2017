@@ -8,7 +8,7 @@ const express = require('express')
 
 // 查看留言
 router.get('/', function(req, res){
-	msgModel.find(req.query).then(docs => {
+	msgModel.find(req.query).populate('from').populate('to').then(docs => {
 		rps.send2000(res, docs); 
 	}).catch(err => {
 		rps.send5000(res, err); 
@@ -29,14 +29,10 @@ router.post('/', function(req, res){
 		rps.send2000(res, ok); 
 		let temp = ok.toObject();
 		temp.from = req.user; 
-		temp.to = req.body.to; 
+
 		IO.serverPush(req.body.to, {
 			type: 'person-in-msg', 
-			data: {
-				_id: ok._id.toString(),
-				from: req.user,
-				content: req.body.content
-			},
+			data: temp,
 			msg: req.body.content,
 			create_at: Date.now()
 		}); 
@@ -46,15 +42,35 @@ router.post('/', function(req, res){
 });
 
 // // 回复别人的留言
-// router.post('/inner', function(req, res){
-// 	let _id = req.body._id; 
+router.post('/inner', function(req, res){
+	let _id = req.body._id; 
 	
-// 	msgModel.find({
-// 		_id: _id
-// 	}).then(msg => {
-// 		msg.
-// 	})
-// });
+	msgModel.findOne({
+		_id: _id
+	}).then(msg => {
+		if (!msg){
+			// no good 
+			rps.send4000(res, req.body); 
+		} else {
+			let temp = {
+				from: req.user._id,
+				nickname: req.user.nickname, 
+				content: req.body.content,
+				headimgurl: req.body.headimgurl,
+				area: req.body.area
+			}
+
+			msg.inner.push(temp); 
+
+			return msg.save().then(ok => {
+				rps.send2000(res, temp); 
+			}); 
+		}
+	}).catch(err => {
+		console.log('ERR', err); 
+		rps.send5000(res, err); 
+	})
+});
 
 
 module.exports = router; 
