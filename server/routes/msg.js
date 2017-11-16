@@ -4,11 +4,14 @@ const express = require('express')
     , rps = require('../utils/rps')
     , { msgModel } = require('../utils/db')
     , auth = require('../utils/auth')
-    , IO = require('../io'); 
+    , IO = require('../io')
+    , mongoose = require('mongoose')
 
 // 查看留言
 router.get('/', function(req, res){
-	msgModel.find(req.query).populate('from').populate('to').then(docs => {
+	msgModel.find({
+		to: mongoose.Types.ObjectId(req.user._id)
+	}).populate('from').populate('to').then(docs => {
 		rps.send2000(res, docs); 
 	}).catch(err => {
 		rps.send5000(res, err); 
@@ -31,7 +34,7 @@ router.post('/', function(req, res){
 		temp.from = req.user; 
 
 		IO.serverPush(req.body.to, {
-			type: 'person-in-msg', 
+			type: 'msg-to-you', 
 			data: temp,
 			msg: req.body.content,
 			create_at: Date.now()
@@ -64,6 +67,13 @@ router.post('/inner', function(req, res){
 
 			return msg.save().then(ok => {
 				rps.send2000(res, temp); 
+
+				// IO.serverPush(msg., {
+				// 	type: 'msg-to-you', 
+				// 	data: temp,
+				// 	msg: req.body.content,
+				// 	create_at: Date.now()
+				// }); 
 			}); 
 		}
 	}).catch(err => {
