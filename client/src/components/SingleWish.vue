@@ -229,7 +229,9 @@ export default {
 		display: inline-block;
 	   	width: 100px;
 		min-height: 100px;
-		background-size: 100% auto;
+		/*background-size: 100% auto;*/
+		/* Size Should Be Cover */
+		background-size: cover;
 		background-position: center;
 		border-radius: 10px;
 		background-repeat: no-repeat;
