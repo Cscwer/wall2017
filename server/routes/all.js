@@ -23,7 +23,9 @@ module.exports = function(req, res, next){
 		if (token){
 			auth.de(token).then(user => {
 				req.user = user;
-				next(); 
+				setTimeout(() => {
+					next(); 
+				}, 1300)
 			}, invalid => {
 				res.redirect('/api/entry'); 
 			}); 
