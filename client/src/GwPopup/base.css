@@ -1,0 +1,10 @@
+/*base.css*/
+.banScroll, .banScroll body {
+	overflow: hidden;
+}
+
+.banScroll body {
+	position: fixed;
+	left: 0; 
+	width: 100%; 
+}
