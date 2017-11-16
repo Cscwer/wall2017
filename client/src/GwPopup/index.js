@@ -5,6 +5,11 @@ import dom_util from './dom_util';
 import components from './components';
 import _ from './tools';
 
+// export default
+let GwPopup = {}; 
+// Counter; 
+let COUNT = 0; 
+
 // For Init 
 function popupInit(Vue, option){
 	// Register Component Global; 
@@ -23,11 +28,6 @@ function popupInit(Vue, option){
 		$app.setAttribute('class', ''); 
 	})
 }
-
-// export default
-let GwPopup = {}; 
-// Counter; 
-let COUNT = 0; 
 
 GwPopup.install = function(Vue, option){
 	// Init 
@@ -130,6 +130,9 @@ GwPopup.install = function(Vue, option){
 
 	// mount to prototype for all vue instances  
 	Vue.prototype.$popup = popup_vm; 
+
+	// mount to prototype for all popupitems
+	GwPopupController.__setPrototype('popup_vm', popup_vm)
 
 	// Get Instance 
 	GwPopup.getPopup = () => popup_vm; 
