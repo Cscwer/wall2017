@@ -191,7 +191,11 @@ export default {
     }
 
     .content {
+        width: 100%;
         font-size: 90%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
         color: rgb(129, 129, 129);
     }
 
