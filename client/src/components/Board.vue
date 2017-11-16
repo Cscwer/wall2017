@@ -5,35 +5,62 @@
 		<div class="board-inner">
 			<ul class="wish-list">
 				<transition-group name="wish-load" tag="div" >
-					<li v-for="(msg, idx) in list" class="wish" :key="idx" :style="{
-							'transition-delay': ((idx % 10) / 10 + .2) + 's'}
-						">
-						<!-- <span class="new-msg" v-if="wish.unread"></span> -->
-						<img :src="msg.from.headimgurl" class="avatar" />
-						<div class="inner">
-							<!-- <div class="new-msg">NEW</div> -->
-							<div class="name">
-								{{ msg.from.nickname }}
-								<span class="time">
-									{{ timeParse(msg.created_at) }}
-								</span>
+					<div v-for="(msg, idx) in list" :key="idx" :style="{
+						'transition-delay': ((idx % 10) / 10 + .2) + 's'}
+					" class="wish">
+						<li class="wish-main">
+							<!-- <span class="new-msg" v-if="wish.unread"></span> -->
+							<img :src="msg.from.headimgurl" class="avatar" />
+							<div class="inner">
+								<!-- <div class="new-msg">NEW</div> -->
+								<div class="name">
+									{{ msg.from.nickname }}
+									<span class="time">
+										{{ timeParse(msg.created_at) }}
+									</span>
+								</div>
+								<p class="msg">{{ areaTable[msg.from.area] }}</p>
 							</div>
-							<p class="msg">{{ areaTable[msg.from.area] }}</p>
-						</div>
 
-						<div class="content">
-							{{ msg.content }}
-						</div>
+							<div class="content">
+								{{ msg.content }}
+							</div>
 
-						<div style="text-align: right;">
-							<div class="reply" @click="replyTo(msg.from)">回复</div>
+							<div style="text-align: right;">
+								<div class="reply" @click="replyTo(msg)">回复</div>
+							</div>
+						</li>
+						
+						<div class="wish-sub" v-if="msg.inner.length !== 0">
+							<li class="sub-replay" v-for="(innerMsg, idx) in msg.inner" :class="{
+								'with-border': idx !== (msg.inner.length - 1)
+							}">
+								<!-- <span class="new-msg" v-if="wish.unread"></span> -->
+								<img :src="innerMsg.headimgurl" class="avatar" />
+								<div class="inner">
+									<!-- <div class="new-msg">NEW</div> -->
+									<div class="name">
+										{{ innerMsg.nickname }}
+										<span class="time">
+											{{ timeParse(innerMsg.created_at) }}
+										</span>
+									</div>
+									<p class="msg">{{ areaTable[innerMsg.area] }}</p>
+
+									<div class="content">
+										{{ innerMsg.content }}
+									</div>
+								</div>
+							</li>
 						</div>
-					</li>
+					</div>
 				</transition-group>
-
+				
+				
 				<div class="no-data-here" v-if="list.length === 0">
 					暂无愿望动态
 				</div>
+
 			</ul>
 		</div>
 	</div>
@@ -85,8 +112,9 @@ export default {
 
 			return h + ':' + m; 
 		},
-		replyTo(user){
-			var _id = user._id;
+		replyTo(msg){
+			// var _id = user._id;
+			// var from = msg.from; 
 
 			let getInput =  this.$popup.push({
 				type: 'prompt',
@@ -94,11 +122,21 @@ export default {
 				placeholderText: '输入给ta的留言',
 				handle: {
 					confirm: (input) => {
-						http.post('/api/msg', {
+						http.post('/api/msg/inner', {
+							_id: msg._id,
+							nickname: this.me && this.me.nickname,
 							from: this.me && this.me._id,
-							to: _id, 
+							area: this.me && this.me.area, 
+							headimgurl: this.me && this.me.headimgurl, 
 							content: input
 						}, ui.topLoading()).then(res => {
+							this.$popup.toast({
+								msg: '留言成功',
+								position: 'bottom',
+								cancelable: true
+							});
+
+							msg.inner.push(res.data); 
 							getInput.close()
 						}); 
 					}
@@ -123,11 +161,35 @@ export default {
 	position: relative;
 	background-color: #FFF; 
 	box-sizing: border-box;
-	padding: 16px 18px; 
+	word-break: break-all;
 	margin-bottom: 1.8em; 
 	min-height: 60px; 
 	box-shadow: 0px 5px 15px 0px rgba(254, 150, 140, .25);
 	border-radius: 14px; 
+}
+
+.wish-main {
+	padding: 16px 18px; 
+}
+
+.wish-sub {
+	font-size: 85%; 
+	background-color: rgb(249, 249, 249);
+	/*padding: 16px 18px 16px 28px; */
+		
+	padding: 16px 0; 
+	border-radius: 0 0 14px 14px; 
+}
+
+.sub-replay {
+	padding: 0px 18px 0px 28px; 
+	padding-bottom: .3em; 
+	
+}
+
+.with-border {
+	border-bottom: 1px solid rgb(238, 238, 238); 
+	margin-bottom: 1.2em; 
 }
 
 .wish-list {
@@ -141,6 +203,12 @@ export default {
 	width: 48px;
 	height: 48px; 
 	border-radius: 50px;
+}
+
+.wish-sub .avatar {
+	left: 33px; 
+	width: 40px; 
+	height: 40px; 
 }
 
 .new-msg {
@@ -167,11 +235,11 @@ export default {
 }
 
 .inner .name {
-	font-size: 16px;
+	font-size: 130%;
 }
 
 .inner .msg {
-	font-size: 14px; 
+	font-size: 120%; 
 	color: rgb(171, 171, 171); 
 	overflow: hidden;
 	text-overflow:ellipsis;
@@ -182,7 +250,7 @@ export default {
 	position: absolute;
 	right: 0; 
 	color: rgb(171, 171, 171); 
-	font-size: 12px; 
+	font-size: 70%; 
 }
 
 .no-data-here {
@@ -206,6 +274,10 @@ export default {
 	color: #555; 
 	margin: 1em 0; 
 	font-size: 14px;
+}
+
+.wish-sub .content {
+	margin: .4em 0; 
 }
 
 .reply {

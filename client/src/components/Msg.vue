@@ -65,7 +65,7 @@
 import chat from '@/utils/chat';
 import Chat_Component from './Chat';
 import WishMsgList from './WishMsgList'; 
-
+import Board from './Board'; 
 
 export default {
     name: 'msg-list',
@@ -77,8 +77,6 @@ export default {
     },
     created() {
         this.loadList(); 
-
-
         console.log('[ Msg.vue Init ]', this.list);
     },
     computed: {
@@ -149,7 +147,11 @@ export default {
             }).launch();
         },
         openBoard(){
-            console.log('openBoard'); 
+            this.$popup.push({
+                type: 'modal',
+                component: Board,
+                bg: 'rgb(255, 241, 241)'
+            }).launch(); 
         }
     }
 }
