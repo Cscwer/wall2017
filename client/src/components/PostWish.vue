@@ -48,6 +48,7 @@
 import wait from '@/utils/wait'; 
 import http from '@/utils/http.client'; 
 import vwx from '@/utils/vwx'; 
+import ui from '@/utils/ui'; 
 
 export default {
 	name: 'post-wish',
@@ -62,6 +63,7 @@ export default {
 	},
 	methods: {
 		chooseImg(){
+			var cancel = ui.showLoading();
 			// this.wish.img = `https://io.chenpt.cc/girl-wall-image/a4cb40c6-e62d-448b-9dd3-6d6dfd4918ed`; 
 			vwx.getAnImg().then(res => {
 				// console.log(img); 
@@ -72,6 +74,8 @@ export default {
 
 				// this.wish.img = `https://io.chenpt.cc/gw-init/album.jpg`; 
 				this.wish.img = url; 
+
+				cancel(); 
 			}); 
 		}
 	}
