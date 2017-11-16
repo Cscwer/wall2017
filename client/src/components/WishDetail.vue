@@ -217,12 +217,19 @@ export default {
 	color: #FFF; 
 	text-align: center;
 	top: 48px;
-	left: 1.5em;
+	left: 1em;
 }
 
 .avatar-area .name-bottom {
 	padding: 4px 0; 
 	font-size: 16px; 
+}
+
+.name-bottom {
+	max-width: 5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .item {

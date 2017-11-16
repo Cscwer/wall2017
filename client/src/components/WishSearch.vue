@@ -40,7 +40,7 @@
 						<div v-else>
 							<div class="no-wish" v-if="list.length === 0 && !loading && text !== ''">没有相关的愿望哦（≧∇≦）</div>
 							<div v-else>
-								<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :myInfo="user"></wish>
+								<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :status="0" :myInfo="user"></wish>
 							</div>
 						</div>
 					</vue-data-loading>
@@ -155,19 +155,23 @@
 </script>
 
 <style scoped>
-html, body, .main-con {
+html, body {
 	height: 100%;
 }
 
-.wish-search-container {
+.main-con {
 	height: 100%;
 	background-color: rgb(255, 241, 241);
 }
 
+.wish-search-container {
+	background-color: rgb(255, 241, 241);
+}
+
 .bg-cover {
+	position: fixed;
 	height: 100%;
 	width: 100%;
-	position: absolute;
 	left: 0;
 	top: 0;
 	background-color: rgb(255, 241, 241);

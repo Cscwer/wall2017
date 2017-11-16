@@ -46,17 +46,13 @@
 			<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
 				<swiper-slide class="swiper-item">
 					<div class="wish-container">
-						<transition-group name="wish-load" tag="div">
 						<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="me" :status="0" :key="idx"></wish>
-						</transition-group>
 					</div>
 					<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : null)}}</div>
 				</swiper-slide>
 				<swiper-slide class="swiper-item">
 					<div class="wish-container">
-						<transition-group name="wish-load" tag="div">
 						<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="me" :status="1" :key="idx"></wish>
-						</transition-group>
 					</div>
 					<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
 				</swiper-slide>
@@ -487,14 +483,6 @@ export default {
 		z-index: 1;
 		color: #fff;
 		background-color: rgba(255, 255, 255, .35);
-	}
-	.wish-load-enter-active, .wish-load-leave-active {
-		transition: all .5s;
-		/*transition-delay: .6s; */
-	}
-	.wish-load-enter, .wish-load-leave-to {
-		transform: translateY(100%);
-		opacity: 0;
 	}
 
 
