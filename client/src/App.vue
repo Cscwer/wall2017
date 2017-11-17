@@ -40,6 +40,7 @@ import ui from '@/utils/ui';
 import http from '@/utils/http.client';
 import chat from '@/utils/chat'; 
 import { tabs, appCtrl } from '@/utils/app.status'; 
+import SelectSex from './components/SelectSex';
 
 let tabHeight = (window.innerWidth / 4) + 'px'; 
 
@@ -62,13 +63,22 @@ export default {
 		}
 	},
 	created(){
-		this.updateIcon(); 
+		this.updateIcon();
 
 		// Object Init 
 		this.status = chat.appStatus.toObject(); 
 
 		http.get('/api/user/me').then(res => {
-			this.me = res.data; 
+			this.me = res.data;
+			if(this.me.sex === 0 ) {
+				this.$popup.toast({
+					msg: "为了方便使用本网页，请更新个人信息",
+					align: true,
+					position: 'bottom'
+				})
+				this.editSex();
+			}
+
 		}); 
 
 		setTimeout(() => {
@@ -99,7 +109,37 @@ export default {
 				path: path
 			}); 
 		}, 
-
+		editSex: function() {
+			let edit = this.$popup.push({
+				type: 'confirm',
+				confirmText: null, 
+				needBlur: true,
+				component: SelectSex,
+				event: {
+					'finish': sex => {
+						http.post('/api/user/init_sex',{
+							sex: sex
+						}).then(res => {
+							edit.close();
+							if(res.data === 2000) {
+								this.$popup.toast({
+									msg: "设置成功！",
+									position: 'bottom'
+								});
+							}
+						})
+					}
+				},
+				handle: {
+					confirm(){},
+					cancel(){
+						console.log('no')
+						this.close(); 
+					}
+				}
+			});
+			edit.launch();
+		},
 		openWish(){
 			if (this.me.sex === 1){
 				// 男的叼毛 
