@@ -40,7 +40,7 @@
 						<div v-else>
 							<div class="no-wish" v-if="list.length === 0 && !loading && text !== ''">没有相关的愿望哦（≧∇≦）</div>
 							<div v-else>
-								<wish class="wish-on-wall" v-for="wish in list" :wish="wish" :status="0" :myInfo="user"></wish>
+								<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list" :wish="wish" :status="0" :myInfo="user" :key="idx"></wish>
 							</div>
 						</div>
 					</vue-data-loading>
@@ -109,6 +109,21 @@
 					p: this.p,
 					wishtype: this.type,
 					area: this.area
+				})
+			},
+			deleteWish(msg){
+				console.log(msg + '   delete');
+				let idx = null;
+				this.list.forEach((e, innerIdx) => {
+					if (e._id === msg) idx = innerIdx;
+				});
+				this.list.splice(idx, 1);
+			},
+			sendToast(msg){
+				this.$popup.toast({
+					msg: msg,
+					align: true,
+					position: 'bottom'
 				})
 			},
 			initAll: async function(){

@@ -146,13 +146,13 @@ export default {
 		sendToast(msg){
 			this.$popup.toast({
 				msg: msg,
+				align: true,
 				position: 'bottom'
 			})
 		},
 		deleteWish(msg){
 			console.log(msg + '   delete');
 			let idx = null;
-			// this.sendToast();
 			this.list.forEach((e, innerIdx) => {
 				if (e._id === msg) idx = innerIdx;
 			});
@@ -195,13 +195,12 @@ export default {
 				p: p
 			}).then(rps => {
 				this.p = p + 1;
-
+				this.list = this.list.concat(rps.data);
 				if (rps.code === 2001){
 					console.log(p + ' : end!!');
 					this.finish = true;
 				} else {
 					console.log(p + ' : not end');
-					this.list = this.list.concat(rps.data);
 				}
 
 				this.loading = false;
@@ -216,11 +215,11 @@ export default {
 				p: 0
 			}).then(res => {
 				this.p = this.p + 1;
+				this.list = res.data;
 
 				if (res.code === 2001){
 					this.finish = true;
 				} else {
-					this.list = res.data;
 				}
 
 				this.loading = false;

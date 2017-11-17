@@ -46,19 +46,19 @@
 			<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
 				<swiper-slide class="swiper-item">
 					<div class="wish-container">
-						<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="me" :status="0" :key="idx"></wish>
+						<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="me" :status="0" :key="idx"></wish>
 					</div>
 					<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : null)}}</div>
 				</swiper-slide>
 				<swiper-slide class="swiper-item">
 					<div class="wish-container">
-						<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="me" :status="1" :key="idx"></wish>
+						<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="me" :status="1" :key="idx"></wish>
 					</div>
 					<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
 				</swiper-slide>
 				<swiper-slide class="swiper-item">
 					<div class="wish-container">
-						<wish class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="me" :status="2" :key="idx"></wish>
+						<wish @toastOnWall="sendToast" class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="me" :status="2" :key="idx"></wish>
 					</div>
 					<div v-show="this.list2.length === 0" class="text">{{isFemale ? text.female.realized : text.male.realized}}</div>
 				</swiper-slide>
@@ -85,9 +85,9 @@ export default {
 		'others': {
 			type: Object,
 			default: null
-		}, 
+		},
 		initialSlide: {
-			type: Number, 
+			type: Number,
 			default: 1
 		}
 	},
@@ -101,7 +101,7 @@ export default {
 			isLoading: true,
 			user: {},
 			me: {},
-			activeidx: 1,
+			activeidx: this.initialSlide,
 			hasMsg: false,
 			notNextTick: true,
 			resistanceRatio : 0.4,
@@ -153,7 +153,7 @@ export default {
 			return this.user._id === this.me._id;
 		},
 		shouldGo() {
-			return this['finish' + this.activeidx]; 
+			return this['finish' + this.activeidx];
 		}
 	},
 	created(){
@@ -186,7 +186,7 @@ export default {
 			this.getWish(0);
 			this.getWish(1);
 			this.getWish(2);
-			
+
 			setTimeout(() => {
 				// window.swiper = this.$refs.mySwiper;
 				if (this.isFemale) this.swiper.unlockSwipeToPrev();
@@ -213,6 +213,13 @@ export default {
 				this.user.phone = info.phone;
 			});
 		},
+		sendToast(msg){
+			this.$popup.toast({
+				msg: msg,
+				align: true,
+				position: 'bottom'
+			})
+		},
 		openMsg: function() {
 			appCtrl.off("hasMsg");
 			var msg = this.$popup.push({
@@ -236,7 +243,7 @@ export default {
 						}, ui.showLoading()).then(() => {
 							console.log('ok');
 							getInput.close();
-						}) 
+						})
 					}
 				}
 			})
@@ -250,22 +257,22 @@ export default {
 				p:0
 			})
 
-			this['list' + status] = res.data; 
+			this['list' + status] = res.data;
 
 			console.log(res);
 			console.log(this.list0);
 		},
 		deleteWish(msg){
-			console.log(msg + 'delete');;
-				this['list' + this.activeidx].forEach((e, innerIdx) => {
-					if (e._id === msg) idx = innerIdx;
-				});
-				this['list' + this.activeidx].splice(idx, 1);
+			console.log(msg + 'delete');
+			this['list' + this.activeidx].forEach((e, innerIdx) => {
+				if (e._id === msg) idx = innerIdx;
+			});
+			this['list' + this.activeidx].splice(idx, 1);
 			let idx = null;
 
 		},
 		loadMore: function(){
-			if (this.loading) return; 
+			if (this.loading) return;
 			this.loading = true;
 
 			return http.get('/api/wish/user', {
@@ -274,7 +281,7 @@ export default {
 				sex: this.user.sex,
 				p: this.arrayP[this.activeidx]+1
 			}).then(rps => {
-				this.arrayP[this.activeidx] = this.arrayP[this.activeidx] + 1; 
+				this.arrayP[this.activeidx] = this.arrayP[this.activeidx] + 1;
 				console.log(this.arrayP);
 				this['list' + this.activeidx] = this['list' + this.activeidx].concat(rps.data);
 				if (rps.code === 2001){
@@ -282,7 +289,7 @@ export default {
 					this['finish' + this.activeidx] = true;
 				} else {
 					console.log(this.arrayP[this.activeidx] + ' : not end');
-					
+
 				}
 
 				this.loading = false;
@@ -470,11 +477,11 @@ export default {
 		min-height: 251px;
 		opacity: 0.7;
 		background: linear-gradient(60deg, #f74e4e,rgba(255, 138, 107, .8));
-		
+
 	}
 
 	.top-wrap {
-		position: absolute;		
+		position: absolute;
 		top: 0;
 		width: 100%;
 		line-height: 40px;
