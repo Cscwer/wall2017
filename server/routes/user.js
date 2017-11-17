@@ -21,8 +21,6 @@ router.get('/', function(req, res){
 	let N = 10; 
 	let q = decodeURIComponent(req.query.q); 
 
-	console.log('q:', q); 
-
 	let EXP = new RegExp(q); 
 
 	userModel.find({
@@ -48,7 +46,7 @@ router.post('/update', function(req, res){
 		let newToken = auth.en(newUser); 
 
 		res.cookie('user-token', newToken, {
-			expires: new Date('2017-11-11')
+			expires: new Date('2017-11-28')
 		});
 
 		rps.send2000(res, newUser); 
@@ -65,7 +63,7 @@ router.get('/wish', function(req, res){
 	  , p = req.query.p || 0
 
 	userModel.findInCache(user_id).then(user => {
-		console.log('Find User', user._id); 
+		// console.log('Find User', user._id); 
 
 		if (user.sex === 0){
 			// 该用户没有设置性别 ~ 无法访问
