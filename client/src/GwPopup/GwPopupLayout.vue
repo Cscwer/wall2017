@@ -167,6 +167,14 @@ export default {
 	opacity: 0; 
 }
 
+.alert-enter-active, .alert-leave-active {
+	transition: all .3s; 
+}
+.alert-enter, .alert-leave-to {
+	transform: scale(1.5);
+	opacity: 0; 
+}
+
 /*modal*/
 .modal-enter-active, .modal-leave-active {
 	transition: all .6s; 
