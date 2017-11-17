@@ -29,7 +29,7 @@
 
 			<div class="wish-container">
 				<!-- <transition-group name="wish-load" tag="div" > -->
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list"
+					<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list"
 						:myInfo="user" :wish="wish" :status="0" :key="idx">
 					</wish>
 				<!-- </transition-group> -->
@@ -102,7 +102,6 @@ export default {
 		// Call Async Function
 		this.initAll();
 
-
 		// window.$$$ = this;
 		// this.loadMore();
 	},
@@ -144,15 +143,16 @@ export default {
 
 			ins.launch();
 		},
-		sendToast(){
+		sendToast(msg){
 			this.$popup.toast({
-				msg: this.toastText,
-				position: this.toastType,
+				msg: msg,
+				position: 'bottom'
 			})
 		},
 		deleteWish(msg){
 			console.log(msg + '   delete');
 			let idx = null;
+			// this.sendToast();
 			this.list.forEach((e, innerIdx) => {
 				if (e._id === msg) idx = innerIdx;
 			});
@@ -186,7 +186,7 @@ export default {
 			return http.get('/api/user/me');
 		},
 		loadMore: function(){
-			if (this.loading) return; 
+			if (this.loading) return;
 
 			let p = this.p;
 			this.loading = true;
@@ -215,8 +215,8 @@ export default {
 			http.get('/api/wish', {
 				p: 0
 			}).then(res => {
-				this.p = this.p + 1; 
-				
+				this.p = this.p + 1;
+
 				if (res.code === 2001){
 					this.finish = true;
 				} else {

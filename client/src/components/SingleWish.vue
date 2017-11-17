@@ -6,7 +6,7 @@
 			<img :src="wish.she.headimgurl" class="avatar" @click="toMe"/>
 			<span class="user-name">{{wish.she.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[wish.she.area] }">{{area[wish.she.area]}}</div>
-			<img v-if="myInfo._id === wish.she._id && status === 0" src="../assets/home/delete.png" class="delete" @click="deleteWish('确定')">
+			<img v-if="myInfo._id === wish.she._id && initStatus === 0" src="../assets/home/delete.png" class="delete" @click="deleteWish('确定')">
 		</div>
 		<div class="wish">
 			{{ wish.text }}
@@ -18,9 +18,9 @@
 					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
 				</label>
 				<div class="placeholder"></div>
-				<button v-if="status !== 0 && (wish.he._id === myInfo._id || wish.she._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
+				<button v-if="initStatus !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
 			</div>
-			<button v-if="!wish.img && status !== 0 && (wish.he._id === myInfo._id || wish.she._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
+			<button v-if="!wish.img && initStatus !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
 			</div>
 		</div>
 	</div>
@@ -40,11 +40,11 @@
 					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
 				</label>
 				<div class="placeholder"></div>
-				<button class=" pickImg" @click="pickWish('确定领取该愿望')" v-if="status === 0">领取愿望</button>
-				<button v-if="status !== 0 && (wish.he._id === myInfo._id || wish.she._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
+				<button class=" pickImg" @click="pickWish('确定领取该愿望')" v-if="initStatus === 0">领取愿望</button>
+				<button v-else-if="initStatus !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
 			</div>
-			<button v-if="!wish.img && status === 0" class="pickWish" @click="pickWish('确定领取该愿望')">领取愿望</button>
-			<button v-if="!wish.img && status !== 0 && (wish.he._id === myInfo._id || wish.she._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
+			<button v-if="initStatus === 0 && !wish.img" class="pickWish" @click="pickWish('确定领取该愿望')">领取愿望</button>
+			<button v-else-if="initStatus !== 0 && !wish.img && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
 		</div>
 	</div>
 </template>
@@ -60,11 +60,13 @@ export default {
 	props: ['wish', 'myInfo', 'status'],
 	data() {
 		return {
+			initStatus: 0,
 			area: ['大学城', '东风路', '龙洞'],
 			bgcolor: ['#b5d1ff', '#ffb9b5', '#ffe88d']
 		}
 	},
 	created(){
+		this.initStatus = this.status ? this.status : 0;
 	},
 	methods: {
 		present(type, world) {
@@ -92,6 +94,7 @@ export default {
 					_id: this.wish._id
 				}).then(res => {
 					if(res.code === 2000) {
+						this.$emit('toastOnWall', '成功删除该愿望');
 						this.$emit('deleteOnWall', this.wish._id);
 					}
 				})
@@ -103,6 +106,10 @@ export default {
 					_id: this.wish._id
 				}).then(res => {
 					if(res.code === 2000) {
+						this.$emit('toastOnWall', '领取成功，请到个人主页查看愿望详情哦~');
+						this.$emit('deleteOnWall', this.wish._id);
+					} else if(res.code === 4108) {
+						this.$emit('toastOnWall', res.msg);
 						this.$emit('deleteOnWall', this.wish._id);
 					}
 				})
