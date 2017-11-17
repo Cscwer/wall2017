@@ -111,6 +111,8 @@ export default {
 					} else if(res.code === 4108) {
 						this.$emit('toastOnWall', res.msg);
 						this.$emit('deleteOnWall', this.wish._id);
+					} else {
+						this.$emit('toastOnWall', res.msg);
 					}
 				})
 			})

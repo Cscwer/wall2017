@@ -75,8 +75,6 @@ export default {
 	},
 	data() {
 		return {
-			toastText: '',
-			toastType: 'top',
 			banners: banners,
 			swiperOption: {
 				autoplay: 3000,
