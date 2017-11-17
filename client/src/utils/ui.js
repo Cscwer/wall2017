@@ -28,8 +28,18 @@ ui.editUserInfo = function(toEdit){
 			},
 			handle: {
 				confirm(e){
-					res(copy(toEdit));
-					this.close();
+					if(/^1[3|4|5|7|8][0-9]{9}$/.test(toEdit.phone)) {
+						res(copy(toEdit));
+						this.close();
+					} 
+					else{
+						GwPopup.getPopup().toast({
+							msg: "手机号码格式不对",
+							align: true,
+							position: 'bottom'
+						})
+					}
+					
 				},
 				cancel(e){
 					rej();
