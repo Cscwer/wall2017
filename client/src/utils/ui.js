@@ -31,7 +31,7 @@ ui.editUserInfo = function(toEdit, force){
 					if(/^1[3|4|5|7|8][0-9]{9}$/.test(toEdit.phone)) {
 						res(copy(toEdit));
 						this.close();
-					} 
+					}
 					else{
 						GwPopup.getPopup().toast({
 							msg: "手机号码格式不对",
@@ -39,13 +39,13 @@ ui.editUserInfo = function(toEdit, force){
 							position: 'bottom'
 						})
 					}
-					
+
 				},
 				cancel(e){
 					rej();
 					console.log("cancel");
 					if(!force) this.close();
-					
+
 				}
 			}
 		})
@@ -131,7 +131,7 @@ ui.newMusic = function(){
 				confirm(e){
 					var msg = null;
 					if (music.content.length === 0){
-						msg = '请输入你想要说的话'; 
+						msg = '请输入你想要说的话';
 					} else if (!music.selected) {
 						msg = '请点歌后再操作'
 					} else {
@@ -142,7 +142,7 @@ ui.newMusic = function(){
 					msg && GwPopup.getPopup().toast({
 						msg: msg,
 						position: 'bottom'
-					}); 
+					});
 				},
 				cancel(){
 					rej();
@@ -365,6 +365,9 @@ ui.share = function() {
 	});
 	noticeTa.launch();
 }
+
+
+vwx.share();
 
 ui.showLoading = function(d = 8000){
 	let loading = GwPopup.getPopup().push({

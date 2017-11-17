@@ -103,20 +103,22 @@ vwx.create('getAnImg', function(){
 	});
 });
 
+import logo from '../../assets/logo.png';
+
 vwx.create('share', function() {
 	wx.onMenuShareAppMessage({
-        title: '快来参加椰子姑娘抽奖', // 分享标题
-        desc: '每天上亿个赠饮机会，等着你来拿！', // 分享描述
+        title: '2017女生节许愿墙', // 分享标题
+        desc: '让你的女生节更加完整', // 分享描述
         link: 'http://gw.chenpt.cc/api/entry', // 分享链接
-        imgUrl: '', // 分享图标
+        imgUrl: logo, // 分享图标
         type: '', // 分享类型,music、video或link，不填默认为link
         dataUrl: '' // 如果type是music或video，则要提供数据链接，默认为空
     });
     wx.onMenuShareTimeline({
-        title: '喜庆开业 豪礼巨献', // 分享标题
-        desc: '喜庆开业 豪礼巨献闺蜜3人行 抽大奖', // 分享描述
+        title: '2017女生节许愿墙', // 分享标题
+        desc: '让你的女生节更加完整', // 分享描述
         link: 'http://gw.chenpt.cc/api/entry', // 分享链接
-        imgUrl: '', // 分享图标
+        imgUrl: logo, // 分享图标
         type: '', // 分享类型,music、video或link，不填默认为link
         dataUrl: '' // 如果type是music或video，则要提供数据链接，默认为空
     });
