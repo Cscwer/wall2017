@@ -22,8 +22,8 @@
 
 			<swiper class="gw-swiper" :options="swiperOption" ref="mySwiper">
 			<!-- slides -->
-				<swiper-slide class="slider-img" v-for="(banner, idx) in banners">
-					<img :src="banner.img" @click.stop="clickBanner(banner)" :key="idx">
+				<swiper-slide class="slider-img" v-for="(banner, idx) in banners" :key="idx">
+					<img :src="banner.img" @click.stop="clickBanner(banner)">
 				</swiper-slide>
 			</swiper>
 
