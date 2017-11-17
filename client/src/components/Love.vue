@@ -100,12 +100,16 @@ export default {
 			});
 		},
 		confirm: function() {
+			if(!this.ta._id) return this.$popup.toast({
+				msg: '请点击选择 TA',
+				position: 'bottom'
+			});
+
 			http.post('/api/ta', {
 				to: this.ta._id
 			}).then(() => {
-					this.checkout();
-				}
-			)
+				this.checkout();
+			})
 		},
 		checkout: function() {
 			http.get('/api/ta/pingpong').then(res => {
