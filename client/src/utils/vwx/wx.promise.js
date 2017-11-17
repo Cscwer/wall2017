@@ -5,7 +5,11 @@ function wxPromisify(fn) {
 				resolve(c); 
 			}
 			obj.fail = function(err){
+				alert('!!!!!! in error')
 				reject(err);
+			}
+			obj.cancel = function(cancel){
+				reject(cancel);
 			}
 			fn(obj);
 		});
