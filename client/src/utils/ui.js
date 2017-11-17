@@ -243,6 +243,16 @@ ui.chooseLover = function() {
 			handle: {
 				confirm(){
 					console.log(input.lover);
+					if(!input.lover.trim()) {
+						GwPopup.getPopup().toast({
+					        msg: '输入值不能为空啦~',
+					        position: 'bottom',
+					        cancelable: true,
+					        align: true,
+					        duration: 3000
+					    });
+					    return ;
+					}
 					ui.loversList(input.lover).then(person => {
 						console.log('in ui person', person);
 						res(person);

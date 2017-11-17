@@ -306,12 +306,12 @@ export default {
 				sex: this.user.sex,
 				p: 0
 			}).then(res => {
+				this['list' + this.activeidx] = res.data;
 
 				if (res.code === 2001){
 					this['finish' + this.activeidx] = true;
 				} else {
 					console.log(this['finish' + this.activeidx]);
-					this['list' + this.activeidx] = res.data;
 				}
 
 				this.loading = false;
