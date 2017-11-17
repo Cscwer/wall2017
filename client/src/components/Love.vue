@@ -102,7 +102,9 @@ export default {
 		confirm: function() {
 			if(!this.ta._id) return this.$popup.toast({
 				msg: '请点击选择 TA',
-				position: 'bottom'
+				position: 'bottom',
+				cancelable: true,
+				align: true
 			});
 
 			http.post('/api/ta', {
