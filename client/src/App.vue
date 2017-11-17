@@ -81,6 +81,8 @@ export default {
 				
 			}
 
+		}).catch(err => {
+			location.href = '/api/entry'; 
 		}); 
 
 		setTimeout(() => {
