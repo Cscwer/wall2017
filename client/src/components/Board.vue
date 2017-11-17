@@ -58,7 +58,7 @@
 				
 				
 				<div class="no-data-here" v-if="list.length === 0">
-					暂无愿望动态
+					暂无留言信息
 				</div>
 
 			</ul>
