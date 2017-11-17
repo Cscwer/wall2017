@@ -226,9 +226,6 @@ export default {
 				})
 				
 			});
-
-
-
 		},
 		sendToast(msg){
 			this.$popup.toast({

@@ -9,7 +9,7 @@ function copy(o){
 	return JSON.parse(JSON.stringify(o));
 }
 
-ui.editUserInfo = function(toEdit){
+ui.editUserInfo = function(toEdit, force){
 	toEdit = toEdit || {
 		nickname: '',
 		area: '',
@@ -43,7 +43,9 @@ ui.editUserInfo = function(toEdit){
 				},
 				cancel(e){
 					rej();
-					this.close();
+					console.log("cancel");
+					if(!force) this.close();
+					
 				}
 			}
 		})
@@ -51,6 +53,7 @@ ui.editUserInfo = function(toEdit){
 		instance.launch();
 	})
 }
+
 
 import PostWish from '@/components/PostWish';
 
