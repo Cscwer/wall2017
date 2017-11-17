@@ -5,8 +5,7 @@
 				<div class="gw-outter"
 					v-if="popupItem.isShow"
 					:style="{
-						'z-index': 200 + idx,
-						'height': pageHeight + 'px'
+						'z-index': 200 + idx
 					}">
 					<component class="popup-item popup-item-toast" is="gw-modal"
 						:style="{ 'background-color': popupItem.bg ? popupItem.bg : '#FFF' }"
@@ -15,7 +14,7 @@
 						@close="closeModal(popupItem)">
 					</component>
 				</div>
-			</transition>			
+			</transition>
 
 			<transition v-else :name="popupItem.transitionName ? popupItem.transitionName : 'fade'">
 				<div class="gw-outter"
@@ -33,7 +32,6 @@
 		</div>
 
 		<div class="toast-list" :class="'toast-pos-' + position" v-for="(position, pidx) in positions">
-
 			<transition :name="position" v-for="(toast, idx) in toastsPosi(position)" :key="idx">
 				<div v-if="toast.active" class="toast-inner"   
 					:style="{
