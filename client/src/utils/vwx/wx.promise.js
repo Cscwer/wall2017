@@ -17,7 +17,7 @@ function wxPromisify(fn) {
 }
 
 export default [
-	'chooseImage', 'uploadImage', 'downloadImage', 'previewImage'
+	'chooseImage', 'uploadImage', 'downloadImage', 'previewImage', 'onMenuShareAppMessage', 'onMenuShareTimeline'
 ].reduce((acc, cur) => {
 	acc[cur] = wxPromisify(wx[cur]); 
 

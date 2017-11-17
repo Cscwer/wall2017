@@ -367,7 +367,9 @@ ui.share = function() {
 }
 
 
-vwx.share();
+
+vwx.share(); 
+
 
 ui.showLoading = function(d = 8000){
 	let loading = GwPopup.getPopup().push({
