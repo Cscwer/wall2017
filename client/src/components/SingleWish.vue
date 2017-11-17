@@ -117,7 +117,8 @@ export default {
 					wish: this.wish,
 					toShow: 'she',
 					enable: false
-				}
+				},
+				bg: 'rgb(255, 241, 241)'
 			})
 
 			msg.launch();

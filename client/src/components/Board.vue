@@ -68,6 +68,7 @@
 
 <script>
 import http from '@/utils/http.client';
+import ws from '@/utils/ws.client'; 
 import ui from '@/utils/ui';
 
 export default {
@@ -98,8 +99,20 @@ export default {
 
 			cancel(); 
 		}); 
+
+		var onMsg = msg => {
+			console.log('!!', msg); 
+
+			if (msg.type === 'msg-to-you'){
+				this.list.unshift(msg.data); 
+			}
+		}
+		ws.bus.$on('onMsg', onMsg);
 	},
 	methods: {
+		reload(){
+			
+		},
 		timeParse(ts){
 			if (!ts) return ''; 
 
