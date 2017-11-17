@@ -14,13 +14,14 @@
 						@close="closeModal(popupItem)">
 					</component>
 				</div>
-			</transition>			
+			</transition>
 
 			<transition v-else :name="popupItem.transitionName ? popupItem.transitionName : 'fade'">
 				<div class="gw-outter"
 					v-if="popupItem.isShow"
 					:style="{
-						'z-index': 200 + idx
+						'z-index': 200 + idx,
+						'height': pageHeight + 'px'
 					}">
 					<component class="popup-item" :is="'gw-' + popupItem.type"
 						v-bind="popupItem"
@@ -31,7 +32,6 @@
 		</div>
 
 		<div class="toast-list" :class="'toast-pos-' + position" v-for="(position, pidx) in positions">
-
 			<transition :name="position" v-for="(toast, idx) in toastsPosi(position)" :key="idx">
 				<div v-if="toast.active" class="toast-inner"   
 					:style="{
@@ -61,6 +61,8 @@
 
 <script>
 
+var pageHeight = window.innerHeight;
+
 export default {
 	name: 'gw-popup', 
 	data(){
@@ -71,7 +73,8 @@ export default {
 			toasts: [
 				
 			],
-			positions: ['top', 'bottom']
+			positions: ['top', 'bottom'],
+			pageHeight: pageHeight
 		}
 	},
 	created(){
@@ -137,7 +140,7 @@ export default {
 	left: 0; 
 	width: 100%; 
 	height: 100%; 
-
+	/*overflow: scroll;*/
 	/*z-index: 500; */
 }
 
@@ -161,6 +164,14 @@ export default {
 .fade-enter, .fade-leave-to {
 	transform: scale(1.5);
 
+	opacity: 0; 
+}
+
+.alert-enter-active, .alert-leave-active {
+	transition: all .3s; 
+}
+.alert-enter, .alert-leave-to {
+	transform: scale(1.5);
 	opacity: 0; 
 }
 

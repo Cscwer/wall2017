@@ -9,7 +9,7 @@ function copy(o){
 	return JSON.parse(JSON.stringify(o));
 }
 
-ui.editUserInfo = function(toEdit){
+ui.editUserInfo = function(toEdit, force){
 	toEdit = toEdit || {
 		nickname: '',
 		area: '',
@@ -43,7 +43,9 @@ ui.editUserInfo = function(toEdit){
 				},
 				cancel(e){
 					rej();
-					this.close();
+					console.log("cancel");
+					if(!force) this.close();
+					
 				}
 			}
 		})
@@ -51,6 +53,7 @@ ui.editUserInfo = function(toEdit){
 		instance.launch();
 	})
 }
+
 
 import PostWish from '@/components/PostWish';
 
@@ -126,8 +129,20 @@ ui.newMusic = function(){
 			},
 			handle: {
 				confirm(e){
-					res(copy(music));
-					this.close();
+					var msg = null;
+					if (music.content.length === 0){
+						msg = '请输入你想要说的话'; 
+					} else if (!music.selected) {
+						msg = '请点歌后再操作'
+					} else {
+						res(copy(music));
+						this.close();
+					}
+
+					msg && GwPopup.getPopup().toast({
+						msg: msg,
+						position: 'bottom'
+					}); 
 				},
 				cancel(){
 					rej();

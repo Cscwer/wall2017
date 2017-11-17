@@ -85,7 +85,8 @@ export default {
 						cancel(){
 							this.close();
 						}
-					}
+					},
+					transitionName: 'alert'
 				}).launch()
 			})
 		},
