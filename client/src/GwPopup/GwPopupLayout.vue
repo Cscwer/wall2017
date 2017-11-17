@@ -5,7 +5,8 @@
 				<div class="gw-outter"
 					v-if="popupItem.isShow"
 					:style="{
-						'z-index': 200 + idx
+						'z-index': 200 + idx,
+						'height': pageHeight + 'px'
 					}">
 					<component class="popup-item popup-item-toast" is="gw-modal"
 						:style="{ 'background-color': popupItem.bg ? popupItem.bg : '#FFF' }"
@@ -20,7 +21,8 @@
 				<div class="gw-outter"
 					v-if="popupItem.isShow"
 					:style="{
-						'z-index': 200 + idx
+						'z-index': 200 + idx,
+						'height': pageHeight + 'px'
 					}">
 					<component class="popup-item" :is="'gw-' + popupItem.type"
 						v-bind="popupItem"
@@ -61,6 +63,8 @@
 
 <script>
 
+var pageHeight = window.innerHeight;
+
 export default {
 	name: 'gw-popup', 
 	data(){
@@ -71,7 +75,8 @@ export default {
 			toasts: [
 				
 			],
-			positions: ['top', 'bottom']
+			positions: ['top', 'bottom'],
+			pageHeight: pageHeight
 		}
 	},
 	created(){
@@ -136,8 +141,8 @@ export default {
 	top: 0;
 	left: 0; 
 	width: 100%; 
-	height: 100%; 
-
+	/*height: 100%; */
+	overflow: scroll;
 	/*z-index: 500; */
 }
 
