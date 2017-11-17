@@ -4,8 +4,10 @@
 		<div class="music-header" v-if="music">
 			<img class="inline-icon" :src="mtag_png" />
 
-			<span v-if="music.kugou.fileName < 10">正在播放: {{ music.kugou.fileName }}</span>
-			<span v-else>{{ music.kugou.fileName }}</span>
+			<span class="header-title" v-if="music.kugou.fileName < 10">
+				正在播放: {{ music.kugou.fileName }}
+			</span>
+			<span v-else class="header-title">{{ music.kugou.fileName }}</span>
 
 			<span class="new-music" @click="newMusic">我要点歌</span>
 		</div>
@@ -460,6 +462,15 @@ export default {
 
 .color-selected {
 	border: 3px solid rgb(255, 141, 135);
+}
+
+.header-title {
+	display: inline-block;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 70%; 
+    vertical-align: middle;
 }
 
 .mp3 {
