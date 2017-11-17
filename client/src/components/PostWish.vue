@@ -76,7 +76,13 @@ export default {
 				this.wish.img = url; 
 
 				cancel(); 
-			}); 
+			}).catch(err => {
+				this.$popup.toast({
+					msg: '取消上传',
+					position: 'bottom'
+				})
+				cancel(); 
+			})
 		}
 	}
 }

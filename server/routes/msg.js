@@ -9,8 +9,14 @@ const express = require('express')
 
 // 查看留言
 router.get('/', function(req, res){
+	// Q.where('wishtype').in(wishtype); 
+	
 	msgModel.find({
-		to: mongoose.Types.ObjectId(req.user._id)
+		$or: [{
+			to: mongoose.Types.ObjectId(req.user._id)
+		}, {
+			from: mongoose.Types.ObjectId(req.user._id)
+		}]
 	}).populate('from').populate('to').then(docs => {
 		rps.send2000(res, docs); 
 	}).catch(err => {

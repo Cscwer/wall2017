@@ -4,7 +4,7 @@
 			<div class="top-wrap" v-if="!isMyself">她的愿望</div>
 			<div class="msg-icon-wrap" @click="isMyself ? openMsg() : leaveMsg(), hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
-				<span class="red-dot" v-if="hasMsg"></span>
+				<span class="red-dot" v-if="hasMsg && isMyself"></span>
 			</div>
 			<div class="userinfo-wrap">
 				<img :src="user.headimgurl" class="avatar" />
@@ -48,7 +48,8 @@
 					<div class="wish-container">
 						<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="me" :status="0" :key="idx"></wish>
 					</div>
-					<div v-show="this.list0.length === 0" class="text">{{(isFemale ? text.female.unclaimed : null)}}</div>
+					<div v-show="this.list0.length === 0 && isMyself" class="text">{{(isFemale ? text.female.unclaimed : null)}}</div>
+					<div v-show="this.list0.length === 0 && !isMyself" class="text">她目前没有待领取的愿望</div>
 				</swiper-slide>
 				<swiper-slide class="swiper-item">
 					<div class="wish-container">
@@ -206,12 +207,28 @@ export default {
 				phone: this.user.phone
 			}
 			ui.editUserInfo(toEdit).then(info => {
-				console.log(info);
 				this.user.nickname = info.nickname;
 				this.user.area = info.area;
 				this.user.weid = info.weid;
 				this.user.phone = info.phone;
+				http.post('/api/user/update', {
+					nickname: this.user.nickname,
+					area: this.user.area,
+					weid: this.user.weid,
+					phone: this.user.phone 
+				}).then(res => {
+					if(res.code === 2000) {
+						this.sendToast("成功更新个人信息");
+					}
+					else{
+						this.sendToast("请重试");
+					}
+				})
+				
 			});
+
+
+
 		},
 		sendToast(msg){
 			this.$popup.toast({

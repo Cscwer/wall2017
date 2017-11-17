@@ -126,7 +126,7 @@ export default {
 				binding: {
 					wish: this.wish,
 					toShow: sex,
-					enable: false
+					enable: this.myInfo._id === this.wish.she._id ? true : false
 				},
 				bg: 'rgb(255, 241, 241)'
 			})
