@@ -26,7 +26,7 @@
 	</div>
 	<div class="wish-container" v-else="myInfo.sex == 1">
 		<div class="user-info">
-			<div class="avatar" v-bind:style="{ backgroundImage: 'url(' + wish.she.headimgurl + ')'}" @click="toMe"></div>
+			<img :src="wish.she.headimgurl" class="avatar" @click="toMe"/>
 			<span class="user-name">{{wish.she.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[wish.she.area] }">{{area[wish.she.area]}}</div>
 		</div>
