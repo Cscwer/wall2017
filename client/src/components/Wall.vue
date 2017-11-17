@@ -22,14 +22,14 @@
 
 			<swiper class="gw-swiper" :options="swiperOption" ref="mySwiper">
 			<!-- slides -->
-				<swiper-slide class="slider-img" v-for="banner in banners">
+				<swiper-slide class="slider-img" v-for="(banner, idx) in banners" :key="idx">
 					<img :src="banner.img" @click.stop="clickBanner(banner)">
 				</swiper-slide>
 			</swiper>
 
 			<div class="wish-container">
 				<!-- <transition-group name="wish-load" tag="div" > -->
-					<wish @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list"
+					<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list"
 						:myInfo="user" :wish="wish" :status="0" :key="idx">
 					</wish>
 				<!-- </transition-group> -->
@@ -75,8 +75,6 @@ export default {
 	},
 	data() {
 		return {
-			toastText: '',
-			toastType: 'top',
 			banners: banners,
 			swiperOption: {
 				autoplay: 3000,
@@ -101,7 +99,6 @@ export default {
 	created(){
 		// Call Async Function
 		this.initAll();
-
 
 		// window.$$$ = this;
 		// this.loadMore();
@@ -144,10 +141,11 @@ export default {
 
 			ins.launch();
 		},
-		sendToast(){
+		sendToast(msg){
 			this.$popup.toast({
-				msg: this.toastText,
-				position: this.toastType,
+				msg: msg,
+				align: true,
+				position: 'bottom'
 			})
 		},
 		deleteWish(msg){
@@ -186,7 +184,7 @@ export default {
 			return http.get('/api/user/me');
 		},
 		loadMore: function(){
-			if (this.loading) return; 
+			if (this.loading) return;
 
 			let p = this.p;
 			this.loading = true;
@@ -195,13 +193,12 @@ export default {
 				p: p
 			}).then(rps => {
 				this.p = p + 1;
-
+				this.list = this.list.concat(rps.data);
 				if (rps.code === 2001){
 					console.log(p + ' : end!!');
 					this.finish = true;
 				} else {
 					console.log(p + ' : not end');
-					this.list = this.list.concat(rps.data);
 				}
 
 				this.loading = false;
@@ -215,12 +212,12 @@ export default {
 			http.get('/api/wish', {
 				p: 0
 			}).then(res => {
-				this.p = this.p + 1; 
-				
+				this.p = this.p + 1;
+				this.list = res.data;
+
 				if (res.code === 2001){
 					this.finish = true;
 				} else {
-					this.list = res.data;
 				}
 
 				this.loading = false;

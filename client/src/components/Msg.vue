@@ -100,6 +100,12 @@ export default {
             var date = new Date(ts);
             var hours = date.getHours();
             var minutes = date.getMinutes();
+            if(minutes % 10 == minutes){
+                minutes = '0' + minutes;
+            }
+            else {
+                minutes = minutes;
+            }
             return hours + ":" + minutes;
         },
         setRead(idx){
