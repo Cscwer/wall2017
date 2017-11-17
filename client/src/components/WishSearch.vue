@@ -75,6 +75,12 @@
 			console.log('on load');
 			this.initAll();
 		},
+		watch: {
+			text: function() {
+				this.p = 0;
+				this.list = [];
+			}
+		},
 		methods: {
 			initStatus() {
 				this.type = [];
