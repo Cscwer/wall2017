@@ -126,8 +126,20 @@ ui.newMusic = function(){
 			},
 			handle: {
 				confirm(e){
-					res(copy(music));
-					this.close();
+					var msg = null;
+					if (music.content.length === 0){
+						msg = '请输入你想要说的话'; 
+					} else if (!music.selected) {
+						msg = '请点歌后再操作'
+					} else {
+						res(copy(music));
+						this.close();
+					}
+
+					msg && GwPopup.getPopup().toast({
+						msg: msg,
+						position: 'bottom'
+					}); 
 				},
 				cancel(){
 					rej();
