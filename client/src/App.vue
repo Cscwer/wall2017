@@ -64,7 +64,7 @@ export default {
 	},
 	created(){
 		this.updateIcon();
-
+		
 		// Object Init 
 		this.status = chat.appStatus.toObject(); 
 
@@ -74,9 +74,11 @@ export default {
 				this.$popup.toast({
 					msg: "为了方便使用本网页，请更新个人信息",
 					align: true,
-					position: 'bottom'
+					position: 'bottom',
+					duration: 5000
 				})
 				this.editSex();
+				
 			}
 
 		}); 
