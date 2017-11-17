@@ -118,13 +118,13 @@ export default {
 			})
 		},
 		searchMore() {
-			console.log('detail');
+			let sex = this.myInfo.sex === 2 ? 'he' : 'she';
 			var msg = this.$popup.push({
 				component: detail,
 				type: "modal",
 				binding: {
 					wish: this.wish,
-					toShow: 'she',
+					toShow: sex,
 					enable: false
 				},
 				bg: 'rgb(255, 241, 241)'

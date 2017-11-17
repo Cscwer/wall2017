@@ -136,15 +136,18 @@
 				this.searchMore = true;
 
 				this.toSearch().then(res => {
-					this.p = this.p + 1;
+					this.p = this.p;
 					this.list = res.data;
 
 					if (res.code === 2001){
 						this.finish = true;
+						console.log(p + 'end!');
 					} else {
+						console.log(p + 'not end!');
 					}
 
 					this.searchMore = false;
+
 				})
 
 
@@ -153,14 +156,17 @@
 				this.p = 0;
 				this.loading = false;
 				this.searchMore = true;
+				console.log('reload');
 
 				this.toSearch().then(res => {
-					this.p = this.p + 1;
+					this.p = this.p;
 					this.list = res.data;
 
 					if (res.code === 2001){
 						this.finish = true;
+						console.log(p + 'end!');
 					} else {
+						console.log(p + 'not end!');
 					}
 					this.searchMore = false;
 				})
