@@ -34,6 +34,33 @@ router.get('/', function(req, res){
 	})
 });
 
+router.post('/init_sex', function(req, res){
+	let user = req.user; 
+
+	let toUpdate = {
+		sex: parseInt(req.body.sex)
+	}
+
+	if (user.sex === 0){
+		userModel.updateOneAndCache({
+			_id: user._id
+		}, toUpdate).then(newUser => {
+			let newToken = auth.en(newUser); 
+
+			res.cookie('user-token', newToken, {
+				expires: new Date('2017-11-28')
+			});
+
+			rps.send2000(res, newUser); 
+		}).catch(err => {
+			console.log(err); 
+			rps.send5099(res, err); 
+		});
+	} else {
+		rps.send4000(res, '你已设置过性别 无须设置'); 
+	}
+})
+
 router.post('/update', function(req, res){
 	let user_id = req.user._id; 
 	let token = req.cookies['user-token']; 

@@ -95,8 +95,9 @@ R.initQueue = (key, list) => {
 
 	return R.del(key).then(done => {
 		let temp = list.map(JSON.stringify);
-		
 		return R.rpush(key, temp); 
+	}).catch(err => {
+		console.log('[ ERR ] initQueue', err);
 	})
 }
 

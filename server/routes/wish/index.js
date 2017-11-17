@@ -221,6 +221,9 @@ router.post('/pull', function(req, res){
 				return wish.save().then(ok => {
 					rps.send2000(res, ok); 
 
+					// 刷新缓存
+					page.cacheFlush(); 
+
 					// User 
 					let temp = JSON.parse(JSON.stringify(wish));
 					temp.he = user; 
