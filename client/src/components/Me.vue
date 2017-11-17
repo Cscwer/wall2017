@@ -4,7 +4,7 @@
 			<div class="top-wrap" v-if="!isMyself">她的愿望</div>
 			<div class="msg-icon-wrap" @click="isMyself ? openMsg() : leaveMsg(), hasMsg=false">
 				<img src="../assets/me/msg-icon.png" alt="" class="msg-icon">
-				<span class="red-dot" v-if="hasMsg"></span>
+				<span class="red-dot" v-if="hasMsg && isMyself"></span>
 			</div>
 			<div class="userinfo-wrap">
 				<img :src="user.headimgurl" class="avatar" />
@@ -207,7 +207,6 @@ export default {
 				phone: this.user.phone
 			}
 			ui.editUserInfo(toEdit).then(info => {
-				console.log(info);
 				this.user.nickname = info.nickname;
 				this.user.area = info.area;
 				this.user.weid = info.weid;
@@ -227,6 +226,9 @@ export default {
 				})
 				
 			});
+
+
+
 		},
 		sendToast(msg){
 			this.$popup.toast({

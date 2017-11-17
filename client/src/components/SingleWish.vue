@@ -66,7 +66,8 @@ export default {
 		}
 	},
 	created(){
-		this.initStatus = this.status ? this.status : 0;
+		console.log(this.wish);
+		this.initStatus = this.wish.status;
 	},
 	methods: {
 		present(type, world) {
@@ -125,7 +126,7 @@ export default {
 				binding: {
 					wish: this.wish,
 					toShow: sex,
-					enable: false
+					enable: this.myInfo._id === this.wish.she._id ? true : false
 				},
 				bg: 'rgb(255, 241, 241)'
 			})
