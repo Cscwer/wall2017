@@ -27,12 +27,19 @@ router.get('/clear-cookie', function(req, res){
 		expires: new Date()
 	});
 
-
 	res.render('msg', {
 		msg: '已清空',
 		data: {}
 	});
 }); 
+
+router.get('/clear-all', function(req, res){
+	res.cookie('user-token', 'no~~', {
+		expires: new Date()
+	});
+
+	res.render('clear'); 
+})
 
 router.get('/who-i-am', function(req, res){
 	let token = req.cookies['user-token']; 

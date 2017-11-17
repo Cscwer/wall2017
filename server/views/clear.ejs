@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>清空数据</title>
+	<link rel="stylesheet" href="/gw-console/main.css">
+</head>
+<body>
+	<h1 class="title">Clear Success</h1>
+
+	<div class="btns">
+		<a href="/"><button>
+			回到应用
+		</button></a>
+		<a href="/api/entry"><button>
+			重新授权
+		</button></a>
+		<button onclick="history.back()">
+			返回上一页
+		</button>
+	</div>
+
+	<script>
+		// clear LS ; 
+		window.localStorage.clear(); 
+	</script>
+</body>
+</html>

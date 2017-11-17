@@ -12,9 +12,11 @@
 }
 
 body {
-	margin: 20px 10px; 
 	color: #555; 
 	font-family: "menlo", "consolas"; 
+	max-width: 700px; 
+	padding: 0 14px;
+	margin: 20px auto;
 }
 
 .user {
