@@ -9,7 +9,7 @@
 		<img v-else class="gw-confirm-picture" :src="snowStick_png" />
 	
 
-		<div class="gw-confirm-btns">
+		<div class="gw-confirm-btns"  v-if="confirmText">
 			<span @click="innerConfirm" class="gw-confirm-btn gw-confirm-yes">
 				{{ confirmText }}
 			</span>
