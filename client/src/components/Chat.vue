@@ -74,22 +74,38 @@ export default {
                 content: this.message,
                 her_id: this.from._id
             }
-            console.log(this.from);
-            ws.socket.emit('sendMsg',msg);
-            msg.create_at = Date.now();
-            msg.myself = true;
-            this.list.unshift(msg);
-            chat_utils.onMsg({
-                type: 'chat',
-                content: this.message,
-                from: this.from,
-                myself: true,
-                create_at: Date.now(),
-                unread: false,
-            })
-            this.message = "";
-            this.toEnd();
+            console.log("Message:",this.message);
+            if(this.message === "" || /^\s+$/gi.test(this.message)) {
+                this.message = "";
+                this.sendToast("不能发送空白消息");
+            }
+            else {
+                ws.socket.emit('sendMsg',msg);
+                msg.create_at = Date.now();
+                msg.myself = true;
+                this.list.unshift(msg);
+                chat_utils.onMsg({
+                    type: 'chat',
+                    content: this.message,
+                    from: this.from,
+                    myself: true,
+                    create_at: Date.now(),
+                    unread: false,
+                })
+                this.message = "";
+                this.toEnd();
+            }
+            
+            
+
         },
+        sendToast(msg){
+			this.$popup.toast({
+				msg: msg,
+				align: true, 
+				position: 'bottom'
+			})
+		},
         toEnd() {    
             setTimeout(()=>{
                 console.log(this.$refs.bottomHash);
