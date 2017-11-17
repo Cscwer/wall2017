@@ -66,7 +66,7 @@ export default {
 		}
 	},
 	created(){
-		console.log(this.wish);
+		// console.log(this.wish);
 		this.initStatus = this.wish.status;
 	},
 	methods: {
