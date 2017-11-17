@@ -22,6 +22,13 @@
 					<!-- {{ tab.text }} -->
 					<img class="tab-icon" :src="tab.active ? tab.icon.fill : tab.icon.outline">
 				</div>
+
+				
+				<transition name="cantLoad">
+					<div class="just-girl" v-if="showCant" :style="{
+						bottom: ((pageWidth / 4) - 4) + 'px'
+					}">11月24号男女权利反转，男生也可以许愿了哦！</div>
+				</transition>
 			</footer>
 			</transition>
 		</div>
@@ -49,7 +56,9 @@ export default {
 			},
 			pageWidth: window.innerWidth,
 			status: null,
-			showFooter: false
+			showFooter: false,
+			me: null,
+			showCant: false
 		}
 	},
 	created(){
@@ -57,6 +66,10 @@ export default {
 
 		// Object Init 
 		this.status = chat.appStatus.toObject(); 
+
+		http.get('/api/user/me').then(res => {
+			this.me = res.data; 
+		}); 
 
 		setTimeout(() => {
 			this.showFooter = true
@@ -88,23 +101,38 @@ export default {
 		}, 
 
 		openWish(){
-			ui.postWish().then(wish => {
-				http.post('/api/wish', wish, ui.topLoading()).then(res => {
-					if (res.code === 2000){
-						this.$popup.toast({
-							msg: '许愿成功 ~ 请到主页查看',
-							position: 'bottom'
-						}); 
-					} else {
-						this.$popup.toast({
-							msg: `许愿失败请重试 errcode: ${res.code}`,
-							position: 'bottom',
-							cancelable: true,
-							duration: 99999
-						}); 
-					}
+			if (this.me.sex === 1){
+				// 男的叼毛 
+				this.canWishNow();
+			} else {
+				ui.postWish().then(wish => {
+					http.post('/api/wish', wish, ui.topLoading()).then(res => {
+						if (res.code === 2000){
+							this.$popup.toast({
+								msg: '许愿成功 ~ 请到主页查看',
+								position: 'bottom'
+							}); 
+						} else {
+							this.$popup.toast({
+								msg: `许愿失败请重试 errcode: ${res.code}`,
+								position: 'bottom',
+								cancelable: true,
+								duration: 99999
+							}); 
+						}
+					}); 
 				}); 
-			}); 
+			}
+		},
+
+		canWishNow(){
+			if (this.showCant) return; 
+
+			this.showCant = true; 
+
+			setTimeout(() => {
+				this.showCant = false
+			}, 2500);
 		},
 
 		updateIcon(){
@@ -177,13 +205,24 @@ export default {
 
 
 .fooload-enter-active, .fooload-leave-active {
-	/*transition-timing-function: cubic-bezier(0.74, 0, 0.36, 1.55);*/
 	transition-timing-function: ease;
 }
 
 .fooload-enter, .fooload-leave-to {
 	transform: translateY(200%);
 }
+
+.cantLoad-enter-active, .cantLoad-leave-active {
+	/*transition-timing-function: cubic-bezier(0.74, 0, 0.36, 1.55);*/
+	transition-timing-function: ease;
+}
+
+.cantLoad-enter, .cantLoad-leave-to {
+	transform: translateY(100%);
+	opacity: 0; 
+}
+
+
 
 
 .tab-page {
@@ -222,6 +261,32 @@ export default {
 	100% {
 		transform: translateY(0%) rotate(0deg);
 	}
+}
+
+.just-girl {
+	transition: all .3s; 
+	position: absolute;
+	text-align: center;
+	width: 46%; 
+	font-size: 10px; 
+	left: 27%; 
+	color: #FFF; 
+	box-sizing: border-box;
+	background-color: rgb(255, 141, 135); 
+	border-radius: 10px; 
+	padding: .5em .8em; 
+}
+
+.just-girl::after {
+	content: ""; 
+	position: absolute;
+	width: 1em; 
+	height: 1em; 
+	bottom: -.5em; 
+
+	left: 50%; 
+	transform: translateX(-50%) rotate(45deg);
+	background-color: rgb(255, 141, 135); 
 }
 
 

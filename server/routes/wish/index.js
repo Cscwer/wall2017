@@ -47,15 +47,13 @@ router.post('/search', function(req, res){
 		decodeURIComponent(q)
 	); 
 
-
-	let Q = wishModel.find({ text: EXP }); 
-
+	let Q = wishModel.find({ text: EXP, status: 0 }); 
 
 	if (wishtype.length !== 0) Q = Q.where('wishtype').in(wishtype); 
 	
 	if (area.length !== 0) Q = Q.where('area').in(area); 
 
-	Q.populate('she').skip(p * N).limit(p).then(docs => {
+	Q.populate('she').skip(p * N).limit(N).then(docs => {
 		if (docs.length !== N){
 			rps.send2001(res, docs); 
 		} else {
