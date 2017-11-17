@@ -25,25 +25,18 @@
 					</div>
 				</div>
 				<div v-else>
-					<vue-data-loading
-						:loading="searchMore"
-						:completed="finish"
-						:listens="['pull-down', 'infinite-scroll']"
-						:init-scroll="false"
-						:offset="20"
-						@infinite-scroll="search"
-						@pull-down="reload">
+					<div class="wish-container">
 
-						<div slot="pull-down-ready">松开下拉</div>
-						<div slot="pull-down-before">下拉以刷新</div>
 						<div v-if="loading" class="no-wish">拼命寻找中 ...</div>
 						<div v-else>
 							<div class="no-wish" v-if="list.length === 0 && !loading && text !== ''">没有相关的愿望哦（≧∇≦）</div>
-							<div v-else>
+							<div v-else class="wish-list">
 								<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list" :wish="wish" :status="0" :myInfo="user" :key="idx"></wish>
+								<div v-if="!finish" class="loadMore" @click="loadMore">查看更多</div>
+								<div v-else class="noMore">已经到底啦~</div>
 							</div>
 						</div>
-					</vue-data-loading>
+					</div>
 				</div>
 		</div>
 		<div class="bg-cover"></div>
@@ -136,40 +129,21 @@
 				this.searchMore = true;
 
 				this.toSearch().then(res => {
-					this.p = this.p;
-					this.list = res.data;
+					this.p = this.p + 1;
+					this.list = this.list.concat(res.data);
 
 					if (res.code === 2001){
+						console.log(p + '  end!');
 						this.finish = true;
-						console.log(p + 'end!');
 					} else {
-						console.log(p + 'not end!');
+						this.finish = false;
+						console.log(p + '  not end!');
 					}
 
 					this.searchMore = false;
-
 				})
 
 
-			},
-			reload: async function(){
-				this.p = 0;
-				this.loading = false;
-				this.searchMore = true;
-				console.log('reload');
-
-				this.toSearch().then(res => {
-					this.p = this.p;
-					this.list = res.data;
-
-					if (res.code === 2001){
-						this.finish = true;
-						console.log(p + 'end!');
-					} else {
-						console.log(p + 'not end!');
-					}
-					this.searchMore = false;
-				})
 			}
 		}
 	}
@@ -194,7 +168,7 @@ html, body {
 	height: 100%;
 	width: 100%;
 	left: 0;
-	top: 0;
+	bottom: 0;
 	background-color: rgb(255, 241, 241);
 	z-index: -100;
 }
@@ -265,7 +239,6 @@ html, body {
 	width: 100%;
 	color: rgba(248, 153, 138, 1);
 	font-size: 0.46rem;
-	/*text-align: center;*/
 }
 
 .wish-on-wall {
@@ -283,4 +256,31 @@ html, body {
 .radio:checked + label {
 	background-color: #ff7272;
 }
+
+.loadMore {
+	width: 3.5rem;
+	height: 1rem;
+	margin: 1rem auto 0 auto;
+	letter-spacing: 2px;
+	line-height: 1rem;
+	border-radius: .5rem;
+	text-align: center;
+	background-color: #f9d52c;
+	font-size: 16px;
+	color: #fff;
+}
+
+.wish-list {
+	padding-bottom: 1rem;
+}
+
+.noMore {
+	width: 100%;
+	margin-top: 1rem;
+	text-align: center;
+	width: 100%;
+	color: rgba(248, 153, 138, 1);
+	font-size: 14px;
+}
+
 </style>

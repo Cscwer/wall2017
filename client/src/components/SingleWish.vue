@@ -66,7 +66,8 @@ export default {
 		}
 	},
 	created(){
-		this.initStatus = this.status ? this.status : 0;
+		console.log(this.wish);
+		this.initStatus = this.wish.status;
 	},
 	methods: {
 		present(type, world) {
