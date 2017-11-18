@@ -6,7 +6,7 @@
 			<img :src="wish.she.headimgurl" class="avatar" @click="toMe"/>
 			<span class="user-name">{{wish.she.nickname}}</span>
 			<div class="area" v-bind:style="{ backgroundColor: bgcolor[wish.she.area] }">{{area[wish.she.area]}}</div>
-			<img v-if="myInfo._id === wish.she._id && initStatus === 0" src="../assets/home/delete.png" class="delete" @click="deleteWish('确定')">
+			<img v-if="myInfo._id === wish.she._id && wish.status === 0" src="../assets/home/delete.png" class="delete" @click="deleteWish('确定')">
 		</div>
 		<div class="wish">
 			{{ wish.text }}
@@ -18,9 +18,9 @@
 					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
 				</label>
 				<div class="placeholder"></div>
-				<button v-if="initStatus !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
+				<button v-if="wish.status && indexPage !== 'wishDetail' !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
 			</div>
-			<button v-if="!wish.img && initStatus !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
+			<button v-if="!wish.img && indexPage !== 'wishDetail' && wish.status !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
 			</div>
 		</div>
 	</div>
@@ -40,11 +40,11 @@
 					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
 				</label>
 				<div class="placeholder"></div>
-				<button class=" pickImg" @click="pickWish('确定领取该愿望')" v-if="initStatus === 0">领取愿望</button>
-				<button v-else-if="initStatus !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
+				<button class=" pickImg" @click="pickWish('确定领取该愿望')" v-if="wish.status === 0">领取愿望</button>
+				<button v-else-if="wish.status !== 0 && indexPage !== 'wishDetail' && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
 			</div>
-			<button v-if="initStatus === 0 && !wish.img" class="pickWish" @click="pickWish('确定领取该愿望')">领取愿望</button>
-			<button v-else-if="initStatus !== 0 && !wish.img && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
+			<button v-if="wish.status === 0 && !wish.img" class="pickWish" @click="pickWish('确定领取该愿望')">领取愿望</button>
+			<button v-else-if="wish.status !== 0 && indexPage !== 'wishDetail' && !wish.img && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
 		</div>
 	</div>
 </template>
@@ -57,17 +57,16 @@ import detail from './WishDetail';
 
 export default {
 	name: 'SingleWish',
-	props: ['wish', 'myInfo', 'status'],
+	props: ['wish', 'myInfo', 'status', 'indexPage'],
 	data() {
 		return {
-			initStatus: 0,
 			area: ['大学城', '东风路', '龙洞'],
 			bgcolor: ['#b5d1ff', '#ffb9b5', '#ffe88d']
 		}
 	},
 	created(){
 		// console.log(this.wish);
-		this.initStatus = this.wish.status;
+		this.index = this.indexPage
 	},
 	methods: {
 		present(type, world) {
@@ -135,6 +134,7 @@ export default {
 			msg.launch();
 		},
 		toMe(){
+			if(this.indexPage === 'me') return;
 			var msg = this.$popup.push({
 				component: me,
 				type: "modal",
@@ -181,6 +181,11 @@ export default {
 	}
 
 	.user-name {
+		display: inline-block;
+		max-width: 4.5rem;
+		white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
 		margin-left: 8px;
 		margin-right: 8px;
 		font-size: 16px;

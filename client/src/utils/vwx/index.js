@@ -7,7 +7,9 @@ let jsApiList = [
 	'previewImage',
 	'uploadImage',
 	'downloadImage',
-	'previewImage'
+	'previewImage',
+	'onMenuShareTimeline',
+	'onMenuShareAppMessage'
 ];
 let DEBUG_MODE = false;
 let vwx = {};
@@ -103,25 +105,38 @@ vwx.create('getAnImg', function(){
 	});
 });
 
-import logo from '../../assets/logo.png';
+// import logo from '../../assets/logo.png';
 
 vwx.create('share', function() {
 	wx.onMenuShareAppMessage({
         title: '2017女生节许愿墙', // 分享标题
         desc: '让你的女生节更加完整', // 分享描述
-        link: 'http://gw.chenpt.cc/api/entry', // 分享链接
-        imgUrl: logo, // 分享图标
+        link: 'https://gw.chenpt.cc/api/entry', // 分享链接
+        imgUrl: 'https://gw.chenpt.cc/logo.png', // 分享图标
         type: '', // 分享类型,music、video或link，不填默认为link
-        dataUrl: '' // 如果type是music或video，则要提供数据链接，默认为空
-    });
+        dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空,
+        success(){
+      
+        },
+        fail(err){
+     
+        }
+    })
+
     wx.onMenuShareTimeline({
         title: '2017女生节许愿墙', // 分享标题
         desc: '让你的女生节更加完整', // 分享描述
-        link: 'http://gw.chenpt.cc/api/entry', // 分享链接
-        imgUrl: logo, // 分享图标
+        link: 'https://gw.chenpt.cc/api/entry', // 分享链接
+        imgUrl: 'https://gw.chenpt.cc/logo.png', // 分享图标
         type: '', // 分享类型,music、video或link，不填默认为link
-        dataUrl: '' // 如果type是music或video，则要提供数据链接，默认为空
-    });
+        dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+        success(){
+
+        },
+        fail(err){
+
+        }
+    })
 })
 
 // vwx.create('previewImage', function(o){

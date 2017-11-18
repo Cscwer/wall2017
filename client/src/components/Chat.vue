@@ -229,6 +229,7 @@ export default {
 
     .footer-wrap {
         min-height: 50px;
+        z-index: 500;
         position: absolute;
         bottom: 0;
         display: flex;

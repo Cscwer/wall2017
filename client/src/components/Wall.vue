@@ -4,7 +4,6 @@
 			:loading="loading"
 			:completed="finish"
 			:listens="['pull-down', 'infinite-scroll']"
-			:init-scroll="true"
 			:offset="20"
 			@infinite-scroll="loadMore"
 			@pull-down="reload">
@@ -101,7 +100,7 @@ export default {
 		this.initAll();
 
 		// window.$$$ = this;
-		// this.loadMore();
+		this.loadMore();
 	},
 	methods: {
 		initSearchPos(){

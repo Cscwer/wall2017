@@ -1,17 +1,17 @@
 <template>
 	<div class="wish-detail">
 		<div class="head">领取详情</div>
-		
+
 		<div v-if="finish" class="inner-wrap">
-			<wish class="wish" :wish="wish" :myInfo="user" />
+			<wish class="wish" :wish="wish" :myInfo="user" :indexPage="page"/>
 			<div class="getter">
 				<span class="he">{{ toShowTable[toShow] }}</span>
-				
+
 				<div class="avatar-area">
 					<img :src="wish[toShow].headimgurl" class="avatar" />
 					<p class="name-bottom">{{ wish[toShow].nickname }}</p>
 				</div>
-				
+
 				<div class="info">
 					<div class="item">
 						<div class="before">姓名：</div>
@@ -40,26 +40,26 @@
 				</div>
 			</div>
 		</div>
-		
+
 	</div>
 </template>
 
 <script>
-import ui from '@/utils/ui'; 
+import ui from '@/utils/ui';
 import http from '@/utils/http.client';
 import Chat_Component from './Chat';
 
-// import SingleWish from './SingleWish'; 
+// import SingleWish from './SingleWish';
 
 export default {
-	name: 'wish-detail', 
+	name: 'wish-detail',
 	props: {
 		wish: {
 			type: Object,
 			required: true
-		}, 
+		},
 		toShow: {
-			type: String, 
+			type: String,
 			default: 'he'
 		},
 		enable: {
@@ -74,9 +74,10 @@ export default {
 			user: null,
 			finish: false,
 			// enable: true,
+			page: 'wishDetail',
 			areaTable: ['大学城', '东风路', '龙洞'],
 			toShowTable: {
-				'he': '领取人', 
+				'he': '领取人',
 				'she': '许愿者'
 			}
 		}
@@ -84,7 +85,7 @@ export default {
 	created(){
 		console.log(this.wish)
 		http.get('/api/user/me', ui.topLoading()).then(res => {
-			this.user = res.data; 
+			this.user = res.data;
 
 			this.finish = true;
 		})
@@ -92,37 +93,37 @@ export default {
 	methods: {
 		ifItWorks(){
 			var d = this.$popup.push({
-				type: 'confirm', 
+				type: 'confirm',
 				confirmText: '确定已实现该愿望',
-				needBlur: true, 
+				needBlur: true,
 				handle: {
 					confirm: () => {
-						this.itWorks(); 
-						d.close(); 
+						this.itWorks();
+						d.close();
 					}
 				}
-			}); 
+			});
 
-			d.launch(); 
+			d.launch();
 		},
 		itWorks(){
-			// 愿望已实现		
+			// 愿望已实现
 			http.post('/api/wish/end', {
 				_id: this.wish._id
 			}, ui.topLoading()).then(res => {
 				if (res.code === 2000){
 					this.$popup.toast({
-						msg: '你的愿望已实现', 
-						position: 'bottom', 
+						msg: '你的愿望已实现',
+						position: 'bottom',
 						align: true
 					});
 
-					this.enable = false; 
-					this.$emit('wishEnd'); 
+					this.enable = false;
+					this.$emit('wishEnd');
 				} else {
 					this.$popup.toast({
-						msg: '出错啦，错误代码：' + res.code, 
-						position: 'bottom', 
+						msg: '出错啦，错误代码：' + res.code,
+						position: 'bottom',
 						cancelable: true,
 					})
 				}
@@ -166,17 +167,17 @@ export default {
     color: rgb(222, 150, 150);
     text-align: center;
     line-height: 50px;
-    background-color: #FFF; 
-	margin-bottom: 1em; 
+    background-color: #FFF;
+	margin-bottom: 1em;
 }
 
 .inner-wrap {
-	width: 92%; 
-	margin: 0 auto 1em auto; 
+	width: 92%;
+	margin: 0 auto 1em auto;
 }
 
 .wish {
-	margin-bottom: 2em; 
+	margin-bottom: 2em;
 }
 
 .wish-detail {
@@ -186,11 +187,11 @@ export default {
 .getter {
 	position: relative;
 	background-color: rgb(254, 199, 196);
-	border-radius: 12px; 
+	border-radius: 12px;
 
 	box-sizing: border-box;
-	padding: 1.5em; 
-	margin-bottom: 2.2em; 
+	padding: 1.5em;
+	margin-bottom: 2.2em;
 }
 
 .he {
@@ -200,29 +201,29 @@ export default {
 	padding: 4px 8px;
 	color: rgb(255, 141, 135);
 	transform: translateY(-50%);
-	background-color: #FFF; 
-	border-radius: 8px; 
-	top: 0; 
+	background-color: #FFF;
+	border-radius: 8px;
+	top: 0;
 }
 
 .info {
-	margin-top: 1em; 
-	padding-left: 5em; 
-	font-size: 16px; 
-	color: #FFF; 
+	margin-top: 1em;
+	padding-left: 5em;
+	font-size: 16px;
+	color: #FFF;
 }
 
 .avatar-area {
 	position: absolute;
-	color: #FFF; 
+	color: #FFF;
 	text-align: center;
 	top: 48px;
 	left: 1em;
 }
 
 .avatar-area .name-bottom {
-	padding: 4px 0; 
-	font-size: 16px; 
+	padding: 4px 0;
+	font-size: 16px;
 }
 
 .name-bottom {
@@ -234,50 +235,50 @@ export default {
 
 .item {
 	position: relative;
-	margin-left: 3em; 
-	margin-bottom: .9em; 
+	margin-left: 3em;
+	margin-bottom: .9em;
 }
 
 .before {
 	position: absolute;
-	right: 100%; 
+	right: 100%;
 	white-space: nowrap;
 }
 
 .content {
-	padding: 2px 8px; 
+	padding: 2px 8px;
 	box-sizing: border-box;
-	border-radius: 6px; 
+	border-radius: 6px;
 	background-color: #FFF;
-	color: #555; 
-	min-height: 1em; 
+	color: #555;
+	min-height: 1em;
 }
 
 .avatar {
 	width: 64px;
-	height: 64px; 
-	border-radius: 64px; 
+	height: 64px;
+	border-radius: 64px;
 }
 
 .btns {
-	font-size: 20px; 
+	font-size: 20px;
 	text-align: center;
 }
 
 .btn {
-	background-color: #FFF; 
-	width: 55%; 
+	background-color: #FFF;
+	width: 55%;
 	display: inline-block;
-	margin-bottom: 1em; 
-	padding: .5em 0px; 
-	border-radius: 100px; 
+	margin-bottom: 1em;
+	padding: .5em 0px;
+	border-radius: 100px;
 	color: rgb(250, 152, 146);
 	box-shadow: 0px 5px 16px 0px rgba(254, 150, 140, .3);
 }
 
 .active {
 	background-color: rgb(255, 153, 138);
-	color: #FFF; 
+	color: #FFF;
 	box-shadow: none;
 }
 
