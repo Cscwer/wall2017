@@ -6,7 +6,8 @@ const auth = require('./utils/auth')
     , IO = {}
     , socketTable = {}
     , kefu = {
-        "_id" : "59ce826c4fece5203cd318c7",
+        // "_id" : "59ce826c4fece5203cd318c7",
+        "_id": "5a0f110b1a7019341f7eaf7d", 
         "openid" : "4444",
         "nickname" : "客服小哥",
         "sex" : 2,
