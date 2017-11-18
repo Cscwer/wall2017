@@ -84,15 +84,20 @@ router.get('/code', function(req, res){
 			}); 
 		} else {
 			console.log(err);
-
 			return Promise.reject(err); 
 		}
 	}).catch(err => {
-		console.log(err); 
-		res.json({
-			code: 500, 
-			err: err
-		});
+        setTimeout(() => {
+            res.cookie('user-token', '', {
+                expires: new Date('2017-11-01')
+            });
+            res.redirect('/api/entry'); 
+        }, 5000); 
+// 		console.log(err); 
+//		res.json({
+//			code: 500, 
+//			err: err
+//		});
 	})
 });
 
