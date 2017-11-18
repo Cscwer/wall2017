@@ -46,20 +46,20 @@
 			<swiper :options="swiperOption" ref="mySwiper" class="swiper-box" :not-next-tick="notNextTick">
 				<swiper-slide class="swiper-item">
 					<div class="wish-container">
-						<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :myInfo="me" :status="0" :key="idx"></wish>
+						<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list0" :wish="wish" :indexPage="page" :myInfo="me" :status="0" :key="idx"></wish>
 					</div>
 					<div v-show="this.list0.length === 0 && isMyself" class="text">{{(isFemale ? text.female.unclaimed : null)}}</div>
 					<div v-show="this.list0.length === 0 && !isMyself" class="text">她目前没有待领取的愿望</div>
 				</swiper-slide>
 				<swiper-slide class="swiper-item">
 					<div class="wish-container">
-						<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :myInfo="me" :status="1" :key="idx"></wish>
+						<wish @toastOnWall="sendToast" @deleteOnWall="deleteWish" class="wish-on-wall" v-for="(wish, idx) in list1" :wish="wish" :indexPage="page" :myInfo="me" :status="1" :key="idx"></wish>
 					</div>
 					<div v-show="this.list1.length === 0" class="text">{{isFemale ? text.female.realizing : text.male.realizing}}</div>
 				</swiper-slide>
 				<swiper-slide class="swiper-item">
 					<div class="wish-container">
-						<wish @toastOnWall="sendToast" class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="me" :status="2" :key="idx"></wish>
+						<wish @toastOnWall="sendToast" class="wish-on-wall" v-for="(wish, idx) in list2" :wish="wish" :myInfo="me" :status="2" :indexPage="page" :key="idx"></wish>
 					</div>
 					<div v-show="this.list2.length === 0" class="text">{{isFemale ? text.female.realized : text.male.realized}}</div>
 				</swiper-slide>
@@ -102,6 +102,7 @@ export default {
 			isLoading: true,
 			user: {},
 			me: {},
+			page: '',
 			activeidx: this.initialSlide,
 			hasMsg: false,
 			notNextTick: true,
@@ -163,9 +164,13 @@ export default {
 		}).then(() => {
 			if(this.others) {
 				this.user = this.others;
+				this.page = 'me';
 			}
 			else {
 				this.user = this.me;
+				if(this.me.sex === 2) {
+					this.page = 'me';
+				}
 			}
 		}).then(() => {
 			this.listload();
