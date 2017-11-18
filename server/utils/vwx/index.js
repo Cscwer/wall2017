@@ -9,10 +9,10 @@ const { httpGet } = require('../http.client')
     , IMAGE_KEY_NS = 'girl-wall-image/'; 
 
 /**
-*  获取 access_token
-*  @param  void
-*  @return Promise<string>
-*/
+ *  @describe 获取 access_token
+ *  @param  void
+ *  @return Promise<string>
+ */
 function getAccessToken(){
 	let qsStr = qs.stringify({
 		grant_type: 'client_credential',
@@ -38,10 +38,10 @@ function getAccessToken(){
 }
 
 /**
-*  用 access_token 换取 jsapi_ticket
-*  @param  code:string
-*  @return Promise<object>
-*/
+ *  @describe 用 access_token 换取 jsapi_ticket
+ *  @param  code:string
+ *  @return Promise<object>
+ */
 function getTicket(access_token){
     var url = `https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=${access_token}&type=jsapi`; 
     return httpGet(url).then(bodyObj => {
@@ -61,10 +61,10 @@ function getTicket(access_token){
 }
 
 /**
-*  用 code 换取用户信息
-*  @param  code:string
-*  @return Promise<object>
-*/
+ *  @describe 用 code 换取用户信息
+ *  @param  code:string
+ *  @return Promise<object>
+ */
 function code2user(code){
 	let qsStr =  qs.stringify({
 		appid: config.AppID,
@@ -92,7 +92,11 @@ function code2user(code){
 	})
 }
 
-
+/**
+ *  @describe 用 media_id 换取微信图片的 URL，并抓取到七牛空间去 
+ *  @param  media_id:string
+ *  @return Promise<object>
+ */
 function media2url(media_id){
 	return R.get('access_token').then(access_token => {
 		let url = 'https://api.weixin.qq.com/cgi-bin/media/get'; 
@@ -108,7 +112,10 @@ function media2url(media_id){
 	}); 
 }
 
-// Loop 
+
+/**
+ *  Access Token Loop Refresh
+ */
 (function loopGet(){
 	// let pre_access_token = R.get('access_token'); 
 	getAccessToken().then(new_access_token => {
