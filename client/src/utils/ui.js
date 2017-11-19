@@ -368,7 +368,7 @@ ui.share = function() {
 
 
 
-vwx.share(); 
+vwx.share();
 
 
 ui.showLoading = function(d = 8000){
