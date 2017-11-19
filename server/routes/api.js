@@ -23,11 +23,12 @@ router.use('/entry', entry);
 // Proxy
 router.use('/proxy', proxy); 
 
+// Normal Router 
+router.use('/ping', ping);
+
 // Get Data Of Token 
 router.use('*', all);
 
-// Normal Router 
-router.use('/ping', ping);
 router.use('/wx', wx); 
 router.use('/user', user); 
 router.use('/ta', ta); 
