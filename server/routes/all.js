@@ -25,10 +25,10 @@ module.exports = function(req, res, next){
 				req.user = user;
 				next(); 
 			}, invalid => {
-				res.redirect('/api/entry'); 
+				res.redirect('/api/entry?reload=true'); 
 			}); 
 		} else {
-			res.redirect('/api/entry'); 
+			res.redirect('/api/entry?reload=true'); 
 		}
 	}
 }
