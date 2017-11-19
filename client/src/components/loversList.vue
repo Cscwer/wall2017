@@ -60,6 +60,8 @@ export default {
 .list-container {
 	width: 100%;
 	margin-bottom: 30px;
+	max-height: 6rem;
+	overflow-y: scroll;
 }
 
 .single-list {
@@ -83,7 +85,11 @@ export default {
 }
 
 .nickname {
+	display: inline-block;
 	font-size: 14px;
+	max-width: 4.5rem;
+	white-space: nowrap;
+    text-overflow: ellipsis;
 	vertical-align: middle;
 }
 
