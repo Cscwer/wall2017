@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
 			expires: new Date('1984-01-01')
 		});
 		return res.redirect(redirectTo);
-	}  
+	}
 
 	// 否则判断cookie 
 	if (req.cookies['user-token']){
