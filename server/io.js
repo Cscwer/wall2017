@@ -5,17 +5,8 @@ const auth = require('./utils/auth')
     , msg = require('./io-events/msg')
     , IO = {}
     , socketTable = {}
-    , kefu = {
-        // "_id" : "59ce826c4fece5203cd318c7",
-        "_id": "5a0f110b1a7019341f7eaf7d", 
-        "openid" : "4444",
-        "nickname" : "客服小哥",
-        "sex" : 2,
-        "headimgurl" : "https://io.chenpt.cc/kefu/nw.png",
-        "created_at" : "2017-09-29T17:27:08.773Z",
-        "phone" : "未设置",
-        "__v" : 0
-	}
+    , config = require('./config')
+    , kefu = config.kefu
 
 module.exports = IO; 
 
