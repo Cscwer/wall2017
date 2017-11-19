@@ -12,6 +12,10 @@ let COUNT = 0;
 
 // For Init 
 function popupInit(Vue, option){
+	history.pushState({
+		name: '_'
+	}, '', '');
+
 	// Register Component Global; 
 	components.register(Vue); 
 
@@ -107,10 +111,13 @@ GwPopup.install = function(Vue, option){
 	var itCan = true;
 
 	window.addEventListener('popstate', function(e){
-		if (!itCan) return; 
+		if (!itCan) return;
 
 		console.log('POPSTATE'); 
 		clearTimeout(timer);
+		history.pushState({
+			name: '_'
+		}, '', '');
 		timer = setTimeout(function(){
 			_backer(e); 
 		})

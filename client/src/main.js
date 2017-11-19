@@ -41,9 +41,9 @@ Vue.component(
 	SingleWish
 )
 
-history.pushState({
-	name: '外层'
-}, '', '');
+// history.pushState({
+// 	name: '外层'
+// }, '', '');
 // history.pushState({
 // 	name: '中层'
 // }, "2", "22");
