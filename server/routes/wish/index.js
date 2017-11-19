@@ -2,6 +2,7 @@
 const express = require('express')
     , mongoose = require('mongoose')
     , router = express.Router()
+    , config = require('../../config')
     , { wishModel } = require('../../utils/db')
     , rps = require('../../utils/rps')
     , R = require('../../utils/redis')
@@ -214,6 +215,10 @@ router.post('/pull', function(req, res){
 	.populate('she')
 	.then(wish => {
 		if (wish){
+			if (wish.she._id.toString() === config.kefu._id){
+				return rps.send4109(res, wish); 
+			}
+
 			if (wish.status === 0){
 				wish.status = 1; 
 				wish.he = req.user._id; 

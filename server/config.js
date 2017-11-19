@@ -2,12 +2,16 @@
 const os = require('os')
     , os_type = os.type().toLowerCase(); 
 
-let r_url; 
+let r_url, kefu_id; 
 
 if (os_type.startsWith('windows')){
+	// 本地 windows
 	r_url = 'http://gw.chenpt.cc/api/entry/code'; 
+	kefu_id = "5a1136f89cd95e19cc260663"
 } else {
+	// 线上 linux 
 	r_url = 'https://gw.chenpt.cc/api/entry/code'; 
+	kefu_id = "5a0f110b1a7019341f7eaf7d"; 
 }
 
 
@@ -26,7 +30,7 @@ module.exports = {
 	AppSecret: 'ffff67117338e06faf403581ebc32830',
 	kefu: {
         // "_id" : "59ce826c4fece5203cd318c7",
-        "_id": "5a0f110b1a7019341f7eaf7d", 
+        "_id": kefu_id, 
         "openid" : "4444",
         "nickname" : "客服小哥",
         "sex" : 2,
