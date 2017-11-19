@@ -62,7 +62,8 @@ let banners = [
 		path: '/love'
 	},
 	{
-		img: 'https://io.chenpt.cc/banner/reverse-2.png',
+		// img: 'https://io.chenpt.cc/banner/reverse-2.png',
+		img: 'https://io.chenpt.cc/banner/reverse-3.jpg', 
 		path: null
 	}
 ];
