@@ -38,7 +38,14 @@ export default {
 		}).then(res => {
 			loading();
 			if (res.code === 2000){
-				this.list = res.data;
+				var temp = res.data.concat(res.data).concat(res.data);
+				temp = temp.concat(temp);
+				temp = temp.concat(temp);
+				temp = temp.concat(temp);
+				temp = temp.concat(temp);
+				temp = temp.concat(temp);
+
+				this.list = temp;
 			} else {
 				this.$popup.toast({
 					msg: `出错了, 请重试, 错误码: ${res.code}`,

@@ -18,7 +18,7 @@
 					<input type="radio" class="preview-cancel" name="preview-toggle"></input>
 				</label>
 				<div class="placeholder"></div>
-				<button v-if="wish.status && indexPage !== 'wishDetail' !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
+				<button v-if="indexPage !== 'wishDetail' && wish.status !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class=" pickImg" @click="searchMore">查看详情</button>
 			</div>
 			<button v-if="!wish.img && indexPage !== 'wishDetail' && wish.status !== 0 && (wish.she._id === myInfo._id || wish.he && wish.he._id === myInfo._id)" class="pickWish" @click="searchMore">查看详情</button>
 			</div>
@@ -67,6 +67,7 @@ export default {
 	created(){
 		// console.log(this.wish);
 		this.index = this.indexPage
+		console.log(this.indexPage);
 	},
 	methods: {
 		present(type, world) {
