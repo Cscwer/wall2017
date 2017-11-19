@@ -47,10 +47,12 @@ PopupItem.prototype.close = function(){
 		if (this.needBlur) this.offBlur()
 
 		console.log('CLOSE ACTIVE COUNT', this.popup_vm.activeCount); 
-		if (this.type === 'modal' && this.popup_vm.activeCount === 0) dom_util.enableScroll();
+
+		if (this.popup_vm.activeCount === 0){
+			dom_util.enableScroll();
+		}
+		// if (this.type === 'modal' && this.popup_vm.activeCount === 0) 
 	});
-
-
 
 	return this; 
 }
