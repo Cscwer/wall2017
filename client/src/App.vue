@@ -6,7 +6,7 @@
 				}"
 				class="tab-page">
 			</router-view>
-				
+
 
 			<transition name="fooload">
 			<footer class="footer-tabs" v-if="showFooter">
@@ -23,7 +23,7 @@
 					<img class="tab-icon" :src="tab.active ? tab.icon.fill : tab.icon.outline">
 				</div>
 
-				
+
 				<transition name="cantLoad">
 					<div class="just-girl" v-if="showCant" :style="{
 						bottom: ((pageWidth / 4) - 4) + 'px'
@@ -36,24 +36,24 @@
 </template>
 
 <script>
-import ui from '@/utils/ui'; 
+import ui from '@/utils/ui';
 import http from '@/utils/http.client';
-import chat from '@/utils/chat'; 
-import { tabs, appCtrl } from '@/utils/app.status'; 
+import chat from '@/utils/chat';
+import { tabs, appCtrl } from '@/utils/app.status';
 import SelectSex from './components/SelectSex';
 
-let tabHeight = (window.innerWidth / 4) + 'px'; 
+let tabHeight = (window.innerWidth / 4) + 'px';
 
-// window.tabs = tabs; 
+// window.tabs = tabs;
 
 export default {
-	name: 'app', 
+	name: 'app',
 	data(){
 		return {
 			tabHeight: tabHeight,
 			tabs: tabs,
 			popup: {
-				isBlur: false	
+				isBlur: false
 			},
 			pageWidth: window.innerWidth,
 			status: null,
@@ -64,9 +64,9 @@ export default {
 	},
 	created(){
 		this.updateIcon();
-		
-		// Object Init 
-		this.status = chat.appStatus.toObject(); 
+
+		// Object Init
+		this.status = chat.appStatus.toObject();
 
 		http.get('/api/user/me').then(res => {
 			this.me = res.data;
@@ -78,45 +78,45 @@ export default {
 					duration: 5000
 				})
 				this.editSex();
-				
+
 			}
 
 		}).catch(err => {
-			location.href = '/api/entry'; 
-		}); 
+			location.href = '/api/entry';
+		});
 
 		setTimeout(() => {
 			this.showFooter = true
-		}, 700); 
+		}, 700);
 	},
 	watch:{
-		// onChnaging Route Path 
+		// onChnaging Route Path
 		$route(to, from){
-			this.updateIcon(); 
+			this.updateIcon();
 		}
 	},
 	methods: {
 		routeTo: function(tab, idx){
-			let { path, onMsg } = tab; 
-			
+			let { path, onMsg } = tab;
+
 			if (path === '/wish') {
-				this.openWish(); 
-				return; 
+				this.openWish();
+				return;
 			}
 
 			if (onMsg){
-				onMsg = false; 
-				appCtrl.off(`${path}-hasMsg`); 
+				onMsg = false;
+				appCtrl.off(`${path}-hasMsg`);
 			}
 
 			this.$router.push({
 				path: path
-			}); 
-		}, 
+			});
+		},
 		editSex: function() {
 			let edit = this.$popup.push({
 				type: 'confirm',
-				confirmText: null, 
+				confirmText: null,
 				needBlur: true,
 				component: SelectSex,
 				event: {
@@ -138,7 +138,7 @@ export default {
 					confirm(){},
 					cancel(){
 						console.log('no')
-						this.close(); 
+						this.close();
 					}
 				}
 			});
@@ -146,7 +146,7 @@ export default {
 		},
 		openWish(){
 			if (this.me.sex === 1){
-				// 男的叼毛 
+				// 男的叼毛
 				this.canWishNow();
 			} else {
 				ui.postWish().then(wish => {
@@ -155,24 +155,24 @@ export default {
 							this.$popup.toast({
 								msg: '许愿成功 ~ 请到主页查看',
 								position: 'bottom'
-							}); 
+							});
 						} else {
 							this.$popup.toast({
 								msg: `许愿失败请重试 errcode: ${res.code}`,
 								position: 'bottom',
 								cancelable: true,
 								duration: 99999
-							}); 
+							});
 						}
-					}); 
-				}); 
+					});
+				});
 			}
 		},
 
 		canWishNow(){
-			if (this.showCant) return; 
+			if (this.showCant) return;
 
-			this.showCant = true; 
+			this.showCant = true;
 
 			setTimeout(() => {
 				this.showCant = false
@@ -180,16 +180,16 @@ export default {
 		},
 
 		updateIcon(){
-			let nowPath = this.$route.path; 
+			let nowPath = this.$route.path;
 
 			this.tabs.forEach(tab => {
 				tab.active = tab.path === nowPath
-			}); 
+			});
 		},
 
 		popupMsg(data){
-			console.log(data); 
-			this.popup.isBlur = data.isBlur; 
+			console.log(data);
+			this.popup.isBlur = data.isBlur;
 		}
 	}
 }
@@ -197,54 +197,54 @@ export default {
 
 <style>
 #app {
-	transition: filter .3s; 
+	transition: filter .3s;
 }
 
 .blur-area {
-	transition: filter .3s; 
+	transition: filter .3s;
 	/*transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);*/
 }
 
 .isBlur {
-	filter: blur(3px); 
+	filter: blur(3px);
 }
 
 .tab-active {
-	color: #FFF; 
+	color: #FFF;
 }
 
 .tab {
 	/*position: relative;*/
-	width: 25%; 
-	font-size: 0; 
+	width: 25%;
+	font-size: 0;
 	text-align: center;
 }
 
 .tab-icon {
-	width: 40%; 
+	width: 40%;
 }
 
 .tab-middle img {
 	position: absolute;
-	bottom: -.2em; 
-	left: 37.5%; 
-	width: 25% 
+	bottom: -.2em;
+	left: 37.5%;
+	width: 25%
 }
 
 .footer-tabs {
 	position: fixed;
-	bottom: 0; 
+	bottom: 0;
 	left: 0;
-	width: 100%; 
-	background-color: #FFF; 
+	width: 100%;
+	background-color: #FFF;
 	display: flex;
-	
-	padding: .8em 0; 
+
+	padding: .8em 0;
 	align-items: center;
-	z-index: 100; 
+	z-index: 100;
 	justify-content: space-between;
 
-	transition: all .5s; 
+	transition: all .5s;
 }
 
 
@@ -263,14 +263,14 @@ export default {
 
 .cantLoad-enter, .cantLoad-leave-to {
 	transform: translateY(100%);
-	opacity: 0; 
+	opacity: 0;
 }
 
 
 
 
 .tab-page {
-	
+
 }
 
 .shake-animation {
@@ -308,29 +308,29 @@ export default {
 }
 
 .just-girl {
-	transition: all .3s; 
+	transition: all .3s;
 	position: absolute;
 	text-align: center;
-	width: 46%; 
-	font-size: 10px; 
-	left: 27%; 
-	color: #FFF; 
+	width: 46%;
+	font-size: 10px;
+	left: 27%;
+	color: #FFF;
 	box-sizing: border-box;
-	background-color: rgb(255, 141, 135); 
-	border-radius: 10px; 
-	padding: .5em .8em; 
+	background-color: rgb(255, 141, 135);
+	border-radius: 10px;
+	padding: .5em .8em;
 }
 
 .just-girl::after {
-	content: ""; 
+	content: "";
 	position: absolute;
-	width: 1em; 
-	height: 1em; 
-	bottom: -.5em; 
+	width: 1em;
+	height: 1em;
+	bottom: -.5em;
 
-	left: 50%; 
+	left: 50%;
 	transform: translateX(-50%) rotate(45deg);
-	background-color: rgb(255, 141, 135); 
+	background-color: rgb(255, 141, 135);
 }
 
 
