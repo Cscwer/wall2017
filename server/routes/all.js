@@ -8,7 +8,6 @@ const express = require('express')
 var banList = {};
 
 banModel.find({}).then(list => {
-	// let arr = list.toArray();
 	list.forEach(e => {
 		banList[e.user.toString()] = true; 
 	}); 
@@ -32,8 +31,6 @@ module.exports = function(req, res, next){
 		if (token){
 			auth.de(token).then(user => {
 				req.user = user;
-
-				console.log(banList, user._id)
 				if (banList[user._id.toString()]){
 					// res.redirect(); 
 					res.json({
