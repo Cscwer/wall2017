@@ -16,7 +16,7 @@ const express = require('express')
     // , login = require('./login')
 
 // System Info
-router.use('/system', system); 
+// router.use('/system', system); 
 
 // Set Token 
 router.use('/entry', entry);
