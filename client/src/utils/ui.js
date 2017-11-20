@@ -28,22 +28,43 @@ ui.editUserInfo = function(toEdit, force){
 			},
 			handle: {
 				confirm(e){
-					if(/^1[3|4|5|7|8][0-9]{9}$/.test(toEdit.phone)) {
+					if(!/^1[3|4|5|7|8][0-9]{9}$/.test(toEdit.phone)) {
+						GwPopup.getPopup().toast({
+							msg: "请正确填写手机号，方便领取愿望之后找到你哦",
+							align: true,
+							cancelable: true,
+							position: 'bottom'
+						})
+					} else if(!/^[a-z_\d]+$/.test(toEdit.weid)) {
+						GwPopup.getPopup().toast({
+							msg: "请正确填写微信号，方便领取愿望之后找到你哦",
+							align: true,
+							cancelable: true,
+							position: 'bottom'
+						})
+					} else {
 						res(copy(toEdit));
 						this.close();
 					}
-					else{
-						GwPopup.getPopup().toast({
-							msg: "手机号码格式不对",
-							align: true,
-							position: 'bottom'
-						})
-					}
-
 				},
 				cancel(e){
 					rej();
 					console.log("cancel");
+					if(!/^1[3|4|5|7|8][0-9]{9}$/.test(toEdit.phone)) {
+						GwPopup.getPopup().toast({
+							msg: "请正确填写手机号，方便领取愿望之后找到你哦",
+							align: true,
+							cancelable: true,
+							position: 'bottom'
+						})
+					} else if(!/^[a-z_\d]+$/.test(toEdit.weid)) {
+						GwPopup.getPopup().toast({
+							msg: "请正确填写微信号，方便领取愿望之后找到你哦",
+							align: true,
+							cancelable: true,
+							position: 'bottom'
+						})
+					};
 					if(!force) this.close();
 
 				}

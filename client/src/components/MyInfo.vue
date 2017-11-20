@@ -5,7 +5,7 @@
 				<label for="my-info-nickname">姓名：</label>
 				<input class="gw-input-area" id="my-info-nickname" type="text" v-model="toEdit.nickname" />
 			</div>
-		
+
 			<div class="my-info-item">
 				<label for="my-info-area">校区：</label>
 				<span class="my-info-down">
@@ -21,13 +21,13 @@
 					<option :value="3">番禺</option>
 				</select>
 			</div>
-		
+
 
 			<div class="my-info-item">
 				<label for="my-info-weid">微信：</label>
 				<input class="gw-input-area" id="my-info-weid" type="text" v-model="toEdit.weid" />
 			</div>
-		
+
 			<div class="my-info-item">
 				<label for="my-info-phone">电话：</label>
 				<input class="gw-input-area" id="my-info-phone" type="tel" v-model="toEdit.phone" />
@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import wait from '@/utils/wait'; 
-import http from '@/utils/http.client'; 
+import wait from '@/utils/wait';
+import http from '@/utils/http.client';
 
 export default {
 	name: 'my-info',
@@ -51,7 +51,7 @@ export default {
 	},
 	methods: {
 		close(){
-			this.$emit('close'); 
+			this.$emit('close');
 		}
 	}
 }
@@ -66,8 +66,8 @@ export default {
 
 .my-info {
 	position: relative;
-	font-size: 14px; 
-	padding-left: 3em; 
+	font-size: 14px;
+	padding-left: 3em;
 
 }
 
@@ -78,11 +78,11 @@ label {
 
 .gw-input-area {
 	border: none;
-	border-radius: 4px; 
+	border-radius: 4px;
 	background-color: rgb(238, 238, 238);
-	width: 100%; 
+	width: 100%;
 	box-sizing: border-box;
-	padding: 2px 6px; 
+	padding: 2px 6px;
 	color: inherit;
 
 	appearance: none;
@@ -91,13 +91,13 @@ label {
 
 .my-info-item {
 	position: relative;
-	margin-bottom: .8em; 
+	margin-bottom: .8em;
 	color: rgb(79, 79, 79);
 }
 
 .my-info-down {
 	position: absolute;
-	right: 6px; 
+	right: 6px;
 	top: 4px;
 }
 

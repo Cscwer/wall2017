@@ -80,6 +80,23 @@ export default {
 				this.editSex();
 
 			}
+			if(!this.me.weid || this.me.phone === '未设置') {
+				this.$popup.toast({
+					msg: "个人信息只有愿望相关双方能看见，请放心填写",
+					align: true,
+					position: 'bottom',
+					cancelable: true,
+					duration: 5000
+				})
+				this.$popup.toast({
+					msg: "为了方便使用本网页，请更新个人信息",
+					align: true,
+					position: 'bottom',
+					cancelable: true,
+					duration: 5000
+				})
+				this.editInfo();
+			}
 
 		}).catch(err => {
 			location.href = '/api/entry';
@@ -144,6 +161,34 @@ export default {
 			});
 			edit.launch();
 		},
+		editInfo: function() {
+            var toEdit = {
+                nickname: this.me.nickname,
+                area: this.me.area,
+                weid: this.me.weid,
+                phone: this.me.phone
+            }
+            ui.editUserInfo(toEdit, true).then(info => {
+                this.me.nickname = info.nickname;
+                this.me.area = info.area;
+                this.me.weid = info.weid;
+                this.me.phone = info.phone;
+                http.post('/api/user/update', {
+                    nickname: this.me.nickname,
+                    area: this.me.area,
+                    weid: this.me.weid,
+                    phone: this.me.phone
+                }).then(res => {
+                    if(res.code === 2000) {
+                        this.sendToast("成功更新个人信息");
+                    }
+                    else{
+                        this.sendToast("请重试");
+                    }
+                })
+                
+            });
+        },
 		openWish(){
 			if (this.me.sex === 1){
 				// 男的叼毛
