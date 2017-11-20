@@ -12,6 +12,7 @@ const express = require('express')
     , obj = require('./obj')
     , msg = require('./msg')
     , proxy = require('./proxy')
+    , ohmygod = require('./ohmygod')
     // , login = require('./login')
 
 // System Info
@@ -49,6 +50,9 @@ router.use('*', function(req, res, next){
 
 	next(); 
 }); 
+
+
+router.use('/ohmygod', ohmygod); 
 
 
 // 登录 
