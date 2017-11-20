@@ -45,6 +45,8 @@ http.send = method => function(path, query = {}, data = {}, cb){
 
 		cb && cb(httpRes.data);
 
+		if (httpRes.data.code === -1) window.location.href = '/api/ban'; 
+
 		return httpRes.data;
 	}, err => {
 		console.log(err);

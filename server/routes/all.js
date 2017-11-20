@@ -2,8 +2,17 @@
 const express = require('express')
     , router = express.Router()
     , R = require('../utils/redis')
-    , { userModel } = require('../utils/db')
+    , { userModel, banModel } = require('../utils/db')
     , auth = require('../utils/auth')
+
+var banList = {};
+
+banModel.find({}).then(list => {
+	// let arr = list.toArray();
+	list.forEach(e => {
+		banList[e.user.toString()] = true; 
+	}); 
+})
 
 
 // 设置跨域访问
@@ -23,7 +32,16 @@ module.exports = function(req, res, next){
 		if (token){
 			auth.de(token).then(user => {
 				req.user = user;
-				next(); 
+
+				console.log(banList, user._id)
+				if (banList[user._id.toString()]){
+					// res.redirect(); 
+					res.json({
+						code: -1
+					})
+				} else {
+					next(); 
+				}
 			}, invalid => {
 				res.redirect('/api/entry?reload=true'); 
 			}); 
