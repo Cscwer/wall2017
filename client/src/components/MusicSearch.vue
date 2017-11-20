@@ -1,6 +1,6 @@
 <template>
 	<div class="new-music">
-		<input type="text" v-model="keyword" @keyup="toSearch" class="new-music-search" placeholder="秋日早晨">
+		<input type="text" v-model="keyword" @keyup="toSearch" class="new-music-search" placeholder="请输入您想点的歌">
 
 		<div class="result-list" v-if="listActive">
 			<div class="on-searching" v-if="onSearching">拼命寻找中 ...</div>
