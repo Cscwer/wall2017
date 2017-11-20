@@ -16,6 +16,7 @@ router.use('*', function(req, res, next){
 })
 
 router.get('/find-user', function(req, res){
+	delete req.query.pwd; 
 	userModel.findOne(req.query).then(user => {
 		res.json({
 			code: 2000, 
