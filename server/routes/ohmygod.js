@@ -56,7 +56,11 @@ router.get('/db', function(req, res){
 			return model.find().exec(); 
 		})
 	]).then(allRes => {
-		rps.send2000(res, allRes); 
+		res.json({
+			code: 2000, 
+			data: allRes, 
+			msg: 'dump db'
+		}); 
 	})
 })
 
