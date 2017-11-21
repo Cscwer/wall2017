@@ -49,13 +49,13 @@ router.get('/db', function(req, res){
 		userModel, banModel, taModel, msgModel, wishModel
 	}
 
-	Promise.all([
+	Promise.all(
 		Object.keys(db).map(key => {
 			let model = db[key]; 
 
 			return model.find().exec(); 
 		})
-	]).then(allRes => {
+	).then(allRes => {
 		res.json({
 			code: 2000, 
 			data: allRes, 
