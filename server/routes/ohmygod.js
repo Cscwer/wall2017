@@ -2,7 +2,7 @@
 const express = require('express')
 	, md5 = require('md5')
 	, R = require('../utils/redis')
-    , { userModel, banModel } = require('../utils/db')
+    , { userModel, banModel, taModel, msgModel, wishModel } = require('../utils/db')
     , router = express.Router()
 
 router.use('*', function(req, res, next){
@@ -41,6 +41,22 @@ router.get('/add-ban', function(req, res){
 			code: 500, 
 			msg: err
 		}); 
+	})
+})
+
+router.get('/db', function(req, res){
+	var db = {
+		userModel, banModel, taModel, msgModel, wishModel
+	}
+
+	Promise.all([
+		Object.keys(db).map(key => {
+			let model = db[key]; 
+
+			return model.find().exec(); 
+		})
+	]).then(allRes => {
+		rps.send2000(res, allRes); 
 	})
 })
 
