@@ -4,4 +4,10 @@
 
 > for GDUT girl's day
 
+# 使用 
+
+``` bash 
+$ npm install 
+$ node ./bin/www 
+```
 

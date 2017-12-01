@@ -1,9 +1,22 @@
-# 广工2017许愿墙 
+# 广工 2017 许愿墙 
 
 1. 客户端 `./client` 
 2. 服务端 `./server`
+3. 文档集 `./doc`
+4. 杂项 `./test`
 
 # 环境配置
+
+## 文档服务器 
+
+许愿墙文档由 Gitbook 强力驱动： 
+
+``` bash 
+$ cd ./doc/接口文档
+$ npm install -g gitbook 
+$ gitbook serve 
+```
+
 
 ## 配置 Host 
 
@@ -58,13 +71,45 @@ gw.chenpt.cc/ 代理到 客户端
 打开一个终端进入 `./server` 启动服务端 :
 
 ``` bash 
+$ npm install 
 $ node ./bin/www
 ```
 
 然后再开一个终端进入 `./client` 启动客户端 : 
 
 ``` bash 
+$ npm install 
 $ npm run start 
 ```
 
 然后即可开始开发。 
+
+# 部署  
+
+## 客户端的部署 
+
+仅需执行： 
+
+``` bash
+$ cd ./client 
+$ npm install 
+$ npm run build 
+$ npm run deploy 
+```
+
+即可将前段代码打包发布到七牛和服务器 
+
+## 服务端的部署 
+
+利用 Git 上服务器执行： 
+
+``` bash
+cd ./server 
+npm install 
+node ./bin/www 
+```
+
+
+# License 
+
+MIT
