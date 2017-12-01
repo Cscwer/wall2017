@@ -1,3 +1,5 @@
+![Hapi](./test/HAPPY-GIRLS-DAY-2.png)
+
 # 广工 2017 许愿墙 
 
 1. 客户端 `./client` 
@@ -109,6 +111,8 @@ npm install
 node ./bin/www 
 ```
 
+# WWW Icon
+![Hapi](client/src/assets/logo.png)
 
 # License 
 
